@@ -1,0 +1,2 @@
+cons.
+  (arrayIfoldr i.cons)

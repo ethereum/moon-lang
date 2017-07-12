@@ -1,0 +1,22 @@
+{
+  "name": "moon-lang",
+  "version": "0.1.22",
+  "description": "Universal code-interchange format",
+  "main": "moon-lang.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/maiavictor/moon.git"
+  },
+  "author": "Victor Maia",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/maiavictor/moon/issues"
+  },
+  "homepage": "https://github.com/maiavictor/moon#readme",
+  "dependencies": {
+    "xhr-request-promise": "^0.1.2"
+  }
+}

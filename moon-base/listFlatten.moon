@@ -1,0 +1,2 @@
+xs.
+  (xs listConcat listNil)

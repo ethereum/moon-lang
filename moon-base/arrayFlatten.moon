@@ -1,0 +1,1 @@
+(arrayFoldr arrayConcat [])
