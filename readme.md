@@ -2,7 +2,7 @@
 
 Moon is an universal code-interchange format. It was designed to be:
 
-- **Portable:** the entire language (parser, optimizer and compiler) is just a [5kb JS file](https://github.com/MaiaVictor/moon/blob/master/moon-lang/moon-core.js) (gzipped).
+- **Portable:** the entire language (parser, optimizer and compiler) is just a [12kb JS file](moon-lang/dist/moon-lang.min.js) (gzipped).
 
 - **Fast:** Moon is highly optimized and can run [5-100x faster](moon-demo/demo-performance.js) than popular FP libs (Ramda, Lodash, Undersore, etc.).
 

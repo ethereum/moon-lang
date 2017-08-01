@@ -500,7 +500,7 @@ const termToString = (term, spaces) => {
   const str = ([type,a,b,c], k, s) => {
     const nl = (add) => (!s && spaces > 0 ? " \n" : "") + sp((lvl += add, lvl) * (s ? 0 : spaces || 0));
     const wp = (add) => (add > 0 ? nl(add) : add < 0 ? up(add) : "");
-    const up = (add) => (lvl+=add, lvl, "");
+    const up = (add) => (lvl += add, "");
     const sp = (n) => n === 0 ? "" : (spaces ? " " : "") + sp(n - 1);
     const w = k === 1 && type !== "Lam" || (k === 2 && type !== "Num" && type !== "Str" && type !== "Map") ? 1 : 0;
     switch (type) {

@@ -1,9 +1,13 @@
 {
   "name": "moon-lang",
-  "version": "0.1.22",
+  "version": "0.1.23",
   "description": "Universal code-interchange format",
-  "main": "moon-lang.js",
+  "main": "lib/moon-lang.js",
   "scripts": {
+    "babel": "babel src --out-dir=lib",
+    "browserify": "browserify lib/moon-lang.js > dist/moon-lang.bundle.js",
+    "minify": "ccjs dist/moon-lang.bundle.js > dist/moon-lang.min.js",
+    "build": "npm run babel; npm run browserify; npm run minify",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -18,5 +22,13 @@
   "homepage": "https://github.com/maiavictor/moon#readme",
   "dependencies": {
     "xhr-request-promise": "^0.1.2"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-es2016": "^6.24.1",
+    "babel-preset-es2017": "^6.24.1",
+    "browserify": "^14.4.0",
+    "ccjs": "^0.2.0"
   }
 }

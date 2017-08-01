@@ -21,58 +21,58 @@ const book = require("./moon-book.js");
 //   Parses Moon code to a native value / function.
 //   Doesn't import undefined variables.
 const parse = (code, opts = {}) => {
-  const term = opts.unsafe ? core.termFromString(code) : core.termFromStringSafe(code)
-  const jsValue = opts.fast ? core.termCompileFast(term) : core.termCompileFull(term);
+  const term = (opts||{}).unsafe ? core.termFromString(code) : core.termFromStringSafe(code)
+  const jsValue = (opts||{}).fast ? core.termCompileFast(term) : core.termCompileFull(term);
   return eval(jsValue)();
 }
 
 // String [, Opts] -> Promise Native
 //   Same as `parse`.
 //   Imports missing variables from the Ethereum / Swarm network.
-const parseth = (code, opts = {}) =>
+const parseth = (code, opts) =>
   parseWithAsync(book, code, opts);
 
 // Importer, String [, Opts] -> Native
 //   Same as `parse`.
 //   Imports undefined variables with the specified importer.
-const parseWith = (importer, code, opts = {}) =>
+const parseWith = (importer, code, opts) =>
   parse(doImport(importer, code), opts); 
 
 // AsyncImporter, String [, Opts] -> Promise Native
 //   Same as `parseWith`, but with asynchronous imports.
-const parseWithAsync = (resolver, code, opts = {}) =>
+const parseWithAsync = (resolver, code, opts) =>
   doImportAsync(resolver, code).then(code => parse(code, opts));
 
 // Native [, Opts] -> String
 //   Stringifies a native value / function back to Moon.
-const stringify = (value, opts = {}) =>
-  core.termToString(core.termDecompileFull(value), opts.spaces || 0);
+const stringify = (value, opts) =>
+  core.termToString(core.termDecompileFull(value), (opts||{}).spaces || 0);
 
 // String [, Opts] -> String
 //   Runs Moon code and returns the resulting Moon code.
 //   Uses fast mode if possible.
 //   Doesn't import undefined variables. 
-const run = (code, opts = {}) => {
-  const term = opts.unsafe ? core.termFromString(code) : core.termFromStringSafe(code);
-  return core.termToString(core.termReduce(term), opts.space);
+const run = (code, opts) => {
+  const term = (opts||{}).unsafe ? core.termFromString(code) : core.termFromStringSafe(code);
+  return core.termToString(core.termReduce(term), (opts||{}).space);
 }
 
 // String [, Opts] -> String
 //   Same as `run`.
 //   Imports missing variables from the Ethereum / Swarm network.
-const runeth = (code, opts = {}) =>
-  runWithAsync(book, code, opts);
+const runeth = (code, opts) =>
+  runWithAsync(book, code, (opts||{}));
 
 // Importer, String [, Opts] -> String
 //   Runs Moon code and returns the resulting Moon code.
 //   Uses fast mode if possible.
 //   Imports undefined variables with the specified importer.
-const runWith = (importer, code, opts = {}) =>
+const runWith = (importer, code, opts) =>
   run(doImport(importer, code), opts);
 
 // Importer, String [, Opts] -> String
 //   Same as `runWith`, but with asynchronous imports.
-const runWithAsync = (importer, code, opts = {}) =>
+const runWithAsync = (importer, code, opts) =>
   doImportAsync(importer, code).then(code => run(code, opts));
 
 // String-> String

@@ -1,6 +1,5 @@
-t.
+io.
   ioFree. ioPure.
-    (t
-      cont. (ioFree (ioGetLineF str.(cont str ioPure ioFree)))
-      str. cont. (ioFree (ioPutLineF str (cont ioPure ioFree)))
-      (ioFree ioExitT))
+    (io
+      req. args. cont. (ioFree (ioAskF req args (cont ioPure ioFree)))
+      ret. (ioFree (ioEndF ret)))

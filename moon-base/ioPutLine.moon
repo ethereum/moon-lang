@@ -1,1 +1,0 @@
-s. (ioBind (ioPutLineM s))

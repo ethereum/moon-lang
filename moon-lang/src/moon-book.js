@@ -31,8 +31,8 @@ var asciiToBytes32 = ascii => {
 };
 
 // String, MoonBookOptions -> Promise (Nullable String)
-var resolve = async (termName, opts = {}) => {
-  try {
+var resolve = (termName, opts = {}) => {
+  return new Promise((resolve,reject) => {
     var termKey = asciiToBytes32(termName);
     var ethUrl = opts.ethUrl || config.testnet.url;
     var swarmUrl = opts.swarmUrl || config.swarmUrl;
@@ -51,7 +51,7 @@ var resolve = async (termName, opts = {}) => {
       ];
       for (var i = 0; i < paths.length; ++i) {
         if (fs().existsSync(paths[i]))
-          return fs().readFileSync(paths[i], "utf8");
+          return resolve(fs().readFileSync(paths[i], "utf8"));
       }
     };
 
@@ -59,7 +59,7 @@ var resolve = async (termName, opts = {}) => {
     if (!opts.disableCache) {
       if (onBrowser) {
         if (localStorage.getItem(termId)) {
-          return Promise.resolve(localStorage.getItem(termId));
+          return resolve(Promise.resolve(localStorage.getItem(termId)));
         }
       } else {
         var homePath = process.env[(process.platform == "win32") ? "USERPROFILE" : "HOME"];
@@ -68,13 +68,13 @@ var resolve = async (termName, opts = {}) => {
         if (!fs().existsSync(moonBookPath))
           fs().mkdirSync(moonBookPath);
         if (fs().existsSync(termPath))
-          return Promise.resolve(fs().readFileSync(termPath, "utf8"));
+          return resolve(Promise.resolve(fs().readFileSync(termPath, "utf8")));
       };
     };
 
     // 2. If not, get the Swarm hash from Ethereum
     if (debug) console.log("- Couldn't resolve " + termName + " locally. Looking up on Ethereum / Swarm. This may take a while...");
-    var swarmHashRequest = await request(ethUrl, {
+    var swarmHashRequest = request(ethUrl, {
       method: "POST",
       contentType: "application/json-rpc",
       body: JSON.stringify({
@@ -93,33 +93,35 @@ var resolve = async (termName, opts = {}) => {
         }, "latest"]
       })
     });
-    var swarmHash = JSON.parse(swarmHashRequest).result.slice(2);
-    if (swarmHash === "0000000000000000000000000000000000000000000000000000000000000000") {
-      return null;
-    }
 
-    // 3. Get the term definition from Swarm
-    var termSwarmUrl = swarmUrl + "/bzzr:/" + swarmHash;
-    var termSource = await request(termSwarmUrl, {method: "GET"});
-    if (termSource === "404 page not found\n") {
-      return null;
-    }
-
-    // 4. Cache the result globally
-    if (!opts.disableCache) {
-      if (onBrowser) {
-        localStorage.setItem(termId, termSource);
-      } else {
-        fs().writeFileSync(termPath, termSource);
+    swarmHashRequest.then(swarmHashRequest => {
+      var swarmHash = JSON.parse(swarmHashRequest).result.slice(2);
+      if (swarmHash === "0000000000000000000000000000000000000000000000000000000000000000") {
+        return resolve(null);
       }
-    }
 
-    // 5. Return it
-    return termSource;
-  } catch (e) {
-    console.log(e);
-    return null;
-  }
+      // 3. Get the term definition from Swarm
+      var termSwarmUrl = swarmUrl + "/bzzr:/" + swarmHash;
+      var termSource = request(termSwarmUrl, {method: "GET"});
+      return termSource.then(termSource => {
+        if (termSource === "404 page not found\n") {
+          return resolve(null);
+        }
+
+        // 4. Cache the result globally
+        if (!opts.disableCache) {
+          if (onBrowser) {
+            localStorage.setItem(termId, termSource);
+          } else {
+            fs().writeFileSync(termPath, termSource);
+          }
+        }
+
+        // 5. Return it
+        return resolve(termSource);
+      });
+    }).catch(() => resolve(null));
+  });
 };
 
 module.exports = resolve;

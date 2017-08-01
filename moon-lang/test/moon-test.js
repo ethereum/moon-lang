@@ -1,4 +1,4 @@
-const M = require(".");
+const M = require("./..");
 const testLib = require("./moon-test-lib");
 const testLibAsync = name => Promise.resolve(testLib[name]);
 const assert = require("assert");

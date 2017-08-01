@@ -1,2 +1,0 @@
-ioGetLineF. ioPutLineF. ioExitF.
-  ioExitF

@@ -1,1 +1,1 @@
-(ioBind ioGetLineM)
+(ioAsk "getLine" {})
