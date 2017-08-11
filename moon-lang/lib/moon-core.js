@@ -152,6 +152,9 @@ var termFromStringWithDeps = function termFromStringWithDeps(source) {
               for (var i = 0; i < arity - len; ++i) {
                 curried = T.Lam("x" + (arity - 1 - len - i), curried);
               }
+              for (var i = 0; i < len - arity; ++i) {
+                curried = T.App(curried, args[arity + 1 + i]);
+              }
               return curried;
             } else {
               var app = name(E)(T);
