@@ -21,7 +21,7 @@ const book = require("./moon-book.js");
 //   Parses Moon code to a native value / function.
 //   Doesn't import undefined variables.
 const parse = (code, opts = {}) => {
-  const term = (opts||{}).unsafe ? core.termFromString(code) : core.termFromStringSafe(code)
+  const term = (opts||{}).unsafe ? core.termFromString(code) : core.termFromString(code)
   const jsValue = (opts||{}).fast ? core.termCompileFast(term) : core.termCompileFull(term);
   return eval(jsValue)();
 }
@@ -53,7 +53,7 @@ const stringify = (value, opts) =>
 //   Uses fast mode if possible.
 //   Doesn't import undefined variables. 
 const run = (code, opts) => {
-  const term = (opts||{}).unsafe ? core.termFromString(code) : core.termFromStringSafe(code);
+  const term = core.termFromString(code);
   return core.termToString(core.termReduce(term), (opts||{}).space);
 }
 
@@ -120,6 +120,24 @@ const makeImporter = importer =>
     ? (name => importer[name])
     : importer;
 
+// Term -> [String]
+const termRefs = term => {
+  var fvs = {};
+  term({
+    App: (f, x) => {},
+    Lam: (name, body) => {},
+    Var: (name) => {},
+    Ref: (name) => fvs[name] = 1,
+    Let: (name, term, body) => {},
+    Fix: (name, term) => {},
+    Pri: (name, args) => {},
+    Num: (num) => {},
+    Str: (num) => {},
+    Map: (kvs) => {}
+  });
+  return Object.keys(fvs);
+};
+
 // Importer, String -> String
 //   Adds imports to Moon code with the specified importer.
 const doImport = (eitherImporter, code) => {
@@ -131,7 +149,7 @@ const doImport = (eitherImporter, code) => {
     if (!imported[name]) {
       imported[name] = true;
       if (code) {
-        core.termFromStringWithDeps(code).deps.forEach(dep => go(dep, importer(dep)));
+        termRefs(core.termFromString(code)).forEach(ref => go(ref, importer(ref)));
         result = result + "\n" + name + ": " + code;
         imported[name] = Promise.resolve(null);
       }
@@ -151,9 +169,9 @@ const doImportAsync = (eitherImporter, code) => {
   let go = (name, code) => {
     if (!imported[name]) {
       if (code) {
-        let codeDeps = core.termFromStringWithDeps(code).deps;
-        let depsProm = Promise.all(codeDeps.map(dep => importer(dep).then(code => go(dep, code))));
-        imported[name] = depsProm.then(() => result = result + "\n" + name + ": " + code);
+        let codeRefs = termRefs(core.termFromString(code));
+        let refsProm = Promise.all(codeRefs.map(ref => importer(ref).then(code => go(ref, code))));
+        imported[name] = refsProm.then(() => result = result + "\n" + name + ": " + code);
       } else {
         imported[name] = Promise.resolve(null);
       }

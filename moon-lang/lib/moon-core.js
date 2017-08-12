@@ -13,8 +13,9 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 //
 // data MoonTerm
 //   = App MoonTerm MoonTerm
-//   | Lam String MoonTerm
-//   | Var String
+//   | Lam MoonTerm
+//   | Var Number
+//   | Ref String
 //   | Let String MoonTerm MoonTerm
 //   | Fix String MoonTerm
 //   | Pri String [MoonTerm]
@@ -22,9 +23,9 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 //   | Str String
 //   | Map [[String, MoonTerm]]
 // 
-// App, Lam, Var, Let and Fix do what you expect from the FP literature.
-// Pri encodes a primitive operation. Num, Str and Map hold JSON data.
-// There are 27 primitive operations:
+// App, Lam, Var are the λ-calculus. Ref is a named free variable. Let binds a
+// named variable, fix is the fixed point, Pri encodes a primitive operation.
+// Num, Str and Map hold JSON data. There are 27 primitive ops:
 // 
 // if  :: Number -> MoonTerm -> MoonTerm
 // add :: Number -> Number -> Number
@@ -56,53 +57,37 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 // Most operations are hopefully obvious. `con` is concatenation, `slc` is
 // slicing, `cmp` is string equality comparison. `nts` and `stn` converts from
 // strings to numbers and back. `gen` generates a Map from its fold. `get` gets
-// the value of a key in a map, and may return null. `for` receives an initial
+// the value of a key in a map, and may return null.  `for` receives an initial
 // index, an exclusive limit, an initial state, a function (that receives the
 // index and the current state and returns the next state), and then it returns
 // the last state of the loop.
 //
-// Moon's syntax is equally simple. This is the base syntax:
+// Terms of that ADT are communicated using a compact binary format:
 //
-// APP: (f x)
-// LAM: varName. body
-// VAR: varName
-// LET: varName: varValue body
-// FIX: varName@ body
-// PRI: (add x y)
-// NUM: 100.75e-32       -- same as JSON numbers
-// STR: "I'm a string"   -- same as JSON strings
-// MAP: {"x": 1, "y": 2} -- same as JSON objects
+// App 00 + term + term
+// Lam 01 + term
+// Var 10 + nat
+// Ref 1100 + ref
+// Let 11010 + ref + term + term
+// Fix 11011 + ref + term
+// Pri 11100 + prim + terms
+// Num 11101 + sign + nat + nat
+// Str 11110 + nat + [nat]
+// Map 11111 + nat + [str + term]
 //
-// There are also some syntax sugars:
+// (TODO: explain more precisely)
 //
-// Array syntax:
-//   This:
-//     [0, 1, 2]
-//   Desugars to:
-//     {"0": 0, "1": 1, "2": 2, "length": 3}
-//  
-// Monadic notation:
-//   This:
-//     | ["aaa", <(f x), "bbb", (f y)> "ccc", "ddd"]
-//   Desugars to this:
-//     (f x A. (f y B. ["aaa", A, "bbb", B, "ccc", "ddd"]))
-//   It works very similarly to Idris's bang-notation.
-// 
-// Finally, there is the "expand-at-compile-time" annotation (`#`) which causes the
-// term next to it to be fully normalized at compiled time. This is very useful for 
-// optimizing inner loops, vectorial code, fusing list algorithms, etc., since those
-// optimizations often can't be performed by the underlying JIT engine.
-//
-// And that pretty much describes it all! The rest is mostly implementation details.
+// Note that, through this file, I actually use a slightly different ADT, which has
+// string-based vars and string variable names on lambdas. The binary format, though,
+// uses bruijn indices for lambdas and bound vars, and strings for everything else.
 
 var find = function find(fn, list) {
   return list === null ? null : fn(list[0]) ? list[0] : find(fn, list[1]);
 };
 
-var termFromStringWithDeps = function termFromStringWithDeps(source) {
+var termFromString = function termFromString(source) {
   var parse = function parse(source) {
     var index = 0;
-    var deps = [];
     var nextName = 0;
     var lift = [];
     var lifted = function lifted(lift, term) {
@@ -360,10 +345,9 @@ var termFromStringWithDeps = function termFromStringWithDeps(source) {
             return v[0] === binder;
           }, vs);
           if (!bind) {
-            deps.push(binder);
             return function (E) {
               return function (T) {
-                return T.Var(binder);
+                return T.Ref(binder);
               };
             };
           } else if (bind[0] === "_rec") {
@@ -388,10 +372,7 @@ var termFromStringWithDeps = function termFromStringWithDeps(source) {
       return parsed;
     }
     var parsed = parse(null, lift, 0, 0);
-    return {
-      term: lifted(lift, parsed)(0),
-      deps: deps
-    };
+    return lifted(lift, parsed)(0);
   };
   var finalize = function finalize(term, scope) {
     return term({
@@ -412,9 +393,14 @@ var termFromStringWithDeps = function termFromStringWithDeps(source) {
       Var: function Var(name) {
         return function (S) {
           return function (T) {
-            return (find(function (n) {
-              return n === name;
-            }, S) ? T.Var : T.Dep)(name);
+            return T.Var(name);
+          };
+        };
+      },
+      Ref: function Ref(name) {
+        return function (S) {
+          return function (T) {
+            return T.Ref(name);
           };
         };
       },
@@ -478,22 +464,127 @@ var termFromStringWithDeps = function termFromStringWithDeps(source) {
     })(scope, 0);
   };
   var parsed = parse(source);
-  return {
-    term: finalize(parsed.term, null),
-    deps: parsed.deps
+  return finalize(parsed, null);
+};
+
+var termToString = function termToString(term, spaces) {
+  var tree = term({
+    App: function App(f, x) {
+      return ["App", f, x];
+    },
+    Lam: function Lam(name, body) {
+      return ["Lam", name, body];
+    },
+    Var: function Var(name) {
+      return ["Var", name];
+    },
+    Ref: function Ref(name) {
+      return ["Ref", name];
+    },
+    Let: function Let(name, term, body) {
+      return ["Let", name, term, body];
+    },
+    Fix: function Fix(name, body) {
+      return ["Fix", name, body];
+    },
+    Pri: function Pri(name, args) {
+      return ["Pri", name, args];
+    },
+    Num: function Num(num) {
+      return ["Num", num];
+    },
+    Str: function Str(str) {
+      return ["Str", str];
+    },
+    Map: function Map(kvs) {
+      return ["Map", kvs];
+    }
+  });
+  var lvl = 0;
+  var str = function str(_ref7, k, s) {
+    var _ref8 = _slicedToArray(_ref7, 4),
+        type = _ref8[0],
+        a = _ref8[1],
+        b = _ref8[2],
+        c = _ref8[3];
+
+    var nl = function nl(add) {
+      return (!s && spaces > 0 ? " \n" : "") + sp((lvl += add, lvl) * (s ? 0 : spaces || 0));
+    };
+    var wp = function wp(add) {
+      return add > 0 ? nl(add) : add < 0 ? up(add) : "";
+    };
+    var up = function up(add) {
+      return lvl += add, "";
+    };
+    var sp = function sp(n) {
+      return n === 0 ? "" : (spaces ? " " : "") + sp(n - 1);
+    };
+    var w = k === 1 && type !== "Lam" || k === 2 && type !== "Num" && type !== "Str" && type !== "Map" ? 1 : 0;
+    switch (type) {
+      case "App":
+        var fnStr = str(a, 0, s);
+        var fnApp = fnStr[0] === "(" && fnStr[fnStr.length - 1] === ")";
+        var fnCln = fnApp ? fnStr.slice(1, -1) : fnStr;
+        return wp(w) + "(" + fnCln + " " + str(b, 0, 1) + ")" + wp(-w);
+      case "Lam":
+        return wp(w) + a + "." + (spaces ? " " : "") + str(b, 1, s) + wp(-w);
+      case "Var":
+        return wp(w) + a + wp(-w);
+      case "Ref":
+        return wp(w) + a + wp(-w);
+      case "Let":
+        return wp(w) + a + ":" + (spaces ? " " : "") + str(b, 0, s) + " " + nl(0) + str(c, 0, s) + wp(-w);
+      case "Fix":
+        return wp(w) + a + "@" + str(b, 0, s) + wp(-w);
+      case "Pri":
+        return wp(w) + "(" + a + " " + b.map(function (x) {
+          return str(x, 0, s);
+        }).join(" ") + ")" + wp(-w);
+      case "Num":
+        return wp(w) + a + wp(-w);
+      case "Str":
+        return wp(w) + '"' + a + '"' + wp(-w);
+      case "Map":
+        var lenIdx = a.reduce(function (i, _ref9, j) {
+          var _ref10 = _slicedToArray(_ref9, 2),
+              k = _ref10[0],
+              v = _ref10[1];
+
+          return k === "length" ? j : i;
+        }, null);
+        if (lenIdx !== null) {
+          var len = Number(a[lenIdx][1][1]);
+          var arr = a.filter(function (_ref11) {
+            var _ref12 = _slicedToArray(_ref11, 2),
+                k = _ref12[0],
+                v = _ref12[1];
+
+            return k !== "length";
+          }).map(function (_ref13) {
+            var _ref14 = _slicedToArray(_ref13, 2),
+                k = _ref14[0],
+                v = _ref14[1];
+
+            return v;
+          });
+          var inn = arr.map(function (v, i) {
+            return up(1) + str(v, 0, s) + up(-1) + (i < len - 1 ? "," + nl(0) : "");
+          }).join("");
+          return wp(w) + "[" + nl(1) + inn + nl(-1) + "]" + wp(-w);
+        } else {
+          var inn = a.map(function (_ref15, i) {
+            var _ref16 = _slicedToArray(_ref15, 2),
+                k = _ref16[0],
+                v = _ref16[1];
+
+            return '"' + k + '":' + sp(1) + str(v, 2, s) + (i < a.length - 1 ? "," + nl(0) : "");
+          }).join("");
+          return wp(w) + "{" + nl(1) + inn + nl(-1) + "}" + wp(-w);
+        }
+    }
   };
-};
-
-var termFromStringSafe = function termFromStringSafe(string) {
-  var parsed = termFromStringWithDeps(string);
-  if (parsed.deps.length > 0) {
-    throw "Moon term has free variables: " + parsed.deps.join(", ");
-  }
-  return parsed.term;
-};
-
-var termFromString = function termFromString(string) {
-  return termFromStringWithDeps(string).term;
+  return str(tree, 0, 0);
 };
 
 var termCompileFast = function termCompileFast(term) {
@@ -510,6 +601,11 @@ var termCompileFast = function termCompileFast(term) {
         };
       },
       Var: function Var(name) {
+        return function (_) {
+          return "_" + name;
+        };
+      },
+      Ref: function Ref(name) {
         return function (_) {
           return "_" + name;
         };
@@ -551,18 +647,13 @@ var termCompileFast = function termCompileFast(term) {
       },
       Map: function Map(kvs) {
         return function (_) {
-          return "({" + kvs.map(function (_ref7) {
-            var _ref8 = _slicedToArray(_ref7, 2),
-                k = _ref8[0],
-                v = _ref8[1];
+          return "({" + kvs.map(function (_ref17) {
+            var _ref18 = _slicedToArray(_ref17, 2),
+                k = _ref18[0],
+                v = _ref18[1];
 
             return k + ":" + v();
           }).join(",") + "})";
-        };
-      },
-      Dep: function Dep(name) {
-        return function (_) {
-          return "_" + name;
         };
       }
     })();
@@ -612,6 +703,9 @@ var termCompileFull = function termCompileFull(term) {
       Var: function Var(name) {
         return "_" + name;
       },
+      Ref: function Ref(name) {
+        return "$D('" + name + "')";
+      },
       Let: function Let(name, term, body) {
         return (/^\(\(\)=>{/.test(body) ? "(()=>{var _" + name + "=" + term + ";" + body.slice(6) : "(()=>{var _" + name + "=" + term + ";return " + body + "})()"
         );
@@ -631,20 +725,17 @@ var termCompileFull = function termCompileFull(term) {
         return JSON.stringify(s);
       },
       Map: function Map(map) {
-        return "({" + map.map(function (_ref9) {
-          var _ref10 = _slicedToArray(_ref9, 2),
-              k = _ref10[0],
-              v = _ref10[1];
+        return "({" + map.map(function (_ref19) {
+          var _ref20 = _slicedToArray(_ref19, 2),
+              k = _ref20[0],
+              v = _ref20[1];
 
           return k + ":" + v;
         }).join(",") + "})";
-      },
-      Dep: function Dep(name) {
-        return "$D('" + name + "')";
       }
     });
   };
-  var compiled = "(()=>{" + "\"use strict\";" + "var $P=((a)=>(a.__=1,a));" + "var $D=(a)=>$P(['dep',a]);" + "var $A=(a,b)=>typeof a==='function'?a(b):$P(['app',a,b]);" + "var " + commonLib.join(",") + "," + pris.map(function (pri) {
+  var compiled = "(()=>{" + "\"use strict\";" + "var $P=((a)=>(a.__=1,a));" + "var $D=(a)=>$P(['ref',a]);" + "var $A=(a,b)=>typeof a==='function'?a(b):$P(['app',a,b]);" + "var " + commonLib.join(",") + "," + pris.map(function (pri) {
     return "$" + pri[0] + "=" + pri[2];
   }).join(",") + ";" + "return " + toJS(term) + "})";
   return compiled;
@@ -687,7 +778,7 @@ var termDecompileFull = function termDecompileFull(func) {
             };
           })), depth + 1)(T));
         };
-      } else if (value[0] === "dep") {
+      } else if (value[0] === "ref") {
         return function (T) {
           return T.Var(value[1]);
         };
@@ -733,150 +824,49 @@ var termReduce = function termReduce(term) {
   };
 };
 
-var termToString = function termToString(term, spaces) {
-  var tree = term({
-    App: function App(f, x) {
-      return ["App", f, x];
-    },
-    Lam: function Lam(name, body) {
-      return ["Lam", name, body];
-    },
-    Var: function Var(name) {
-      return ["Var", name];
-    },
-    Let: function Let(name, term, body) {
-      return ["Let", name, term, body];
-    },
-    Fix: function Fix(name, body) {
-      return ["Fix", name, body];
-    },
-    Pri: function Pri(name, args) {
-      return ["Pri", name, args];
-    },
-    Num: function Num(num) {
-      return ["Num", num];
-    },
-    Str: function Str(str) {
-      return ["Str", str];
-    },
-    Map: function Map(kvs) {
-      return ["Map", kvs];
-    },
-    Dep: function Dep(name) {
-      return ["Var", name];
-    }
-  });
-  var lvl = 0;
-  var str = function str(_ref11, k, s) {
-    var _ref12 = _slicedToArray(_ref11, 4),
-        type = _ref12[0],
-        a = _ref12[1],
-        b = _ref12[2],
-        c = _ref12[3];
-
-    var nl = function nl(add) {
-      return (!s && spaces > 0 ? " \n" : "") + sp((lvl += add, lvl) * (s ? 0 : spaces || 0));
-    };
-    var wp = function wp(add) {
-      return add > 0 ? nl(add) : add < 0 ? up(add) : "";
-    };
-    var up = function up(add) {
-      return lvl += add, "";
-    };
-    var sp = function sp(n) {
-      return n === 0 ? "" : (spaces ? " " : "") + sp(n - 1);
-    };
-    var w = k === 1 && type !== "Lam" || k === 2 && type !== "Num" && type !== "Str" && type !== "Map" ? 1 : 0;
-    switch (type) {
-      case "App":
-        var fnStr = str(a, 0, s);
-        var fnApp = fnStr[0] === "(" && fnStr[fnStr.length - 1] === ")";
-        var fnCln = fnApp ? fnStr.slice(1, -1) : fnStr;
-        return wp(w) + "(" + fnCln + " " + str(b, 0, 1) + ")" + wp(-w);
-      case "Lam":
-        return wp(w) + a + "." + (spaces ? " " : "") + str(b, 1, s) + wp(-w);
-      case "Var":
-        return wp(w) + a + wp(-w);
-      case "Let":
-        return wp(w) + a + ":" + (spaces ? " " : "") + str(b, 0, s) + " " + nl(0) + str(c, 0, s) + wp(-w);
-      case "Fix":
-        return wp(w) + a + "@" + str(b, 0, s) + wp(-w);
-      case "Pri":
-        return wp(w) + "(" + a + " " + b.map(function (x) {
-          return str(x, 0, s);
-        }).join(" ") + ")" + wp(-w);
-      case "Num":
-        return wp(w) + a + wp(-w);
-      case "Str":
-        return wp(w) + '"' + a + '"' + wp(-w);
-      case "Map":
-        var lenIdx = a.reduce(function (i, _ref13, j) {
-          var _ref14 = _slicedToArray(_ref13, 2),
-              k = _ref14[0],
-              v = _ref14[1];
-
-          return k === "length" ? j : i;
-        }, null);
-        if (lenIdx !== null) {
-          var len = Number(a[lenIdx][1][1]);
-          var arr = a.filter(function (_ref15) {
-            var _ref16 = _slicedToArray(_ref15, 2),
-                k = _ref16[0],
-                v = _ref16[1];
-
-            return k !== "length";
-          }).map(function (_ref17) {
-            var _ref18 = _slicedToArray(_ref17, 2),
-                k = _ref18[0],
-                v = _ref18[1];
-
-            return v;
-          });
-          var inn = arr.map(function (v, i) {
-            return up(1) + str(v, 0, s) + up(-1) + (i < len - 1 ? "," + nl(0) : "");
-          }).join("");
-          return wp(w) + "[" + nl(1) + inn + nl(-1) + "]" + wp(-w);
-        } else {
-          var inn = a.map(function (_ref19, i) {
-            var _ref20 = _slicedToArray(_ref19, 2),
-                k = _ref20[0],
-                v = _ref20[1];
-
-            return '"' + k + '":' + sp(1) + str(v, 2, s) + (i < a.length - 1 ? "," + nl(0) : "");
-          }).join("");
-          return wp(w) + "{" + nl(1) + inn + nl(-1) + "}" + wp(-w);
-        }
-    }
-  };
-  return str(tree, 0, 0);
-};
-
 var termToBinary = function termToBinary(term) {
-  //App 01
-  //Lam 10
-  //Var 00
-  //Let 1100
-  //Fix 11100
-  //Pri 1101 + XXXXX
-  //Num 11101
-  //Str 11110
-  //Map 11111
   var encodeStr = function encodeStr(str) {
-    return encodeNat(str.length) + str.split("").map(function (c) {
+    var len = encodeNat(str.length);
+    var nats = str.split("").map(function (c) {
       return encodeNat(c.charCodeAt(0));
     }).join("");
+    return len + nats;
   };
-  var encodeNat = function encodeNat(num) {
+  var encodeRef = function encodeRef(ref) {
     var str = "";
-    for (var n = num + 1; n > 1; n = n / 2 | 0) {
-      str = "1" + n % 2 + str;
-    }return str + "0";
+    for (var i = 0; i < ref.length; ++i) {
+      str += refs[ref[i]];
+    }
+    return str + "000000";
   };
-  var encodeDep = function encodeDep(str) {};
+  var encodeNat = function encodeNat(nat) {
+    var bits = (nat + 2).toString(2).slice(1);
+    for (var i = 0, chunks = bits.length; i < chunks; ++i) {
+      bits = (i === 0 ? "0" : "1") + bits;
+    }return bits;
+  };
+  var encodeNum = function encodeNum(num) {
+    var exp = 0;
+    var sgn = 0;
+    var man = 0;
+    var esg = 0;
+    if (num !== 0) {
+      if (num < 0) sgn = 1, num = -num;
+      while (num > 2) {
+        num /= 2, exp++;
+      }while (num < 1) {
+        num *= 2, exp--;
+      }while (num !== 0) {
+        man = man * 2 + (num | 0), num = (num - (num | 0)) * 2;
+      }
+    }
+    if (exp < 0) esg = 1, exp = -exp;
+    return String(sgn) + encodeNat(man) + String(esg) + encodeNat(exp);
+  };
   return term({
     App: function App(f, x) {
       return function (S) {
-        return "10" + f(S) + x(S);
+        return "00" + f(S) + x(S);
       };
     },
     Lam: function Lam(name, body) {
@@ -891,39 +881,34 @@ var termToBinary = function termToBinary(term) {
             throw "";
           }() : S[0] === name ? 0 : 1 + find(S[1]);
         };
-        return "00" + encodeNat(find(S));
+        return "10" + encodeNat(find(S));
       };
     },
-    Dep: function Dep(name) {
+    Ref: function Ref(name) {
       return function (S) {
-        var num = Number(name.slice(1));
-        if (name[0] !== "$" || isNaN(num)) throw "Free var: " + name;
-        var len = function len(S) {
-          return !S ? 0 : 1 + len(S[1]);
-        };
-        return "00" + encodeNat(len(S) + num);
+        return "1100" + encodeRef(name);
       };
     },
     Let: function Let(name, term, body) {
       return function (S) {
-        return "1100" + term(S) + body([name, S]);
+        return "11010" + encodeRef(name) + term(S) + body([name, S]);
       };
     },
     Fix: function Fix(name, term) {
       return function (S) {
-        return "11100" + term([name, S]);
+        return "11011" + encodeRef(name) + term([name, S]);
       };
     },
     Pri: function Pri(name, args) {
       return function (S) {
-        return "1101" + pri[name][5] + args.map(function (arg) {
+        return "11100" + pri[name][5] + args.map(function (arg) {
           return arg(S);
         }).join("");
       };
     },
     Num: function Num(num) {
       return function (S) {
-        return "11101" + encodeNat(num);
+        return "11101" + encodeNum(num);
       };
     },
     Str: function Str(str) {
@@ -956,11 +941,16 @@ var termFromBinary = function termFromBinary(src) {
       return String.fromCharCode(n);
     }).join("");
   };
+  var parseRef = function parseRef() {
+    var ref = "";
+    while (src.slice(idx, idx += 6) !== "000000") {
+      ref += refs[src.slice(idx - 6, idx)];
+    }
+    return ref;
+  };
   var parseNat = function parseNat() {
-    var num = 1;
-    while (src[(idx += 2) - 2] !== "0") {
-      num = num * 2 + Number(src[idx - 1]);
-    }return idx--, num - 1;
+    for (var chunks = 0; src[(chunks++, idx++)] !== "0";) {};
+    return parseInt("1" + src.slice(idx, idx += chunks), 2) - 2;
   };
   var head = function head(_head) {
     if (src.slice(idx, idx + _head.length) === _head) {
@@ -969,49 +959,62 @@ var termFromBinary = function termFromBinary(src) {
     }
     return false;
   };
-  var parseTerm = function parseTerm(d) {
-    if (head("10")) {
-      var f = parseTerm(d);
-      var x = parseTerm(d);
+  var parseTerm = function parseTerm(S, d) {
+    if (head("00")) {
+      var f = parseTerm(S, d);
+      var x = parseTerm(S, d);
       return function (T) {
         return T.App(f(T), x(T));
       };
     } else if (head("01")) {
-      var body = parseTerm(d + 1);
+      var body = parseTerm(["v" + d, S], d + 1);
       return function (T) {
         return T.Lam("v" + d, body(T));
       };
-    } else if (head("00")) {
+    } else if (head("10")) {
       var i = parseNat();
-      var k = d - i - 1;
-      return function (T) {
-        return T.Var(k < 0 ? "$" + (-k - 1) : "v" + k);
+      for (var k = 0; k < i; ++k) {
+        S = S[1];
+      }return function (T) {
+        return T.Var(S[0]);
       };
     } else if (head("1100")) {
-      var term = parseTerm(d);
-      var body = parseTerm(d + 1);
+      var name = parseRef();
       return function (T) {
-        return T.Let("v" + d, term(T), body(T));
+        return T.Ref(name);
+      };
+    } else if (head("11010")) {
+      var name = parseRef();
+      var term = parseTerm(S, d);
+      var body = parseTerm([name, S], d + 1);
+      return function (T) {
+        return T.Let(name, term(T), body(T));
+      };
+    } else if (head("11011")) {
+      var name = parseRef();
+      var body = parseTerm([name, S], d + 1);
+      return function (T) {
+        return T.Fix(name, body(T));
       };
     } else if (head("11100")) {
-      var body = parseTerm(d + 1);
-      return function (T) {
-        return T.Fix("v" + d, body(T));
-      };
-    } else if (head("1101")) {
       var pri = pri2[src.slice(idx, idx += 5)];
       var args = [];
       for (var i = 0; i < pri[1]; ++i) {
-        args.push(parseTerm(d));
+        args.push(parseTerm(S, d));
       }return function (T) {
         return T.Pri(pri[0], args.map(function (a) {
           return a(T);
         }));
       };
     } else if (head("11101")) {
-      var nat = parseNat();
-      return function (T) {
-        return T.Num(nat);
+      var sgn = src[idx++] === "0" ? 1 : -1;
+      var man = parseNat();
+      var esg = src[idx++] === "0" ? 1 : -1;
+      var exp = parseNat();
+      while (man > 2) {
+        man /= 2;
+      }return function (T) {
+        return T.Num(sgn * man * Math.pow(2, esg * exp));
       };
     } else if (head("11110")) {
       var str = parseStr();
@@ -1022,7 +1025,7 @@ var termFromBinary = function termFromBinary(src) {
       var len = parseNat();
       var kvs = [];
       for (var i = 0; i < len; ++i) {
-        kvs.push([parseStr(d), parseTerm(d)]);
+        kvs.push([parseStr(d), parseTerm(S, d)]);
       }return function (T) {
         return T.Map(kvs.map(function (_ref23) {
           var _ref24 = _slicedToArray(_ref23, 2),
@@ -1034,7 +1037,7 @@ var termFromBinary = function termFromBinary(src) {
       };
     }
   };
-  return parseTerm(0);
+  return parseTerm(null, 0);
 };
 
 var termToBytes = function termToBytes(term) {
@@ -1058,6 +1061,16 @@ var termFromBytes = function termFromBytes(bytes) {
 };
 
 var commonLib = ["$F=(a)=>typeof a===\"function\"?1:0", "$S=(a)=>typeof a===\"string\"?1:0", "$N=(a)=>typeof a===\"number\"?1:0", "$O=(a)=>typeof a===\"object\"&&!a.__?1:0", "$U=undefined", "$V=undefined"];
+
+var refs = function () {
+  var refs = {};
+  " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_".split("").forEach(function (chr, idx) {
+    var bin = ("000000" + idx.toString(2)).slice(-6);
+    refs[bin] = chr;
+    refs[chr] = bin;
+  });
+  return refs;
+}();
 
 var pris = [["if", 3, "(a,b,c)=>$N(a)?(a?b():c()):$P(['if',a,b(),c()])", function (a, b, c) {
   return "(" + a + "?" + b + ":" + c + ")";
@@ -1121,10 +1134,6 @@ var pri2 = pris.reduce(function (pris, pri) {
 }, {});
 
 module.exports = {
-  termFromString: termFromString,
-  termFromStringSafe: termFromStringSafe,
-  termFromStringWithDeps: termFromStringWithDeps,
-  termToString: termToString,
   termCompileFast: termCompileFast,
   termDecompileFast: termDecompileFast,
   termReduceFast: termReduceFast,
@@ -1132,6 +1141,8 @@ module.exports = {
   termDecompileFull: termDecompileFull,
   termReduceFull: termReduceFull,
   termReduce: termReduce,
+  termToString: termToString,
+  termFromString: termFromString,
   termToBinary: termToBinary,
   termFromBinary: termFromBinary,
   termToBytes: termToBytes,

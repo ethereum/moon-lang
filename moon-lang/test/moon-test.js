@@ -77,14 +77,14 @@ assertAsync(async () => {
   return sum(10) === 45;
 });
 
-// tests if pack(code) === pack(unpack(pack(code)))
+//// tests if pack(code) === pack(unpack(pack(code)))
 [ 'a.a',
   'a.b.a',
   'x.y.z.(x z (y z))',
   '(f.x.(f (x x)) f.x.(f (x x)))',
   'f.x.(f (f x))',
   'a.b.c.d.e.(b f.g.h.(h f g) f.e (c f.g.h.i.(d (a h f) (i g)) f.g.e))"',
-  't.(t 1 2 "foo" [1,2,3] {"bar": [1,$2,3]})',
+  't.(t 1 2 "foo" [1,2,3] {"bar": [1,_2,3]})',
   '(f.x.(f (f (f (f (f (f (f (f (f (f x)))))))))) f.x.(f (f (f (f (f (f (f (f (f (f x)))))))))))',
   'a.b.c.d.(for a b d e. (c (sub (add a b) (add e 1))))',
   'a. b. c. (gen d. e. (d "a" (sub b a) (for a b e f. (d (nts (sub (add a b) (add f 1))) (c (sub (add a b) (add f 1)))))))',
@@ -97,5 +97,3 @@ assertAsync(async () => {
   var repacked = M.pack(unpacked);
   assert(packed === repacked);
 });
-
-console.log("All tests pass.");

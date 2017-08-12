@@ -27,7 +27,7 @@ var book = require("./moon-book.js");
 var parse = function parse(code) {
   var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-  var term = (opts || {}).unsafe ? core.termFromString(code) : core.termFromStringSafe(code);
+  var term = (opts || {}).unsafe ? core.termFromString(code) : core.termFromString(code);
   var jsValue = (opts || {}).fast ? core.termCompileFast(term) : core.termCompileFull(term);
   return eval(jsValue)();
 };
@@ -65,7 +65,7 @@ var stringify = function stringify(value, opts) {
 //   Uses fast mode if possible.
 //   Doesn't import undefined variables. 
 var run = function run(code, opts) {
-  var term = (opts || {}).unsafe ? core.termFromString(code) : core.termFromStringSafe(code);
+  var term = core.termFromString(code);
   return core.termToString(core.termReduce(term), (opts || {}).space);
 };
 
@@ -151,6 +151,26 @@ var makeImporter = function makeImporter(importer) {
   } : importer;
 };
 
+// Term -> [String]
+var termRefs = function termRefs(term) {
+  var fvs = {};
+  term({
+    App: function App(f, x) {},
+    Lam: function Lam(name, body) {},
+    Var: function Var(name) {},
+    Ref: function Ref(name) {
+      return fvs[name] = 1;
+    },
+    Let: function Let(name, term, body) {},
+    Fix: function Fix(name, term) {},
+    Pri: function Pri(name, args) {},
+    Num: function Num(num) {},
+    Str: function Str(num) {},
+    Map: function Map(kvs) {}
+  });
+  return Object.keys(fvs);
+};
+
 // Importer, String -> String
 //   Adds imports to Moon code with the specified importer.
 var doImport = function doImport(eitherImporter, code) {
@@ -162,8 +182,8 @@ var doImport = function doImport(eitherImporter, code) {
     if (!imported[name]) {
       imported[name] = true;
       if (code) {
-        core.termFromStringWithDeps(code).deps.forEach(function (dep) {
-          return go(dep, importer(dep));
+        termRefs(core.termFromString(code)).forEach(function (ref) {
+          return go(ref, importer(ref));
         });
         result = result + "\n" + name + ": " + code;
         imported[name] = Promise.resolve(null);
@@ -184,13 +204,13 @@ var doImportAsync = function doImportAsync(eitherImporter, code) {
   var go = function go(name, code) {
     if (!imported[name]) {
       if (code) {
-        var codeDeps = core.termFromStringWithDeps(code).deps;
-        var depsProm = Promise.all(codeDeps.map(function (dep) {
-          return importer(dep).then(function (code) {
-            return go(dep, code);
+        var codeRefs = termRefs(core.termFromString(code));
+        var refsProm = Promise.all(codeRefs.map(function (ref) {
+          return importer(ref).then(function (code) {
+            return go(ref, code);
           });
         }));
-        imported[name] = depsProm.then(function () {
+        imported[name] = refsProm.then(function () {
           return result = result + "\n" + name + ": " + code;
         });
       } else {

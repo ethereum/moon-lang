@@ -1,14 +1,6 @@
 {
   "a": (arraySum [1,2,3,4])
 
-  "b":
-    mulOf: m. n. (eql (mod n m) 0)
-    valid: n. (add (mulOf 3 n) (mulOf 5 n))
-    (with (listRange 0 1000) [
-      (listFilter valid)
-      listSum
-    ])
-
   "c": |
     sub: <(fork ["A dog", "A ninja"]),
     vrb: <(fork ["has eaten", "attacked"])
