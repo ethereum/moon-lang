@@ -15,7 +15,6 @@ depth. gtn. lis.
       (aas a. as.
         (bbs (case_as_bs a as) (case_as_nil a as))
         (bbs case_nil_bs case_nil_nil))
-
     (go slistNil a b)
 
   split: split@ d. lis.

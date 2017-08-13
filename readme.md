@@ -27,18 +27,16 @@ In essence, Moon is a minimal subset of JS with just enough things to be fast, s
     And import/use:
 
     ```javascript
-    const M = require("moon-lang");
+    const Moon = require(".");
 
-    // User-submitted algorithms
-    const userAlgos = M.parse(`{
-      "successor": x. (add x 1),
-      "square": x. (mul x x),
-      "factorial": x. (for 1 (add 1 x) 1 (mul))
-    }`);
+    // Parse user-submitted algorithm
+    const untrustedFactorial = Moon.parse(`x. (for 1 x 1 (mul))`);
 
-    // Since they were parsed by Moon, you can run them safely!
-    console.log(userAlgos.factorial(4)); // output: 24
+    // Run it safely
+    console.log(untrustedFactorial(10000000)); // output: infinity (too large to fit a double)
     ```
+
+    You can do a lot!
 
 
 2. **Command line:**
@@ -66,38 +64,6 @@ In essence, Moon is a minimal subset of JS with just enough things to be fast, s
     moon book whatsMyBMI                      # shows its code
     ```
 
+## Learning
 
-## Articles
-
-- [Ethereum + Swarm + λ = Moon, an universal code-interchange format](https://medium.com/@maiavictor/moon-a-decentralized-programming-language-282ba6c92e7a)
-
-## Demos
-
-- [Language overview ("learn Moon in Y minutes")](moon-demo/demo-language-overview.js)
-
-- [Optimizing functional JavaScript code by 5-100x](moon-demo/demo-performance.js)
-
-- [Tail calls and pure fors](moon-demo/demo-tail-calls-vs-pure-fors.js)
-
-- [Lightweight monadic notation as a generalization of async/await](moon-demo/demo-monadic-notation.js)
-
-- [Custom importers](moon-demo/demo-importers.md)
-
-
-## Soon
-
-- Build/publish Ethereum DApps with `moon dapp myDapp.moon` and [Inferno](https://infernojs.org).
-
-- [ENS](https://ens.domains) used on Moon's contract for proper namespacing.
-
-- System-F based type inferencer / checker?
-
-- Better syntax?
-
-## Disclaimers
-
-1. Moon is in experimental stage, wasn't audited and **certainly** has nasty bugs. Don't use it in production yet.
-
-2. Sorry for creating a new programming language.
-
-3. [be kind]
+The best way to learn right now is looking at the examples on [demos](demos). Tutorials and documentations are being developed.
