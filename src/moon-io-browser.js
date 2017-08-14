@@ -1,7 +1,7 @@
 // Standard side-effects on browser
 
 module.exports = {
-  print: text => cont => (alert(text), cont(null)),
-  prompt: question => cont => cont(prompt(question)),
-  log: text => cont => (alert(text), cont(null))
+  prompt: text => Promise.resolve(prompt(text)),
+  print: text => Promise.resolve(alert(text), null),
+  log: text => Promise.resolve(console.log(text), null)
 };
