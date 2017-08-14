@@ -161,25 +161,29 @@ const doImport = (eitherImporter, code) => {
 
 // AsyncImporter, String -> Promise String
 //   Same as `doImport`, but asynchronous.
-const doImportAsync = (eitherImporter, code) => {
-  let importer = makeImporter(eitherImporter);
-  let imports = [];
-  let imported = {};
-  let result = "";
-  let go = (name, code) => {
-    if (!imported[name]) {
-      if (code) {
-        let codeRefs = termRefs(core.termFromString(code));
-        let refsProm = Promise.all(codeRefs.map(ref => importer(ref).then(code => go(ref, code))));
-        imported[name] = refsProm.then(() => result = result + "\n" + name + ": " + code);
-      } else {
-        imported[name] = Promise.resolve(null);
+const doImportAsync = (eitherImporter, code) => new Promise((resolve,reject) => {
+  try {
+    let importer = makeImporter(eitherImporter);
+    let imports = [];
+    let imported = {};
+    let result = "";
+    let go = (name, code) => {
+      if (!imported[name]) {
+        if (code) {
+          let codeRefs = termRefs(core.termFromString(code));
+          let refsProm = Promise.all(codeRefs.map(ref => importer(ref).then(code => go(ref, code))));
+          imported[name] = refsProm.then(() => result = result + "\n" + name + ": " + code).catch(reject);
+        } else {
+          imported[name] = Promise.resolve(null);
+        }
       }
+      return imported[name];
     }
-    return imported[name];
+    return go("main", code).then(() => resolve(result + "\nmain"));
+  } catch (e) {
+    reject(e);
   }
-  return go("main", code).then(() => result + "\nmain");
-}
+});
 
 // String -> Promise String
 //   Same as `doImport

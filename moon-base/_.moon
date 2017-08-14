@@ -1,5 +1,5 @@
 {
-  "expansions":
+  expansions:
     A: a. (add a a)
     B: a. b. (add #(A a) (A b))
     C: a. b. #(B a b)

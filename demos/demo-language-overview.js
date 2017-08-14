@@ -9,48 +9,46 @@ const Moon = require("./..");
 //    - Commas are always optional.
 
 const data = Moon.parse(`{
-  "number": 137.01
-  "string": "hello world"
-  "array": [1 2 3]
-  "map": {"x": 1, "y": 2}
+  number: 137.01
+  string: "hello world"
+  array: [1 2 3]
+  map: {x:1 y:2}
 }`);
 
-console.log(data.map.x); // output: 1
+console.log(data.map.x);
 
 
 
-
-// 2. Primitive operations
-//    - Thesis: this is roughly the minimum necessary to do everything JS can without losing performance.
-//    - Also: check `demo-tail-calls-and-pure-fors.js` for more about the immutable for-loop primitive.
+//// 2. Primitive operations
+////    - Thesis: this is roughly the minimum necessary to do everything JS can without losing performance.
+////    - Also: check `demo-tail-calls-and-pure-fors.js` for more about the immutable for-loop primitive.
 
 const ops = Moon.parse(`{
-  "add": (add 3 2) // A + B
-  "sub": (sub 3 2) // A - B
-  "mul": (mul 3 2) // A * B
-  "div": (div 3 2) // A / B
-  "mod": (mod 3 2) // A % B
-  "pow": (pow 3 2) // A ^ B
-  "log": (log 3 2) // Math.log(A) / Math.log(B)
-  "ltn": (ltn 3 2) // A < B ? 1 : 0
-  "gtn": (gtn 3 2) // A > B ? 1 : 0
-  "eql": (eql 3 2) // A === B ? 1 : 0
-  "flr": (flr 3.14) // Math.floor(A)
-  "sin": (sin 3.14) // Math.sin(A)
-  "cos": (cos 3.14) // Math.cos(A)
-  "tan": (tan 3.14) // Math.tan(A)
-  "asn": (asn 0.5) // Math.asin(A)
-  "acs": (acs 0.5) // Math.acos(A)
-  "atn": (atn 0.5) // Math.atan(A)
-  "con": (con "foo" "bar") // A + B
-  "slc": (slc "abcdef" 1 3) // A.slice(B,c)
-  "cmp": (cmp "foo" "bar") // A === B ? 1 : 0
-  "nts": (nts 10) // String(A)
-  "stn": (stn "10") // Number(A)
-  "gen": (gen put.map.(put "a" 1 (put "b" 2 (put "c" 3 map)))) // generates a map programatically
-  "get": (get {"x": 1, "y": 2} "x") // A[B]
-  "for": (for 0 4 "a" index. result. (con result result)) // s = C; for (var i = A; i < B; ++i) s = D(i)(C); return s
-  "ops": 27
+  add: (add 3 2) // A + B
+  sub: (sub 3 2) // A - B
+  mul: (mul 3 2) // A * B
+  div: (div 3 2) // A / B
+  mod: (mod 3 2) // A % B
+  pow: (pow 3 2) // A ^ B
+  log: (log 3 2) // Math.log(A) / Math.log(B)
+  ltn: (ltn 3 2) // A < B ? 1 : 0
+  gtn: (gtn 3 2) // A > B ? 1 : 0
+  eql: (eql 3 2) // A === B ? 1 : 0
+  flr: (flr 3.14) // Math.floor(A)
+  sin: (sin 3.14) // Math.sin(A)
+  cos: (cos 3.14) // Math.cos(A)
+  tan: (tan 3.14) // Math.tan(A)
+  asn: (asn 0.5) // Math.asin(A)
+  acs: (acs 0.5) // Math.acos(A)
+  atn: (atn 0.5) // Math.atan(A)
+  con: (con "foo" "bar") // A + B
+  slc: (slc "abcdef" 1 3) // A.slice(B,c)
+  cmp: (cmp "foo" "bar") // A === B ? 1 : 0
+  nts: (nts 10) // String(A)
+  stn: (stn "10") // Number(A)
+  gen: (gen put.map.(put "a" 1 (put "b" 2 (put "c" 3 map)))) // generates a map programatically
+  get: (get {x: 1, y: 2} "x") // A[B]
+  for: (for 0 4 "a" index. result. (con result result)) // s = C; for (var i = A; i < B; ++i) s = D(i)(C); return s
 }`);
 
 console.log(ops); // output: (too long)
@@ -58,10 +56,10 @@ console.log(ops); // output: (too long)
 
 
 
-// 3. Variable assignments
-//    - They're very lightweight expressions.
-//    - The syntax is just `name: value expression`.
-//    - May look confusing at first.
+//// 3. Variable assignments
+////    - They're very lightweight expressions.
+////    - The syntax is just `name: value expression`.
+////    - May look confusing at first.
 
 const vars0 = Moon.parse(`
   x: 100
@@ -72,8 +70,8 @@ const vars0 = Moon.parse(`
 console.log(vars0); // output: 300
 
 const vars1 = Moon.parse(`{
-  "name": first: "Trolland" last: "Dump" (con first last)
-  "age": x:7 y:(z:10 (add z z)) (add x y)
+  name: first: "Trolland" last: "Dump" (con first last)
+  age: x:7 y:(z:10 (add z z)) (add x y)
 }`);
 
 console.log(vars1); // output: { name: 'TrollandDump', age: 27 }
@@ -81,10 +79,10 @@ console.log(vars1); // output: { name: 'TrollandDump', age: 27 }
 
 
 
-// 4. Functions
-//    - Also lightweight expressions.
-//    - The syntax for `(x) => x` is just `x. x`.
-//    - May also look confusing at first.
+//// 4. Functions
+////    - Also lightweight expressions.
+////    - The syntax for `(x) => x` is just `x. x`.
+////    - May also look confusing at first.
 
 const triple = Moon.parse(`x. (mul x 3)`);
 
@@ -110,16 +108,16 @@ const partial = Moon.parse(`a. b.
   [1, 2, 3, (mul a a), (mul b b)]
 `);
 
-// Moon can stringify partially applied functions!
+//// Moon can stringify partially applied functions!
 console.log(Moon.stringify(partial(3))); // output: a. [1, 2, 3, 9, (mul a a)]
 
 
 
 
-// 5. Monadic sugar
-//    - Same functionality of async/await.
-//    - Works for other monadic computations.
-//    - Check `demo-monadic-notation.js` for more.
+//// 5. Monadic sugar
+////    - Same functionality of async/await.
+////    - Works for other monadic computations.
+////    - Check `demo-monadic-notation.js` for more.
 
 const asyncAwait = Moon.parse(`isFamilyAround.
   request: url. callback. (callback (con "<div>" (con url "</div>"))) // simulates HTTP request
@@ -127,16 +125,16 @@ const asyncAwait = Moon.parse(`isFamilyAround.
   // <(value) allows us to use async values like normal vars!
   // Callbacks are placed where the pipe (i.e., |) is.
   | {
-    "socialNetwork": (if isFamilyAround
+    socialNetwork: (if isFamilyAround
       <(request "reddit.com")
       <(request "4chan.com"))
-    "searcher": (if isFamilyAround
+    searcher: (if isFamilyAround
       <(request "google.com")
       <(request "bing.com"))
   }
 `);
 
-console.log(asyncAwait(1)); // output: {socialNetwork: '<div>reddit.com</div>', searcher:'<div>google.com</div>'}
+//console.log(asyncAwait(1)); // output: {socialNetwork: '<div>reddit.com</div>', searcher:'<div>google.com</div>'}
 
 const stateMonad = Moon.run(`
   inc: f. st. (f (add st 1) (add st 1))
@@ -206,14 +204,14 @@ const fn = Moon.compile(`
 
   // Using the functions above with and without #
   x. {
-    "slowPow4": (pow4 a),
-    "fastPow4": #(pow4 a),
-    "slowConst": (slowMul 100 100),
-    "fastConst": #(slowMul 100 100)
+    slowPow4: (pow4 a),
+    fastPow4: #(pow4 a),
+    slowConst: (slowMul 100 100),
+    fastConst: #(slowMul 100 100)
   }
 `);
 
-// console.log(require("js-beautify").js_beautify(fn));
+//console.log(require("js-beautify").js_beautify(fn));
 
 // As can be seen on the output, (uncomment the line above),
 // the program above is compiled to:

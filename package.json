@@ -1,6 +1,6 @@
 {
   "name": "moon-lang",
-  "version": "0.1.30",
+  "version": "0.1.33",
   "description": "Universal code-interchange format",
   "main": "lib/moon-lang.js",
   "scripts": {

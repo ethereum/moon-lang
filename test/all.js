@@ -21,8 +21,8 @@ assert(M.run(`(cmp "foo" "foo")`) === `1`);
 assert(M.run(`(cmp "foo" "bar")`) === `0`);
 assert(M.run(`(nts 3)`) === `"3"`);
 assert(M.run(`(stn "3")`) === `3`);
-assert(M.run(`(gen a.b.(a "x" 1 (a "y" 2 b)))`) === `{"y":2,"x":1}`);
-assert(M.run(`(get {"x":[1,2],"y":2} "x")`) === `[1,2]`);
+assert(M.run(`(gen a.b.(a "x" 1 (a "y" 2 b)))`) === `{y:2,x:1}`);
+assert(M.run(`(get {x:[1,2],y:2} "x")`) === `[1,2]`);
 assert(M.run(`(for 0 10 0 (add))`) === `45`);
 assert(M.run(`this:x.c.(c x) | [<(this 1), (this 7)> 2, <(this 3)]`) === `[1,2,3]`); // identity monad
 assert(M.run(`l:r@t.(t 1 r) (l a.b.b a.b.b a.b.b a.b.a)`) === `1`); // infinite list
@@ -51,8 +51,8 @@ assert(M.run(`a.(cmp "foo" "foo")`) === `a.1`);
 assert(M.run(`a.(cmp "foo" "bar")`) === `a.0`);
 assert(M.run(`a.(nts 3)`) === `a."3"`);
 assert(M.run(`a.(stn "3")`) === `a.3`);
-assert(M.run(`a.(gen a.b.(a "x" 1 (a "y" 2 b)))`) === `a.{"y":2,"x":1}`);
-assert(M.run(`a.(get {"x":[1,2],"y":2} "x")`) === `a.[1,2]`);
+assert(M.run(`a.(gen a.b.(a "x" 1 (a "y" 2 b)))`) === `a.{y:2,x:1}`);
+assert(M.run(`a.(get {x:[1,2],y:2} "x")`) === `a.[1,2]`);
 assert(M.run(`a.(for 0 10 0 (add))`) === `a.45`);
 assert(M.run(`a.(this:x.c.(c x) | [<(this 1), (this 7)> 2, <(this 3)])`) === `a.[1,2,3]`);
 assert(M.run(`l:r@t.(t 1 r) (l a.b.b a.b.b a.b.b a.b.a)`) === `1`);
@@ -63,21 +63,21 @@ try {
   console.log("Warning: no tail-call optimization. Are you using an old version of Node?");
 }
 
-// Testing the main API
+//// Testing the main API
 assertAsync(async () => await M.runBook(`(arrayMap (mul 2) [1,2,3])`) === `[2,4,6]`)
 assertAsync(async () => {
   const sum = await M.parseBook(`n.(listSum (listRange 0 n))`);
   return sum(10) === 45;
 });
 
-////// tests if pack(code) === pack(unpack(pack(code)))
+//////// tests if pack(code) === pack(unpack(pack(code)))
 [ 'a.a',
   'a.b.a',
   'x.y.z.(x z (y z))',
   '(f.x.(f (x x)) f.x.(f (x x)))',
   'f.x.(f (f x))',
   'a.b.c.d.e.(b f.g.h.(h f g) f.e (c f.g.h.i.(d (a h f) (i g)) f.g.e))"',
-  't.(t 1 2 "foo" [1,2,3] {"bar": [1,_2,3]})',
+  't.(t 1 2 "foo" [1,2,3] {bar: [1,_2,3]})',
   '(f.x.(f (f (f (f (f (f (f (f (f (f x)))))))))) f.x.(f (f (f (f (f (f (f (f (f (f x)))))))))))',
   'a.b.c.d.(for a b d e. (c (sub (add a b) (add e 1))))',
   'a. b. c. (gen d. e. (d "a" (sub b a) (for a b e f. (d (nts (sub (add a b) (add f 1))) (c (sub (add a b) (add f 1)))))))',

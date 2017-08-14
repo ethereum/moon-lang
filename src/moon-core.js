@@ -79,6 +79,7 @@ const find = (fn, list) =>
   : find(fn, list[1]);
 
 const termFromString = (source) => {
+  var error = "No parse.";
   const parse = (source) => {
     var index = 0;
     var nextName = 0;
@@ -93,21 +94,23 @@ const termFromString = (source) => {
       // Skip spacing
       while (invalid.test(source[index]||""))
         ++index;
+
+      // Comment
+      if (/(\/\/|--)/.test(source.slice(index,index+2))) {
+        var i = index;
+        while (source[index] && source[index++] !== "\n" && index !== source.length) {}
+        return parse(vs,li,isKey,isPri);
         
       // Application
-      if (source[index] === "(") {
+      } else if (source[index] === "(") {
         var startIndex = index;
         ++index;
+        var next;
         var args = [];
         args.push(parse(vs,li,0,1));
-        while (source[index] !== ")") {
-          args.push(parse(vs,li,0,0));
-          while (invalid.test(source[index]||""))
-            ++index;
-          if (source[index] === undefined)
-            throw "No parse.";
+        while ((next = parse(vs,li,0,0)) !== null) {
+          args.push(next);
         }
-        ++index;
         var endIndex = index;
         return E => T => {
           var name = args[0];
@@ -135,6 +138,47 @@ const termFromString = (source) => {
           return app;
         };
 
+      // String
+      } else if (/"/.test(source[index]) || (isKey && !/}/.test(source[index]))) {
+        index += isKey ? 0 : 1;
+        var string = "";
+        while (!/"/.test(source[index]) && !(isKey && /:/.test(source[index]))) {
+          if (source[index] === undefined)
+            throw error;
+          if (source[index] !== "\\") {
+            string += source[index++];
+          } else {
+            ++index;
+            if (/[\\"\/bfnrt]/.test(source[index])) {
+              switch (source[index]) {
+                case "b": string += "\b"; break;
+                case "f": string += "\f"; break;
+                case "n": string += "\n"; break;
+                case "r": string += "\r"; break;
+                case "t": string += "\t"; break;
+                case "\\": string += "\\"; break;
+                case "/": string += "/"; break;
+                case '"': string += ''; break;
+                default: throw error;
+              }
+            } else if (/u/.test(source[index])) {
+              ++index;
+              var hex
+                = string[index++] + string[index++]
+                + string[index++] + string[index++];
+              if (/[0-9a-fA-F]{4}/.test(hex)) {
+                string += JSON.parse("\\u"+hex);
+              } else {
+                throw error;
+              }
+            }
+          }
+          if (source[index] === undefined)
+            throw error;
+        }
+        ++index;
+        return E => T => T.Str(string);
+
       // Number
       } else if (/[0-9\-]/.test(source[index]) && !/^[a-f0-9]{16}$/.test(source.slice(index,index+16))) {
         var number = "";
@@ -156,67 +200,26 @@ const termFromString = (source) => {
         }
         return E => T => T.Num(Number(number));
 
-      // String
-      } else if (/"/.test(source[index])) {
-        ++index;
-        var string = "";
-        while (!/"/.test(source[index])) {
-          if (source[index] === undefined)
-            throw "";
-          if (source[index] !== "\\") {
-            string += source[index++];
-          } else {
-            ++index;
-            if (/[\\"\/bfnrt]/.test(source[index])) {
-              switch (source[index]) {
-                case "b": string += "\b"; break;
-                case "f": string += "\f"; break;
-                case "n": string += "\n"; break;
-                case "r": string += "\r"; break;
-                case "t": string += "\t"; break;
-                case "\\": string += "\\"; break;
-                case "/": string += "/"; break;
-                case '"': string += ''; break;
-                default: throw "Bad string literal: " + string;
-              }
-            } else if (/u/.test(source[index])) {
-              ++index;
-              var hex
-                = string[index++] + string[index++]
-                + string[index++] + string[index++];
-              if (/[0-9a-fA-F]{4}/.test(hex)) {
-                string += JSON.parse("\\u"+hex);
-              } else {
-                throw "Bad string literal: " + string;
-              }
-            }
-          }
-          if (source[index] === undefined)
-            throw "No parse.";
-        }
-        ++index;
-        return E => T => T.Str(string);
-
       // Map/Array notation (syntax sugar)
       } else if (/\{/.test(source[index]) || /\[/.test(source[index])) {
         var isArray = /\[/.test(source[index++]);
-        var end = isArray ? /\]/ : /\}/;
         var kvs = [];
         var len = 0;
-        while (!end.test(source[index])) {
-          var key = isArray ? String(len++) : parse(vs,li,1,0)()({Str:s=>s}); // TODO: expectString param
-          var val = parse(vs,li,0,0);
+        var next;
+        while ((next = parse(vs,li,isArray?0:1,0)) !== null) {
+          var key = isArray ? String(len++) : next()({Str:s=>s}); // TODO: expectString param
+          var val = isArray ? next : parse(vs,li,0,0);
           kvs.push([key,val]);
-          while (invalid.test(source[index]))
-            ++index;
-          if (!source[index])
-            throw "No parse.";
         }
         if (isArray)
           kvs.push(["length", E => T => T.Num(len)]);
-        ++index;
         return E => T =>
           T.Map(kvs.map(([k,v]) => [k,v(E)(T)]));
+
+      // End of Map/Array
+      } else if (/(\}|\]|\))/.test(source[index]) || index >= source.length) {
+        ++index;
+        return null;
 
       // Bang
       } else if (/</.test(source[index])) {
@@ -231,12 +234,6 @@ const termFromString = (source) => {
         ++index;
         var body = parse(vs,li,0,0);
         return E => T => T.Nor(T => body(1)(T));
-
-      // Comment
-      } else if (source.slice(index,index+2) === "//") {
-        var i = index;
-        while (source[index] && source[index++] !== "\n" && index !== source.length) {}
-        return parse(vs,li,isKey,isPri);
 
       // Binder-related
       } else {
@@ -296,7 +293,7 @@ const termFromString = (source) => {
     }
     function parse(vs,li,isKey,isPri) {
       var parsed = parseTerm(vs,li,isKey,isPri);
-      if (/>/.test(source[index])) {
+      if (/>/.test(source[index]) && parsed !== null) {
         ++index;
         li.push(["_", parsed]);
         return parse(vs,li,isKey,isPri);
@@ -365,7 +362,7 @@ const termToString = (term, spaces) => {
           var inn = arr.map((v,i) => up(1) + str(v,0,s) + up(-1) + (i < len - 1 ? "," + nl(0) : "")).join("");
           return wp(w) + "[" + nl(1) + inn + nl(-1) + "]" + wp(-w);
         } else {
-          var inn = a.map(([k,v],i) => '"' + k + '":' + sp(1) + str(v,2,s) + (i < a.length - 1 ? "," + nl(0) : "")).join("");
+          var inn = a.map(([k,v],i) => k + ':' + sp(1) + str(v,2,s) + (i < a.length - 1 ? "," + nl(0) : "")).join("");
           return wp(w) + "{" + nl(1) + inn + nl(-1) + "}" + wp(-w);
         }
       }
@@ -396,7 +393,7 @@ const termCompileFast = term => {
     Pri: (name, args) => _ => pri[name][3](...(args.map(a => a()))),
     Num: num => _ => JSON.stringify(num),
     Str: str => _ => JSON.stringify(str),
-    Map: kvs => _ => "({"+kvs.map(([k,v]) => k+":"+v()).join(",")+"})"
+    Map: kvs => _ => "({"+kvs.map(([k,v]) => '"'+k+'"'+":"+v()).join(",")+"})"
   })();
   return "(()=>{"
     + "\"use strict\";"
@@ -443,7 +440,7 @@ const termCompileFull = term => {
     Pri: (name, xs) => "$"+pri[name][0]+"("+xs.map((o,i)=>pri[name][0]==="if"&&i?"()=>"+o:o).join(",")+")",
     Num: n => JSON.stringify(n),
     Str: s => JSON.stringify(s),
-    Map: map => "({"+map.map(([k,v]) => k+":"+v).join(",")+"})"
+    Map: map => "({"+map.map(([k,v]) => '"'+k+'"'+":"+v).join(",")+"})"
   });
   var compiled = "(()=>{"
     + "\"use strict\";"
