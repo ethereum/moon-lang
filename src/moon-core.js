@@ -136,7 +136,7 @@ const termFromString = (source) => {
         };
 
       // Number
-      } else if (/[0-9\-]/.test(source[index])) {
+      } else if (/[0-9\-]/.test(source[index]) && !/^[a-f0-9]{16}$/.test(source.slice(index,index+16))) {
         var number = "";
         if (source[index] === "-")
           number = source[index++];
