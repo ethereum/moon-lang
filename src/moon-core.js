@@ -60,7 +60,7 @@
 // Lam 01 + term
 // Var 10 + nat
 // Ref 11000 + ref
-// Fun 01001 + ref + term
+// Fun 11001 + ref + term
 // Let 11010 + ref + term + term
 // Fix 11011 + ref + term
 // Pri 11100 + prim + terms

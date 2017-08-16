@@ -11,10 +11,10 @@ const demoIO_a = await Moon.parseBook(`
   (io
     (ioAsk "prompt" "What is your name?" name.
       (ioAsk "print" (con "Hi, " name) x.
-        (ioEnd "Bye"))))
+        (ioReturn "Bye"))))
 `);
 
-// `io`, `ioAsk` and `ioEnd` are part of the base libs. They arrange your
+// `io`, `ioAsk` and `ioReturn` are part of the base libs. They arrange your
 // program in a convenient tree form which can be used by the host language to
 // actually execute the requested effects in order. Let's do it:
 

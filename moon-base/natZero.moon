@@ -1,0 +1,2 @@
+succ. zero.
+  zero

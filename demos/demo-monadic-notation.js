@@ -14,7 +14,7 @@ const demoIO_a = await Moon.parseBook(`
   (io |
     name: <(ioAsk "prompt" "What is your name?")
     (ioAsk "print" (con "Hi, " name))>
-    (ioEnd "Bye"))
+    (ioReturn "Bye"))
 `);
 
 // What is going on here is that:
