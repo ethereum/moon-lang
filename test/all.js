@@ -83,7 +83,8 @@ assertAsync(async () => {
   'a. b. c. (gen d. e. (d "a" (sub b a) (for a b e f. (d (nts (sub (add a b) (add f 1))) (c (sub (add a b) (add f 1)))))))',
   'a. b. (gen c. d. (c "a" (sub (add (get a "a") (get b "a")) 0) (for 0 (add (get a "a") (get b "a")) d e. (c (nts (sub (add 0 (add (get a "a") (get b "a"))) (add e 1))) (if (ltn (sub (add 0 (add (get a "a") (get b "a"))) (add e 1)) (get a "a")) (get a (nts (sub (add 0 (add (get a "a") (get b "a"))) (add e 1)))) (get b (nts (sub (sub (add 0 (add (get a "a") (get b "a"))) (add e 1)) (get a "a")))))))))',
   '"abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz"',
-  '| a: <(a.b.(b a) 1) b: <(a.b.(b a) 2) (add a b)'
+  '| a: <(a.b.(b a) 1) b: <(a.b.(b a) 2) (add a b)',
+  'v0. v1. (v0 (v0 (v0 v1)))'
 ].forEach(code => {
   var packed = M.pack(code);
   var unpacked = M.unpack(packed);

@@ -59,7 +59,8 @@
 // App 00 + term + term
 // Lam 01 + term
 // Var 10 + nat
-// Ref 1100 + ref
+// Ref 11000 + ref
+// Fun 01001 + ref + term
 // Let 11010 + ref + term + term
 // Fix 11011 + ref + term
 // Pri 11100 + prim + terms
@@ -535,20 +536,26 @@ const termToBinary = term => {
     return String(sgn) + encodeNat(man) + String(esg) + encodeNat(exp);
   }
   return term({
-    App: (f, x) => S => "00" + f(S) + x(S),
-    Lam: (name, body) => S => "01" + body([name,S]),
-    Var: (name) => S => {
+    App: (f, x) => (S,d) => "00" + f(S) + x(S),
+    Lam: (name, body) => (S,d) => {
+      if (name === "v" + d) {
+        return "01" + body([name,S], d+1);
+      } else {
+        return "11001" + encodeRef(name) + body([name,S], d+1);
+      }
+    },
+    Var: (name) => (S,d) => {
       var find = (S) => !S ? (()=>{throw ""})() : S[0] === name ? 0 : 1 + find(S[1]);
       return "10" + encodeNat(find(S));
     },
-    Ref: (name) => S => "1100" + encodeRef(name),
-    Let: (name, term, body) => S => "11010" + encodeRef(name) + term(S) + body([name,S]),
-    Fix: (name, term) => S => "11011" + encodeRef(name) + term([name,S]),
-    Pri: (name, args) => S => "11100" + pri[name][5] + args.map(arg => arg(S)).join(""),
-    Num: (num) => S => "11101" + encodeNum(num),
-    Str: (str) => S => "11110" + encodeStr(str),
-    Map: (kvs) => S => "11111" + encodeNat(kvs.length) + kvs.map(([k,v]) => encodeStr(k) + v(S)).join("")
-  })(null);
+    Ref: (name) => (S,d) => "11000" + encodeRef(name),
+    Let: (name, term, body) => (S,d) => "11010" + encodeRef(name) + term(S,d) + body([name,S],d+1),
+    Fix: (name, term) => (S,d) => "11011" + encodeRef(name) + term([name,S],d+1),
+    Pri: (name, args) => (S,d) => "11100" + pri[name][5] + args.map(arg => arg(S,d)).join(""),
+    Num: (num) => (S,d) => "11101" + encodeNum(num),
+    Str: (str) => (S,d) => "11110" + encodeStr(str),
+    Map: (kvs) => (S,d) => "11111" + encodeNat(kvs.length) + kvs.map(([k,v]) => encodeStr(k) + v(S,d)).join("")
+  })(null,0);
 };
 
 const termFromBinary = src => {
@@ -591,9 +598,13 @@ const termFromBinary = src => {
       for (var k = 0; k < i; ++k)
         S = S[1];
       return T => T.Var(S[0]);
-    } else if (head("1100")) {
+    } else if (head("11000")) {
       var name = parseRef();
       return T => T.Ref(name);
+    } else if (head("11001")) {
+      var name = parseRef();
+      var body = parseTerm([name,S], d+1);
+      return T => T.Lam(name, body(T));
     } else if (head("11010")) {
       var name = parseRef();
       var term = parseTerm(S, d);
