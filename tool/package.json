@@ -1,6 +1,6 @@
 {
   "name": "moon-tool",
-  "version": "0.1.34",
+  "version": "0.1.35",
   "description": "",
   "main": "moon-tool.js",
   "bin": {
@@ -23,7 +23,7 @@
     "eth-lib": "^0.1.21",
     "js-beautify": "^1.6.14",
     "moon-book": "^0.1.1",
-    "moon-lang": "^0.1.34",
+    "moon-lang": "^0.1.35",
     "swarm-js": "^0.1.36"
   }
 }

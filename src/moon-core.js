@@ -120,11 +120,11 @@ const termFromString = (source) => {
             var arity = pri[name][1];
             var priArgs = [];
             for (var i = 0; i < arity; ++i) {
-              priArgs.push(i < len ? args[i+1](E)(T) : T.Var("x" + (i - len)));
+              priArgs.push(i < len ? args[i+1](E)(T) : T.Var("v" + (i - len)));
             }
             var curried = T.Pri(name, priArgs);
             for (var i = 0; i < arity - len; ++i) {
-              curried = T.Lam("x" + (arity - 1 - len - i), curried);
+              curried = T.Lam("v" + (arity - 1 - len - i), curried);
             }
             for (var i = 0; i < len - arity; ++i) {
               curried = T.App(curried, args[arity + 1 + i]);
