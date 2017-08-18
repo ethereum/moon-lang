@@ -111,25 +111,27 @@ const Moon = require("moon-lang")();
 Moon itself is pure, but it can perform side-effective computations by injecting the effects from a usual language. To avoid the "callback-hell", you can use Moon's monadic notation:
 
 ```javascript
-io = zb2rhaz1mri11t28zguorHncAG9SXZmn47Kh9ow1QjsfeKzbT
+io     = zb2rhdn7aJnH47c6oykLN2p5Jt93duP5s2CZt1sr2evw5FW9H
+run    = (io "run")
 prompt = (io "prompt")
-print = (io "print")
+print  = (io "print")
+end    = (io "end")
 
-(io "do"
-  go = askPowerLevel =>
-    | power =< (io "prompt" "What is your power level? ")
-      (if (gtn (stn power) 9000)
-        | (io "print" "No, it is not.")>
-          (askPowerLevel askPowerLevel)
-        | (io "print" "Ah, that's cute!")>
-          (io "end"))
-  (go go))
+askPowerLevel = repeat@ f =>
+  | power =< (prompt "What is your power level? ")
+    (if (gtn (stn power) 9000)
+      | (print "No, it is not.")>
+        (repeat f)
+      | (print "Ah, that's cute!")>
+        end)
+
+(run (askPowerLevel {}))
 ```
 
 You can run the code above using [moon-tool](https://github.com/maiavictor/moon-tool):
 
 ```bash
-moon runio zb2rhnvp7g2yYGjNQegCH61MEhonZzGXv9uTak63AG1duyQrC
+moon runio zb2rhcV4oVtChoHsgrJQSrgjZ8pPvFsqqBY8oNDmoUAVSdY1W
 ```
 
 ### Optimizing code
