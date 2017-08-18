@@ -23,7 +23,7 @@ const termFromString = (source) => {
         var i = index;
         while (source[index] && source[index++] !== "\n" && index !== source.length) {}
         return parse(vs,li,isKey,isPri);
-        
+
       // Application
       } else if (source[index] === "(") {
         var startIndex = index;
@@ -249,54 +249,305 @@ const termFromString = (source) => {
   return finalize(parsed, null);
 };
 
-const termToString = (term, spaces) => {
-  const tree = term({
-    App: (f, x) => ["App", f, x],
-    Lam: (name, body) => ["Lam", name, body],
-    Var: (name) => ["Var", name],
-    Ref: (name) => ["Ref", name],
-    Let: (name, term, body) => ["Let", name, term, body],
-    Fix: (name, body) => ["Fix", name, body],
-    Pri: (name, args) => ["Pri", name, args],
-    Num: num => ["Num", num],
-    Str: str => ["Str", str],
-    Map: kvs => ["Map", kvs]
-  });
-  var lvl = 0;
-  const str = ([type,a,b,c], k, s) => {
-    const nl = (add) => (!s && spaces > 0 ? " \n" : "") + sp((lvl += add, lvl) * (s ? 0 : spaces || 0));
-    const wp = (add) => (add > 0 ? nl(add) : add < 0 ? up(add) : "");
-    const up = (add) => (lvl += add, "");
-    const sp = (n) => n === 0 ? "" : (spaces ? " " : "") + sp(n - 1);
-    const w = k === 1 && type !== "Lam" || (k === 2 && type !== "Num" && type !== "Str" && type !== "Map") ? 1 : 0;
-    switch (type) {
-      case "App":
-        const fnStr = str(a,0,s);
-        const fnApp = fnStr[0]=== "(" && fnStr[fnStr.length - 1] === ")";
-        const fnCln = fnApp ? fnStr.slice(1,-1) : fnStr;
-        return wp(w) + "(" + fnCln + " " + str(b,0,1) + ")" + wp(-w);
-      case "Lam": return wp(w) + a + "=>" + (spaces ? " " : "") + str(b,1,s) + wp(-w);
-      case "Var": return wp(w) + a + wp(-w);
-      case "Ref": return wp(w) + a + wp(-w);
-      case "Let": return wp(w) + a + "=" + (spaces ? " " : "") + str(b,0,s) + " " + nl(0) + str(c,0,s) + wp(-w);
-      case "Fix": return wp(w) + a + "@" + str(b,0,s) + wp(-w);
-      case "Pri" : return wp(w) + "(" + a + " " + b.map(x => str(x,0,s)).join(" ") + ")" + wp(-w);
-      case "Num": return wp(w) + a + wp(-w);
-      case "Str": return wp(w) + '"'+a+'"' + wp(-w);
-      case "Map":
-        var lenIdx = a.reduce((i, [k,v], j) => k === "length" ? j : i, null);
-        if (lenIdx !== null) {
-          var len = Number(a[lenIdx][1][1]);
-          var arr = a.filter(([k,v]) => k !== "length").map(([k,v]) => v);
-          var inn = arr.map((v,i) => up(1) + str(v,0,s) + up(-1) + (i < len - 1 ? "," + nl(0) : "")).join("");
-          return wp(w) + "[" + nl(1) + inn + nl(-1) + "]" + wp(-w);
-        } else {
-          var inn = a.map(([k,v],i) => k + ':' + sp(1) + str(v,2,s) + (i < a.length - 1 ? "," + nl(0) : "")).join("");
-          return wp(w) + "{" + nl(1) + inn + nl(-1) + "}" + wp(-w);
+const termFormatter = decorations => term => {
+  var D = decorations;
+
+  var App = 0, Lam = 1, Var = 2, Ref = 3,
+      Let = 4, Fix = 5, Pri = 6, Num = 7,
+      Str = 8, Map = 9, Arr = 10;
+
+  const formattable = term({
+    App: (f, x) => {
+      // (App [App f [x]] y) -> (App f [x y])
+      if (f.term[0] === App) {
+        return {
+          term: [App, f.term[1], f.term[2].concat([x])],
+          size: 3 + f.size + x.size - 2 // (f x)y -> (f x y)
+        };
+      } else {
+        return {
+          term: [App, f, [x]],
+          size: 3 + f.size + x.size // fx -> (f x)
+        };
+      }
+    },
+    Lam: (name, body) => {
+      // (Lam "foo" [Lam ["bar"] x]) -> (Lam ["foo" "bar"] x)
+      if (body.term[0] === Lam) {
+        return {
+          term: [Lam, [name].concat(body.term[1]), body.term[2]],
+          size: 4 + name.length + body.size // xy. t -> x => y => t
+        };
+      } else {
+        return {
+          term: [Lam, [name], body],
+          size: 4 + name.length + body.size, // xt -> x => t
+        };
+      }
+    },
+    Var: name => ({
+      term: [Var, name],
+      size: name.length
+    }),
+    Ref: name => ({
+      term: [Ref, name],
+      size: name.length
+    }),
+    Let: (name, term, body) => {
+      // (Let "k" v [Let [["K" V]] t]) -> (Let ["k" "v"] t)
+      if (body.term[0] === Let) {
+        return {
+          term: [Let, [[name,term]].concat(body.term[1]), body.term[2]],
+          size: 4 + name.length + term.size + body.size // kvK = V t -> k = v K = V t
+        };
+      } else {
+        return {
+          term: [Let, [[name,term]], body],
+          size: 4 + name.length + term.size + body.size, // kvt -> k = v t
+        };
+      }
+    },
+    Fix: (name, body) => ({
+      term: [Fix, name, body],
+      size: 2 + name.length + body.size // xt -> x@ t
+    }),
+    Pri: (name, args) => ({
+      term: [Pri, name, args],
+      size: 2 + name.length + args.reduce((size,arg) => size + 1 + arg.size, 0) // oabc -> (o a b c)
+    }),
+    Num: num => ({
+      term: [Num, num],
+      size: String(num).length
+    }),
+    Str: str => ({
+      term: [Str, str],
+      size: 2 + str.length
+    }),
+    Map: kvs => {
+      var isArray = false;
+      for (var i = 0; i < kvs.length; ++i)
+        if (kvs[i][0] === "length")
+          isArray = true;
+      if (isArray) {
+        var vals = kvs.filter(([k,v]) => k !== "length").map(([k,v]) => v);
+        return {
+          term: [Arr, vals],
+          size: 2 + vals.reduce((size,v) => size + v.size, 0) + Math.max(vals.length - 1, 0)
+        }
+      } else {
+        return {
+          term: [Map, kvs.map(([k,v]) => [k,v])],
+          size: 2 + kvs.reduce((size,[k,v]) => size + k.length + 1 + v.size, 0) + Math.max(kvs.length - 1, 0)
         }
       }
+    }
+  });
+
+  const stringifyFlat = ({term,size}) => {
+    const go = ({term,size}) => {
+      const joinMany = terms =>
+        D.Many(
+          terms.map((term,i) =>
+            D.Many([
+              D.Text(i > 0 ? " " : ""),
+              go(term)])));
+      switch (term[0]) {
+        case App:
+          return D.Many([
+            D.Text("("),
+            go(term[1]),
+            D.Text(" "),
+            joinMany(term[2]),
+            D.Text(")")]);
+        case Lam:
+          return D.Many([
+            D.Many(term[1].map(v =>
+              D.Many([
+                D.Var(v),
+                D.Text(" =>"),
+                D.Text(" ")]))),
+            go(term[2])
+          ]);
+        case Var:
+          return D.Var(term[1]);
+        case Ref:
+          return D.Ref(term[1]);
+        case Let:
+          return D.Many([
+            D.Many(term[1].map(([k,v]) =>
+              D.Many([
+                D.Var(k),
+                D.Text(" = "),
+                go(v),
+                D.Text(" ")]))),
+            go(term[2])]);
+        case Fix:
+          return D.Many([
+            term[1],
+            D.Text("@"),
+            D.Text(" "),
+            go(term[2])]);
+        case Pri:
+          return D.Many([
+            D.Text("("),
+            D.Pri(term[1]),
+            D.Text(" "),
+            joinMany(term[2]),
+            D.Text(")")]);
+        case Num:
+          return D.Num(String(term[1]));
+        case Str:
+          return D.Str(D.Many([
+            D.Text('"'),
+            term[1],
+            D.Text('"')]));
+        case Map:
+          return D.Many([
+            D.Text("{"),
+            D.Many(term[1].map(([k,v], i) =>
+              D.Many([
+                D.Text(i > 0 ? " " : ""),
+                D.Key(k),
+                D.Text(":"),
+                go(v)]))),
+            D.Text("}")]);
+        case Arr:
+          return D.Many([
+            D.Text("["),
+            joinMany(term[1]),
+            D.Text("]")]);
+      }
+    };
+    return go({term,size});
   };
-  return str(tree,0,0);
+
+  const stringify = ({term,size}) => {
+    var tabs = 0;
+    var prep = null;
+    var prepSize = 0;
+    var lines = [];
+    const limit = D.maxCols || 80;
+    const prepend = (str, size) => (prep = str, prepSize = size);
+    const tab = () => ++tabs;
+    const untab = () => --tabs;
+    const push = str => (lines.push(D.Line(tabs, D.Many([prep, str]))), prep = null);
+    const fits = size => tabs * 2 + prepSize + size <= limit;
+    const go = ({term,size}) => {
+      if (fits(size)) {
+        push(stringifyFlat({term,size}));
+      } else {
+        switch (term[0]) {
+          case App:
+            push(D.Text("("));
+            tab();
+            go(term[1]);
+            term[2].forEach(go);
+            untab();
+            push(D.Text(")"));
+            break;
+          case Lam:
+            push(
+              D.Many(term[1].map(v =>
+                D.Many([
+                  D.Var(v),
+                  D.Text(" => ")]))));
+            tab();
+            go(term[2]);
+            untab();
+            break;
+          case Let:
+            for (var i = 0; i < term[1].length; ++i) {
+              prepend(
+                D.Many([
+                  D.Var(term[1][i][0]),
+                  " = "]),
+                term[1][i][0].length + 2);
+              go(term[1][i][1]);
+            }
+            go(term[2]);
+            break;
+          case Var:
+            push(D.Var(term[1]));
+            break;
+          case Ref:
+            push(D.Ref(term[1]));
+            break;
+          case Fix:
+            push(
+              D.Many([
+                term[1],
+                D.Text("@"),
+                D.Text(" ")]));
+            tab();
+            go(term[2]);
+            untab();
+            break;
+          case Pri:
+            push(D.Text("("));
+            tab();
+            push(D.Pri(term[1]));
+            term[2].forEach(go);
+            untab();
+            push(D.Text(")"));
+            break;
+          case Num:
+            push(D.Num(String(term[1])));
+            break;
+          case Str:
+            push(D.Str('"' + term[1] + '"'));
+            break;
+          case Map:
+            push(D.Text("{"));
+            tab();
+            for (var i = 0; i < term[1].length; ++i) {
+              prepend(
+                D.Many([
+                  D.Key(term[1][i][0]),
+                  D.Text(":"),
+                  D.Text(" ")]),
+                term[1][i][0].length + 2);
+              go(term[1][i][1]);
+            }
+            untab();
+            push(D.Text("}"));
+            break;
+          case Arr:
+            push(D.Text("["));
+            tab();
+            for (var i = 0; i < term[1].length; ++i) {
+              go(term[1][i]);
+            }
+            untab();
+            push(D.Text("]"));
+            break;
+        }
+      }
+    }
+    go({term,size});
+    return D.Many(lines);
+  };
+
+  return D.indent
+    ? stringify(formattable)
+    : stringifyFlat(formattable);
+};
+
+const termToString = (term, spaces, maxCols) => {
+  const repeat = (n, str) =>
+    n === 0 ? "" : str + repeat(n - 1, str);
+  return termFormatter({
+    indent: spaces > 0,
+    maxCols: maxCols,
+    Many: terms => terms.join(""),
+    Text: text => text,
+    Var: name => name,
+    Ref: name => name,
+    Pri: name => name,
+    Key: name => name,
+    Num: name => name,
+    Str: name => name,
+    Line: (tabs, line) => repeat(spaces * tabs, " ") + line + "\n"
+  })(term);
 };
 
 const priArity = {
@@ -331,4 +582,5 @@ const priArity = {
 module.exports = {
   termFromString,
   termToString,
+  termFormatter
 }

@@ -11,6 +11,8 @@ module.exports = ipfsUrl => {
   // type Native = <a native JavaScript value>
   
   // type Opts = {
+  //   maxCols: Number,  -- max cols when formatting terms
+  //   indent: Number,   -- spaces when formatting terms (0 = no indent)
   //   fast: Bool,       -- builds a native term that runs faster but can't be stringified
   //   opsLimit: Number, -- max limit of operations that compiled functions can perform (UNIMPLEMENTED - will be soon)
   // }
@@ -25,8 +27,19 @@ module.exports = ipfsUrl => {
 
   // Native [, Opts] -> String
   //   Stringifies a native value / function back to Moon.
-  const stringify = (value, opts) =>
-    synt.termToString(comp.termDecompileFull(value));
+  const stringify = (value, opts = {}) =>
+    synt.termToString(
+      comp.termDecompileFull(value),
+      opts.indent === undefined ? 2 : opts.indent,
+      opts.maxCols || 80);
+
+  // String [, Opts] -> String
+  //   Stringifies Moon code without normalizing it.
+  const format = (code, opts = {}) =>
+    synt.termToString(
+      synt.termFromString(code),
+      opts.indent === undefined ? 2 : opts.indent,
+      opts.maxCols || 80);
 
   // String [, Opts] -> String
   //   Runs Moon code and returns the resulting Moon code.
@@ -134,6 +147,7 @@ module.exports = ipfsUrl => {
   return {
     parse,
     stringify,
+    format,
     run,
     pack,
     unpack,
