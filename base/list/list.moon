@@ -1,0 +1,17 @@
+(get {
+  nil: zb2rhdMA7pJgypiZ6PsmxX417KUTmwkpDJBNyFeGKWueeLJC3
+  cons: zb2rhfEz1ZyheiBXi7WptHiNwoXoMkdWv3nWqvtvoHZMLj11h
+  foldr: zb2rhhTZWSPJLzp7TnJmZyZR53c86KdHRiK4d6SaYYG3paXsh
+  map: zb2rhbZGnAoSDjNLe77j7pB6FjKzH3xMbqR2gzApdUypDiWEa
+  concat: zb2rhYjLm4uAZUXk4qCTJYgXwqimGQQa7CZwjzKe3sqRpzvmj
+  filter: zb2rhaXx6rediKEEKvMDzDKvDcbacFqsLTfdhdptNJ28zZaV4
+  flatten: zb2rhXeQYJRG7UyEHeXffsiWLp3oEs4VY9mGcTW6UbS7AUUz2
+  flatMap: zb2rhYxANpwRBizkZFvrb8Q8YH2vExUJAZuo7H55AxwgxwhgN
+  zipWith: zb2rhiMYfSiFzn1dACqJz3cxS3oPCnRhDpoGAoiHrph7mkD6o
+  mul: zb2rheTr2uB6g4Ko6TeBMTtTNSvjxyJP83JtGfhGefDE6TUd9
+  sum: zb2rhoMMnNH7etHbYEKmm2LVJJpuzSPUMfsy4R3jSpJtb5kiY
+  range: zb2rhjxuHU526qygFxwLhELViAAatjAkatg7roSjCxLf21NLs
+  reverse: zb2rhhy5zHN84VKdj4F8YZEMEarVJkaTzmJsuWnFVUKKzqFLJ
+  toArray: zb2rhgV8FTZ5RDjzugq2CUjVchGzePkQSQuqXvGuDtHgP7aaK
+  dot: zb2rhZYyzPecm67CJJb7PbYyCzu1BQj5TeVNefkGSzsW5M9j6
+})

@@ -1,69 +1,174 @@
-## Moon: an universal code-interchange format
+## Moon
 
-Moon is an universal code-interchange format. It was designed to be:
+Moon is an minimal, JIT-compilable, portable and secure code-interchange format. It is:
 
-- **Portable:** the entire language (parser, optimizer and compiler) is just a [12kb JS file](moon-lang/dist/moon-lang.min.js) (gzipped).
+- **Safe:** Moon isolates logic from side-effects, allowing you to securely run code from untrusted sources.
 
-- **Fast:** Moon is highly optimized and can run [5-100x faster](moon-demo/demo-performance.js) than popular FP libs (Ramda, Lodash, Undersore, etc.).
+- **Fast:** when compiled to JS, it beats popular libs by [a large margin](benchmark/functional.js).
 
-- **Safe:** since Moon is 100% pure and side-effect free, you can safely run code from untrusted sources.
+- **Compact:** Moon has a canonical binary format for very small bundles.
 
-- **Lightweight:** thanks to its [compact binary format](https://tromp.github.io/cl/LC.pdf), Moon bundles are much smaller than JS bundles.
+- **Decentralized:** Moon imports are hash-addressed, recursively resolved from [IPFS](https://ipfs.io/).
 
-- **Decentralized:** you can publish and import code from [Ethereum](https://www.ethereum.org), a censure-resistant computer network.
+- **Small:** this entire implementation, for example, is a 7.5K JS file (gzipped).
 
-In essence, Moon is a minimal subset of JS with just enough things to be fast, safe and powerful. Its main use-case is to pass code around and run user-submitted, untrusted code safely. Think of it as JSON for algorithms.
+Formally, Moon is just untyped λ-calculus extended with numbers, strings and maps.
 
-## Usage
+## Usage / Examples
 
-1. **Inside JavaScript:**
+### Running code
 
-    Install:
+To evaluate some code, simply use `Moon.run()`:
 
-    ```bash
-    npm install moon-lang
-    ```
+```javascript
+const Moon = require("moon-lang")();
 
-    And import/use:
+const program = `
+  maximum = array =>
+    (for 0 (get array "length") 0 index => result =>
+      value = (get array (stn index))
+      (if (gtn value result)
+        value
+        result))
+  (maximum [1 7 6 9 5 2 8])
+`;
 
-    ```javascript
-    const Moon = require(".");
+console.log(Moon.run(program));
+```
 
-    // Parse user-submitted algorithm
-    const untrustedFactorial = Moon.parse(`x. (for 1 x 1 (mul))`);
+This is safe to do no matter the code contents, because Moon runs fully sandboxed.
 
-    // Run it safely
-    console.log(untrustedFactorial(10000000)); // output: infinity (too large to fit a double)
-    ```
+### Compiling Moon to a native function
 
-    You can do a lot!
+You can also JIT-compile it to fast native functions:
 
+```javascript
+const Moon = require("moon-lang")();
 
-2. **Command line:**
+const factorial = Moon.parse(`n =>
+  (for 1 (add n 1) 1 i => result =>
+    (mul i result))
+`);
 
-    Make sure you're using Node.js 8.0+, and install `moon-tool`:
+console.log(factorial(4));
+```
 
-    ```bash
-    npm install -g moon-tool
-    ```
+### Decompiling a native function to Moon
 
-    Then just use it:
+And the other way around:
 
-    ```bash
-    moon                                      # shows the help
-    echo '"Hello World!"' >> hello.moon       # creates a hello world file
-    moon run hello                            # prints a hello world!
-    moon run "[hello, hello]"                 # prints two hello worlds!
-    moon run "(for 0 8 hello i.r.(con r r))"  # prints many hellos!
-    moon address                              # shows the Ethereum address of this Moon CLI
-    moon balance                              # checks its balance
-    moon publish hello                        # publishes your hello world to Ethereum/Swarm
-    rm hello.moon                             # removes it from the local system
-    moon run "[hello, hello]"                 # imports it back from Ethereum/Swarm
-    moon runIO whatsMyBMI                     # runs a demo CLI-DApp from Ethereum/Swarm
-    moon book whatsMyBMI                      # shows its code
-    ```
+```javascript
+const Moon = require("moon-lang")();
 
-## Learning
+const pair = Moon.parse("a => b => [a b]");
 
-The best way to learn right now is looking at the examples on [demos](demos). Tutorials and documentations are being developed.
+console.log(Moon.stringify(pair(1)));
+```
+
+### Loading code from IPFS
+
+Moon can recursivelly import hash-addressed terms from IPFS:
+
+```javascript
+const Moon = require("moon-lang")(); 
+
+(async () => {
+
+  const sum = Moon.parse(await Moon.imports(`n =>
+    // Imports array library from IPFS
+    List = zb2rha9PW5Wnvhvz1n7pxXFZoMzeD3NxKYdZUHgxEsbhW8B4D
+    reduce = (List "foldr")
+    range = (List "range")
+
+    (reduce (add) 0 (range 0 n))
+  `));
+
+  console.log(sum(5000000));
+
+})();
+```
+
+### Saving code to IPFS
+
+It can also easily publish those terms:
+
+```javascript
+const Moon = require("moon-lang")();
+
+(async () => {
+
+  const cid = await Moon.save("x => (mul x 2)");
+  console.log(cid);
+
+  const double = Moon.parse(await Moon.imports(cid));
+  console.log(double(7));
+  
+})();
+```
+
+### Performing side-effects (IO)
+
+Moon itself is pure, but it can perform side-effective computations by injecting the effects from a usual language. To avoid the "callback-hell", you can use Moon's monadic notation:
+
+```javascript
+io = zb2rhaz1mri11t28zguorHncAG9SXZmn47Kh9ow1QjsfeKzbT
+prompt = (io "prompt")
+print = (io "print")
+
+(io "do"
+  go = askPowerLevel =>
+    | power =< (io "prompt" "What is your power level? ")
+      (if (gtn (stn power) 9000)
+        | (io "print" "No, it is not.")>
+          (askPowerLevel askPowerLevel)
+        | (io "print" "Ah, that's cute!")>
+          (io "end"))
+  (go go))
+```
+
+You can run the code above using [moon-tool](https://github.com/maiavictor/moon-tool):
+
+```bash
+moon runio zb2rhnvp7g2yYGjNQegCH61MEhonZzGXv9uTak63AG1duyQrC
+```
+
+### Optimizing code
+
+1. Use `#` to fully inline an expression.
+
+2. Use `{fast:true}` option (faster, only tradeoff is it can't be decompiled).
+
+```javascript
+(async () => {
+
+// Notice the hash (#): it fully inlines an expression, making it 8x faster.
+const dotCode = `# x0 => y0 => z0 => x1 => y1 => z1 =>
+  Array = zb2rhYmsjmQuJivUtDRARcobLbApVQZE1CwqhfnbBxmYuGpXx
+  a = [x0 y0 z0]
+  b = [x1 y1 z1]
+  (Array "sum" (Array "zipWith" (mul) a b))
+`;
+
+// Also, use {fast:true}
+const dot = Moon.parse(await Moon.imports(dotCode), {fast:true});
+
+// Call it a ton of times
+var dots = 0;
+for (var i = 0; i < 1000000; ++i) {
+  dots += dot(1)(2)(3)(4)(5)(6);
+}
+console.log(dots);
+
+// Check the difference on the output
+console.log(Moon.compile(await Moon.imports(dotCode)));
+
+})();
+```
+
+## CLI
+
+Check out [moon-tool](https://github.com/maiavictor/moon-tool).
+
+## TODO
+
+- Time limit option

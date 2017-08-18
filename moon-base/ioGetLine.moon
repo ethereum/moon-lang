@@ -1,1 +1,0 @@
-(ioAsk "getLine" {})

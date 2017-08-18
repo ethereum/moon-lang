@@ -1,2 +1,0 @@
-array.
-  (get array "length")

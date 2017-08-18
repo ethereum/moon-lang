@@ -1,1 +1,0 @@
-(arrayFoldr (add) 0)

@@ -1,1 +1,0 @@
-str. (ioAsk "print" str)

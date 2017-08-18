@@ -1,5 +1,0 @@
-{
-  "interface": [{"constant":true,"inputs":[{"name":"key","type":"bytes32"}],"name":"get","outputs":[{"name":"","type":"bytes32"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"key","type":"bytes32"},{"name":"val","type":"bytes32"}],"name":"set","outputs":[],"payable":false,"type":"function"},{"inputs":[],"payable":false,"type":"constructor"}],
-  "testnetAddress": "0x6161782f7C60a5b6a57F29635d96fE0078E6D2C4",
-  "mainnetAddress": "" 
-}
