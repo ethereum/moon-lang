@@ -13,51 +13,46 @@ module.exports = ipfsUrl => {
   // type Opts = {
   //   maxCols: Number,  -- max cols when formatting terms
   //   indent: Number,   -- spaces when formatting terms (0 = no indent)
-  //   fast: Bool,       -- builds a native term that runs faster but can't be stringified
-  //   opsLimit: Number, -- max limit of operations that compiled functions can perform (UNIMPLEMENTED - will be soon)
+  //   fast: Bool       -- builds a native term that runs faster but can't be stringified
   // }
 
   // String [, Opts] -> Native
   //   Parses Moon code to a native value / function.
-  const parse = (code, opts = {}) => {
+  const parse = (code, opts) => {
     const term = synt.termFromString(code);
-    const jsValue = (opts||{}).fast ? comp.termCompileFast(term) : comp.termCompileFull(term);
+    const jsValue = (opts||{}).fast
+      ? comp.termCompileFast(term)
+      : comp.termCompileFull(term);
     return eval(jsValue)();
   }
 
   // Native [, Opts] -> String
   //   Stringifies a native value / function back to Moon.
-  const stringify = (value, opts = {}) =>
-    synt.termToString(
-      comp.termDecompileFull(value),
-      opts.indent === undefined ? 2 : opts.indent,
-      opts.maxCols || 80);
+  const stringify = (value, opts) =>
+    synt.termToString(comp.termDecompileFull(value), opts);
 
   // String [, Opts] -> String
   //   Stringifies Moon code without normalizing it.
-  const format = (code, opts = {}) =>
-    synt.termToString(
-      synt.termFromString(code),
-      opts.indent === undefined ? 2 : opts.indent,
-      opts.maxCols || 80);
+  const format = (code, opts) =>
+    synt.termToString(synt.termFromString(code), opts);
 
   // String [, Opts] -> String
   //   Runs Moon code and returns the resulting Moon code.
   //   Uses fast mode if possible.
   const run = (code, opts) => {
     const term = synt.termFromString(code);
-    return synt.termToString(comp.termReduce(term));
+    return synt.termToString(comp.termReduce(term), opts);
   }
 
-  // String-> String
+  // String [, Opts] -> String
   //   Returns the canonical binary representation of a term.
-  const pack = code =>
+  const pack = (code, opts) =>
     hexs.termToHex(synt.termFromString(code));
 
   // String [, Opts] -> String
   //   Unpacks the canonical binary representation of a term. 
-  const unpack = hex =>
-    synt.termToString(hexs.termFromHex(hex));
+  const unpack = (hex, opts) =>
+    synt.termToString(hexs.termFromHex(hex), opts);
 
   // String -> String
   //   Compiles Moon code to JavaScript code.

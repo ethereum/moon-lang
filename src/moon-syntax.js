@@ -250,11 +250,10 @@ const termFromString = (source) => {
 };
 
 const termFormatter = decorations => term => {
-  var D = decorations;
-
-  var App = 0, Lam = 1, Var = 2, Ref = 3,
-      Let = 4, Fix = 5, Pri = 6, Num = 7,
-      Str = 8, Map = 9, Arr = 10;
+  const D = decorations;
+  const App = 0, Lam = 1, Var = 2, Ref = 3,
+        Let = 4, Fix = 5, Pri = 6, Num = 7,
+        Str = 8, Map = 9, Arr = 10;
 
   const formattable = term({
     App: (f, x) => {
@@ -438,12 +437,23 @@ const termFormatter = decorations => term => {
       } else {
         switch (term[0]) {
           case App:
-            push(D.Text("("));
-            tab();
-            go(term[1]);
-            term[2].forEach(go);
-            untab();
-            push(D.Text(")"));
+            if (fits(1 + term[1].size)) {
+              push(D.Many([
+                D.Text("("),
+                stringifyFlat(term[1]),
+                D.Text(" ")]));
+              tab();
+              term[2].forEach(go);
+              untab();
+              push(D.Text(")"));
+            } else {
+              push(D.Text("("));
+              tab();
+              go(term[1]);
+              term[2].forEach(go);
+              untab();
+              push(D.Text(")"));
+            }
             break;
           case Lam:
             push(
@@ -483,12 +493,60 @@ const termFormatter = decorations => term => {
             untab();
             break;
           case Pri:
-            push(D.Text("("));
-            tab();
-            push(D.Pri(term[1]));
-            term[2].forEach(go);
-            untab();
-            push(D.Text(")"));
+            var inlineFor = false;
+            if (term[1] === "for") {
+              var forLam = term[2][term[2].length - 1];
+              if (forLam.term[0] === Lam) {
+                var forArgs = term[2].slice(0, -1);
+                var forSize = 4
+                  + forArgs.reduce((s,arg) => s + arg.size + 1, 0)
+                  + forLam.size - forLam.term[2].size;
+                inlineFor = fits(forSize);
+              }
+            }
+            var inlineIf = false;
+            if (term[1] === "if") {
+              inlineIf = fits(3 + term[2][0].size);
+            }
+            if (inlineFor) {
+              push(D.Many([
+                D.Text("("),
+                D.Pri(term[1]),
+                D.Text(" "),
+                stringifyFlat(term[2][0]),
+                D.Text(" "),
+                stringifyFlat(term[2][1]),
+                D.Text(" "),
+                stringifyFlat(term[2][2]),
+                D.Text(" "),
+                D.Many(forLam.term[1].map(v =>
+                  D.Many([
+                    D.Var(v),
+                    D.Text(" => ")])))]));
+              tab();
+              go(forLam.term[2]);
+              untab();
+              push(D.Text(")"));
+            } else if (inlineIf) {
+              push(D.Many([
+                D.Text("("),
+                D.Pri(term[1]),
+                D.Text(" "),
+                stringifyFlat(term[2][0])]));
+              tab();
+              term[2].slice(1).forEach(go);
+              untab();
+              push(D.Text(")"));
+            } else {
+              push(D.Many([
+                D.Text("("),
+                D.Pri(term[1])
+              ]));
+              tab();
+              term[2].forEach(go);
+              untab();
+              push(D.Text(")"));
+            }
             break;
           case Num:
             push(D.Num(String(term[1])));
@@ -532,12 +590,12 @@ const termFormatter = decorations => term => {
     : stringifyFlat(formattable);
 };
 
-const termToString = (term, spaces, maxCols) => {
-  const repeat = (n, str) =>
-    n === 0 ? "" : str + repeat(n - 1, str);
+const termToString = (term, opts = {}) => {
+  const repeat = (n, str) => n === 0 ? "" : str + repeat(n - 1, str);
+  const spaces = opts.indent === undefined ? 2 : opts.indent;
   return termFormatter({
     indent: spaces > 0,
-    maxCols: maxCols,
+    maxCols: opts.maxCols,
     Many: terms => terms.join(""),
     Text: text => text,
     Var: name => name,

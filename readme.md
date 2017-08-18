@@ -140,6 +140,8 @@ moon runio zb2rhcV4oVtChoHsgrJQSrgjZ8pPvFsqqBY8oNDmoUAVSdY1W
 
 2. Use `{fast:true}` option (faster, only tradeoff is it can't be decompiled).
 
+3. Don't use recursive algorithms (map, reduce, etc.) directly on arrays; convert to churh-lists to enable fusion.
+
 ```javascript
 (async () => {
 
