@@ -108,7 +108,7 @@ const Moon = require("moon-lang")();
 
 ### Performing side-effects (IO)
 
-Moon itself is pure, but it can perform side-effective computations by injecting the effects from a usual language. To avoid the "callback-hell", you can use Moon's monadic notation:
+Moon itself is pure, but it can perform side-effective computations by injecting the effects from the host language. To avoid the "callback-hell", you can use Moon's monadic notation:
 
 ```javascript
 io     = zb2rhdn7aJnH47c6oykLN2p5Jt93duP5s2CZt1sr2evw5FW9H
