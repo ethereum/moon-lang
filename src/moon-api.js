@@ -62,9 +62,11 @@ module.exports = ipfsUrl => {
   // CID -> Promise String
   //   Stores a term on IPFS.
   const load = memo("moon-base").async(cid =>
-    ipfs.get(cid)
-      .then(bytes => unpack(util.bytesToHex(bytes)))
-      .catch(() => Promise.reject("Couldn't resolve " + cid + ".")));
+    cid.slice(0,5) === "zb2rh"
+      ? ipfs.get(cid)
+        .then(bytes => unpack(util.bytesToHex(bytes)))
+        .catch(() => Promise.reject("Couldn't resolve " + cid + "."))
+      : Promise.reject("Incorrect cid " + cid + "."));
 
   // String -> Promise CID 
   //   Gets a term from IPFS.
