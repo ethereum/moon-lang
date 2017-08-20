@@ -634,7 +634,8 @@ const priArity = {
   "stn": 1,
   "gen": 1,
   "get": 2,
-  "for": 4
+  "for": 4,
+  "len": 1
 };
 
 module.exports = {

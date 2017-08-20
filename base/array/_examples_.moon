@@ -14,4 +14,5 @@ b = [5 6 7 8]
   sum: (Array "sum" a)
   toList: (Array "toList" a)
   zipWith: (Array "zipWith" (add) a b)
+  crossWith: (Array "crossWith" (add) 0 [[1 2 3] [1 1 1] [1 1 1]])
 }

@@ -168,7 +168,8 @@ const pris = [
   ["gen", 1, "(f,_)=>f(k=>v=>a=>(!$S(k)||!$O(a)?$P(['gen',f]):(a[k]=v,a)))({})", (f)=>f+"(k=>v=>a=>(a[k]=v,a))({})"],
   ["get", 2, "(a,k)=>$O(a)&&$S(k)?(($V=a[k])!==$U?$V:null):$P(['get',a,k])", (a,k,d)=>"(($V="+a+"["+k+"])!==$U?$V:"+d+")"],
   ["for", 4, "(a,b,c,d)=>{if($N(a)&&$N(b)&&$F(d)){while(a<b)c=d(a++)(c);return c};return $P(['for',a,b,c,d]);}",
-    (i,j,x,f)=>"((i,j,x,f)=>{f="+f+";x="+x+";for(i="+i+",j="+j+";i<j;++i){x=f(i)(x);};return x;})()"]
+    (i,j,x,f)=>"((i,j,x,f)=>{f="+f+";x="+x+";for(i="+i+",j="+j+";i<j;++i){x=f(i)(x);};return x;})()"],
+  ["len", 1, "(a)=>$S(a)?a.length:$P(['len',a])", (a)=>"("+a+".length)"]
 ];
 
 const pri = pris.reduce((pris, pri) => (pris[pri[0]] = pri, pris), {});
