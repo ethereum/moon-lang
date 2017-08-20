@@ -467,12 +467,16 @@ const termFormatter = decorations => term => {
             break;
           case Let:
             for (var i = 0; i < term[1].length; ++i) {
-              prepend(
-                D.Many([
-                  D.Var(term[1][i][0]),
-                  " = "]),
-                term[1][i][0].length + 2);
-              go(term[1][i][1]);
+              const assignment = D.Many([D.Var(term[1][i][0]), " = "]);
+              if (term[1][i][1].term[0] === Let) {
+                push(assignment);
+                tab();
+                go(term[1][i][1]);
+                untab();
+              } else {
+                prepend(assignment, term[1][i][0].length + 2);
+                go(term[1][i][1]);
+              }
             }
             go(term[2]);
             break;
