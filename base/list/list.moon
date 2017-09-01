@@ -14,4 +14,6 @@
   reverse: zb2rhhy5zHN84VKdj4F8YZEMEarVJkaTzmJsuWnFVUKKzqFLJ
   toArray: zb2rhgV8FTZ5RDjzugq2CUjVchGzePkQSQuqXvGuDtHgP7aaK
   dot: zb2rhZYyzPecm67CJJb7PbYyCzu1BQj5TeVNefkGSzsW5M9j6
+  match: zb2rhgr3EHmgEAgPo4gLfb1fmZ4gTUhfAYhW8U7n7mppBLjw7
+  len: zb2rhewXLf1ikYbooDBeg19TsobyB71Y8XMjtAksfNTE3gDFk
 })
