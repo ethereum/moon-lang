@@ -1,4 +1,4 @@
-const M = require("./..");
+const M = require("./..")();
 const assert = require("assert");
 const assertAsync = async x => assert(await x());
 

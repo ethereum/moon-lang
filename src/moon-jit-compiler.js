@@ -161,7 +161,7 @@ const pris = [
   ["acs", 1, "(a)=>$N(a)?Math.acos(a):$P(['acs',a])", (a)=>"Math.acos("+a+")"],
   ["atn", 1, "(a)=>$N(a)?Math.atan(a):$P(['atn',a])", (a)=>"Math.atan("+a+")"],
   ["con", 2, "(a,b)=>$S(a)&&$S(b)?a+b:$P(['con',a,b])", (a,b)=>"("+a+"+"+b+")"],
-  ["slc", 3, "(a,b,c)=>$S(a)&&$N(b)&&$N(c)?a.slice(b,c):$P(['slc',a,b,c])", (a,b,c)=>a+".slice("+b+","+c+")"],
+  ["slc", 3, "(a,b,c)=>$S(a)&&$N(b)&&$N(c)?(b===c-1?a[b]||'':a.substring(b,c)):$P(['slc',a,b,c])", (a,b,c)=>"((a,b,c)=>b===c-1?a[b]||'':a.substring(b,c))("+a+","+b+","+c+")"],
   ["cmp", 2, "(a,b)=>$S(a)&&$S(b)?(a===b?1:0):$P(['cmp',a,b])", (a,b)=>a+"==="+b],
   ["nts", 1, "(a)=>$N(a)?String(a):$P(['nts',a])", (a)=>"String("+a+")"],
   ["stn", 1, "(a)=>$S(a)?Number(a):$P(['stn',a])", (a)=>"Number("+a+")"],
