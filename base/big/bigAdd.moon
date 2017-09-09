@@ -1,7 +1,7 @@
 a => b =>
-  md = (pow 2 32)
-  al = (a (u32 => (add 1)) 0)
-  bl = (b (u32 => (add 1)) 0)
+  md = (pow 2 16)
+  al = (a (u16 => (add 1)) 0)
+  bl = (b (u16 => (add 1)) 0)
   xs = (if (gtn al bl) a b)
   ys = (if (gtn al bl) b a (y => ys => c => n => (c y ys)) (c => n => n))
   cons => nil =>
