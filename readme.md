@@ -169,6 +169,10 @@ console.log(Moon.compile(await Moon.imports(dotCode)));
 })();
 ```
 
+### Exporting Moon libs to npm
+
+[See this repository.](https://github.com/MaiaVictor/moon-bignum)
+
 ## CLI
 
 Check out [moon-tool](https://github.com/maiavictor/moon-tool).
