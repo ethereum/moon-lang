@@ -1,6 +1,6 @@
-bigCmp = zb2rheYfDrgCazTf5KETbxn3UniU4uTA9WTbX7rvXXpn58Ugh
-bigMul = zb2rhmmjgCisMdEevm8iM53Rg1kWraiTsbyLuQwTajy1ZHyV6
-bigSub = zb2rhYicog3wophhiMHETgWFzxz3srMk9MuSqjVhpv2mY6ZFe
+bigCmp = zb2rhb6YKkXTWP2SCqP9kq5hdGNvkmjZT4d42YLF9VNu34yXC
+bigMul = zb2rhnbB1UWmrC8dhYbJZ4aunoWc3o9JJR1W2jBHNpAjrnF2S
+bigSub = zb2rhecvjCY6eL7ixvBWQnpjECGYEoHNZGWKLA7KfCQrwMEin
 
 // Big -> Big -> Uint16
 findDigit = a => b =>

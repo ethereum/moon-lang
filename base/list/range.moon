@@ -1,4 +1,4 @@
 from => til =>
-  cons => nil =>
-    (for from til nil i =>
-      (cons (sub (add from til) (add i 1))))
+  val => end =>
+    (for from til end i =>
+      (val (sub (add from til) (add i 1))))

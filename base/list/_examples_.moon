@@ -1,8 +1,8 @@
-List = zb2rhb1bXTJEohRcB5kgAb4zinkrunuzicKLbnM2rQ6rRbTur
-cons = (List "cons")
-nil = (List "nil")
-a = (cons 1 (cons 2 (cons 3 (cons 4 nil))))
-b = (cons 5 (cons 6 (cons 7 (cons 8 nil))))
+List = zb2rhn9hxhbQp3UYpciYJSJzePFMibeWZaQXJsDV3wGkLmAXX
+val = (List "val")
+end = (List "end")
+a = (val 1 (val 2 (val 3 (val 4 end))))
+b = (val 5 (val 6 (val 7 (val 8 end))))
 {
   range: (List "range" 0 4)
   sum: (List "sum" a)

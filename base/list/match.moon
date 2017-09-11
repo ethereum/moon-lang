@@ -1,4 +1,4 @@
 xs =>
   (xs
-    h => t => cons => nil => (cons h t)
-    cons => nil => nil)
+    h => t => val => end => (val h t)
+    val => end => end)

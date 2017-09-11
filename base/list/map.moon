@@ -1,2 +1,2 @@
 f => xs =>
-  cons => (xs head => (cons (f head)))
+  val => (xs end => (val (f end)))

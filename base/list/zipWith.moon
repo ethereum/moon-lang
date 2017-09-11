@@ -1,8 +1,8 @@
 f => xs => ys =>
-  cons => nil =>
+  val => end =>
     (xs
       x => xs => c => (c x xs)
-      c => nil
+      c => end
       (ys
-        y => ys => x => xs => (cons (f x y) (xs ys))
-        x => xs => nil))
+        y => ys => x => xs => (val (f x y) (xs ys))
+        x => xs => end))
