@@ -38,4 +38,3 @@ c = (big "2")
   div: (dec (bdiv a b))
   mod: (dec (bmod a c))
 }
-

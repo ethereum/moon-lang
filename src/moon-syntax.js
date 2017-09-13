@@ -639,7 +639,9 @@ const priArity = {
   "gen": 1,
   "get": 2,
   "for": 4,
-  "len": 1
+  "len": 1,
+  "and": 2,
+  "or": 2
 };
 
 module.exports = {
