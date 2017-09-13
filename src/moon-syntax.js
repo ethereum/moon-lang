@@ -641,7 +641,8 @@ const priArity = {
   "for": 4,
   "len": 1,
   "and": 2,
-  "or": 2
+  "or": 2,
+  "xor": 2
 };
 
 module.exports = {

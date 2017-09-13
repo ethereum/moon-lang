@@ -197,7 +197,8 @@ const pris = [
   ["for", "11010"],
   ["len", "11011"],
   ["and", "11100"],
-  ["or", "11101"]
+  ["or", "11101"],
+  ["xor", "11110"]
 ];
 
 const priArity = {
@@ -227,7 +228,10 @@ const priArity = {
   "gen": 1,
   "get": 2,
   "for": 4,
-  "len": 1
+  "len": 1,
+  "and": 2,
+  "or": 2,
+  "xor": 1
 };
 
 const priBits = pris.reduce((pris, pri) => (pris[pri[0]] = pri[1], pris), {});

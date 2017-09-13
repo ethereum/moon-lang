@@ -170,7 +170,8 @@ const pris = [
   ["for", 4, "(a,b,c,d)=>{if($N(a)&&$N(b)&&$F(d)){while(a<b)c=d(a++)(c);return c};return $P(['for',a,b,c,d]);}", (i,j,x,f)=>"((i,j,x,f)=>{f="+f+";x="+x+";for(i="+i+",j="+j+";i<j;++i){x=f(i)(x);};return x;})()"],
   ["len", 1, "(a)=>$S(a)?a.length:$P(['len',a])", (a)=>"("+a+".length)"],
   ["and", 2, "(a,b)=>$N(a)&&$N(b)?a&b:$P(['and',a,b])", (a,b)=>"("+a+"&"+b+")"],
-  ["or", 2, "(a,b)=>$N(a)&&$N(b)?a-b:$P(['or',a,b])", (a,b)=>"("+a+"|"+b+")"]
+  ["or", 2, "(a,b)=>$N(a)&&$N(b)?a|b:$P(['or',a,b])", (a,b)=>"("+a+"|"+b+")"],
+  ["xor", 2, "(a,b)=>$N(a)&&$N(b)?a^b:$P(['or',a,b])", (a,b)=>"("+a+"^"+b+")"]
 ];
 
 const pri = pris.reduce((pris, pri) => (pris[pri[0]] = pri, pris), {});
