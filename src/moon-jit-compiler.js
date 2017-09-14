@@ -174,7 +174,7 @@ const pris = [
   ["len", 1, "(a)=>$S(a)?a.length:$P(['len',a])", (a)=>"("+a+".length)"],
   ["and", 2, "(a,b)=>$N(a)&&$N(b)?(a&b)>>>0:$P(['and',a,b])", (a,b)=>"(("+a+"&"+b+")>>>0)"],
   ["or", 2, "(a,b)=>$N(a)&&$N(b)?(a|b)>>>0:$P(['or',a,b])", (a,b)=>"(("+a+"|"+b+")>>>0)"],
-  ["xor", 2, "(a,b)=>$N(a)&&$N(b)?(a^b)>>>0:$P(['or',a,b])", (a,b)=>"(("+a+"^"+b+")>>>0)"]
+  ["xor", 2, "(a,b)=>$N(a)&&$N(b)?(a^b)>>>0:$P(['xor',a,b])", (a,b)=>"(("+a+"^"+b+")>>>0)"]
 ];
 
 const pri = pris.reduce((pris, pri) => (pris[pri[0]] = pri, pris), {});

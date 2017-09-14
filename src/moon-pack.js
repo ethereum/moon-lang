@@ -231,7 +231,7 @@ const priArity = {
   "len": 1,
   "and": 2,
   "or": 2,
-  "xor": 1
+  "xor": 2
 };
 
 const priBits = pris.reduce((pris, pri) => (pris[pri[0]] = pri[1], pris), {});
