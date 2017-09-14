@@ -209,7 +209,7 @@ const termFromString = (source) => {
           var bind = find(v => v[0] === binder, vs);
           if (!bind) {
             return E => T => T.Ref(binder);
-          } else if (bind[0] === "_rec") {
+          } else if (bind[1] === "_rec") {
             throw "Recursive let not allowed: check variable '" + binder +"'";
           } else {
             return E => T =>
