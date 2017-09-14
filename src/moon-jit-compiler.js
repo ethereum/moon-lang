@@ -24,9 +24,18 @@ const termCompileFast = term => {
     Num: num => _ => JSON.stringify(num),
     Str: str => _ => JSON.stringify(str),
     Map: kvs => _ => {
-      for (var i = 0; i < kvs.length; ++i)
-        if (kvs[i][0] === "length")
-          return "(["+kvs.map(([k,v]) => v()).join(",")+"])";
+      for (var i = 0; i < kvs.length; ++i) {
+        if (kvs[i][0] === "length") {
+          var len = kvs[i][1]();
+          if (/^\d\d*$/.test(len)) {
+            var arr = "([";
+            for (var j = 0; j < len; ++j)
+              arr += (j > 0 ? "," : "") + kvs[j][1]();
+            arr += "])";
+            return arr;
+          }
+        }
+      }
       return "({"+kvs.map(([k,v]) => '"'+k+'"'+":"+v()).join(",")+"})"
     }
   })();
@@ -45,6 +54,8 @@ const termDecompileFast = func => {
           var kvs = [];
           for (var key in value)
             kvs.push([key, fromJS(value[key])(T)]);
+          if (value.key.length !== undefined && !key in value)
+            kvs.push(["length", fromJS(value.length)(T)]);
           return T.Map(kvs);
         }
       } else if (typeof value === "string") {
