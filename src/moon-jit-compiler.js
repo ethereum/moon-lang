@@ -23,7 +23,12 @@ const termCompileFast = term => {
     Pri: (name, args) => _ => pri[name][3](...(args.map(a => a()))),
     Num: num => _ => JSON.stringify(num),
     Str: str => _ => JSON.stringify(str),
-    Map: kvs => _ => "({"+kvs.map(([k,v]) => '"'+k+'"'+":"+v()).join(",")+"})"
+    Map: kvs => _ => {
+      for (var i = 0; i < kvs.length; ++i)
+        if (kvs[i][0] === "length")
+          return "(["+kvs.map(([k,v]) => v()).join(",")+"])";
+      return "({"+kvs.map(([k,v]) => '"'+k+'"'+":"+v()).join(",")+"})"
+    }
   })();
   return "(()=>{"
     + "\"use strict\";"
