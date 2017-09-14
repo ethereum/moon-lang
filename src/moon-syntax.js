@@ -1,3 +1,5 @@
+// Comments: https://github.com/MaiaVictor/moon-lang/issues/23
+
 const find = require("./moon-util").find;
 const termReduceFull = require("./moon-jit-compiler").termReduceFull;
 
