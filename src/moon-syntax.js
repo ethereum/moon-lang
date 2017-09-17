@@ -1,3 +1,5 @@
+// Comments: https://github.com/MaiaVictor/moon-lang/issues/23
+
 const find = require("./moon-util").find;
 const termReduceFull = require("./moon-jit-compiler").termReduceFull;
 
@@ -209,7 +211,7 @@ const termFromString = (source) => {
           var bind = find(v => v[0] === binder, vs);
           if (!bind) {
             return E => T => T.Ref(binder);
-          } else if (bind[0] === "_rec") {
+          } else if (bind[1] === "_rec") {
             throw "Recursive let not allowed: check variable '" + binder +"'";
           } else {
             return E => T =>
@@ -639,7 +641,10 @@ const priArity = {
   "gen": 1,
   "get": 2,
   "for": 4,
-  "len": 1
+  "len": 1,
+  "and": 2,
+  "or": 2,
+  "xor": 2
 };
 
 module.exports = {

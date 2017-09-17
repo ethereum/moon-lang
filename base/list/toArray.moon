@@ -1,5 +1,5 @@
 list =>
-  (gen c => n => (list
-    h => t => i => (c (nts i) h (t (add i 1)))
-    i => (c "length" i n)
+  (gen val => end => (list
+    x => xs => i => (val (nts i) x (xs (add i 1)))
+    i => (val "length" i end)
     0))

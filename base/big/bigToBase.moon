@@ -1,20 +1,18 @@
-bigQtr = zb2rhijkwV5H4zWV2JcEN6ZUMPsGkaUqLBEfJ19SjAVJPFF63
-bigGtn = zb2rhXKeedDmWEnTU43CQN2kspBaumzNigt2LESzTCn8RaQuA
+bigQtrShort = zb2rhjyNi921eSUvyyVSpsrYRqPqpNkCeVS9hm871hCqVPSug
+bigGtnZero = zb2rhhWsyoJp669c7e2bMganHQR7gYFGU67eEiHUbeLLwKJxX
 
-f = base => a => cons => nil =>
-  zero = c => n => (c 0 n)
-  go = self @ a =>
-    (if (bigGtn a zero)
-      qtr = (bigQtr a base)
-      (cons
-        (get qtr "rem" a => b => a 0)
-        (self (get qtr "quo")))
-      nil)
-  (go a)
+listSingle = zb2rhivi1RLszWdNEMezzWzhzrDqB6ionDyjRjFukKMDLoMFb
+listConcat = zb2rheicGSCKD9rQ8LghijJww9sjEGDgUMANMX9dBZJB5vgdb
+listEnd = zb2rhbQFhrUA2SqQVKweLeRoHomXzJwAsKLtKT2TjW7Eunk6x
 
-
-Big = zb2rhfCCxE8jsua1CRigFVKZaGztxoY1PfNf7v89tCKWgW5W8
-hex = (Big "hex")
-big = (Big "big")
-
-(f (big "0xa") (big "0x10000000000000000000000000000000000000000000000000000000000") a => b => s => (b (con (nts a) s)) s => s "")
+// Uint16 -> Big -> List Uint16
+// Converts a bigNum to any base N (max 2^16).
+// Most significant digit first (as opposed to BigNum's format).
+base =>
+  getDigits @ big =>
+    (if (bigGtnZero big)
+      qtr = (bigQtrShort big base)
+      rem = (get qtr "rem")
+      quo = (get qtr "quo")
+      (listConcat (getDigits quo) (listSingle rem))
+      listEnd)

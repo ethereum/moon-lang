@@ -1,4 +1,4 @@
-bigQtr = zb2rhijkwV5H4zWV2JcEN6ZUMPsGkaUqLBEfJ19SjAVJPFF63
+bigQtr = zb2rhZ9tBWcj8uXb563fE1rLXtvAkB2og8tvocLbPGQRSsikA
 
 a => b =>
   (get (bigQtr a b) "quo")

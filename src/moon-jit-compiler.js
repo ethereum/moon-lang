@@ -23,7 +23,21 @@ const termCompileFast = term => {
     Pri: (name, args) => _ => pri[name][3](...(args.map(a => a()))),
     Num: num => _ => JSON.stringify(num),
     Str: str => _ => JSON.stringify(str),
-    Map: kvs => _ => "({"+kvs.map(([k,v]) => '"'+k+'"'+":"+v()).join(",")+"})"
+    Map: kvs => _ => {
+      for (var i = 0; i < kvs.length; ++i) {
+        if (kvs[i][0] === "length") {
+          var len = kvs[i][1]();
+          if (/^\d\d*$/.test(len)) {
+            var arr = "([";
+            for (var j = 0; j < len; ++j)
+              arr += (j > 0 ? "," : "") + kvs[j][1]();
+            arr += "])";
+            return arr;
+          }
+        }
+      }
+      return "({"+kvs.map(([k,v]) => '"'+k+'"'+":"+v()).join(",")+"})"
+    }
   })();
   return "(()=>{"
     + "\"use strict\";"
@@ -40,6 +54,8 @@ const termDecompileFast = func => {
           var kvs = [];
           for (var key in value)
             kvs.push([key, fromJS(value[key])(T)]);
+          if (value.key.length !== undefined && !key in value)
+            kvs.push(["length", fromJS(value.length)(T)]);
           return T.Map(kvs);
         }
       } else if (typeof value === "string") {
@@ -135,9 +151,7 @@ const commonLib = [
   "$F=(a)=>typeof a===\"function\"?1:0",
   "$S=(a)=>typeof a===\"string\"?1:0",
   "$N=(a)=>typeof a===\"number\"?1:0",
-  "$O=(a)=>typeof a===\"object\"&&!a.__?1:0",
-  "$U=undefined",
-  "$V=undefined"
+  "$O=(a)=>typeof a===\"object\"&&!a.__?1:0"
 ];
 
 // TODO: make a proper file to avoid repetition of this on other files
@@ -166,10 +180,12 @@ const pris = [
   ["nts", 1, "(a)=>$N(a)?String(a):$P(['nts',a])", (a)=>"String("+a+")"],
   ["stn", 1, "(a)=>$S(a)?Number(a):$P(['stn',a])", (a)=>"Number("+a+")"],
   ["gen", 1, "(f,_)=>f(k=>v=>a=>(!$S(k)||!$O(a)?$P(['gen',f]):(a[k]=v,a)))({})", (f)=>f+"(k=>v=>a=>(a[k]=v,a))({})"],
-  ["get", 2, "(a,k)=>$O(a)&&$S(k)?(($V=a[k])!==$U?$V:null):$P(['get',a,k])", (a,k,d)=>"(($V="+a+"["+k+"])!==$U?$V:"+d+")"],
-  ["for", 4, "(a,b,c,d)=>{if($N(a)&&$N(b)&&$F(d)){while(a<b)c=d(a++)(c);return c};return $P(['for',a,b,c,d]);}",
-    (i,j,x,f)=>"((i,j,x,f)=>{f="+f+";x="+x+";for(i="+i+",j="+j+";i<j;++i){x=f(i)(x);};return x;})()"],
-  ["len", 1, "(a)=>$S(a)?a.length:$P(['len',a])", (a)=>"("+a+".length)"]
+  ["get", 2, "(a,k)=>$O(a)&&$S(k)?a[k]:$P(['get',a,k])", (a,k)=>a+"["+(/^"\d*"$/.test(k)?k.slice(1,-1):/^String\(.*\)$/.test(k)?k.slice(7,-1):k)+"]"],
+  ["for", 4, "(a,b,c,d)=>{if($N(a)&&$N(b)&&$F(d)){while(a<b)c=d(a++)(c);return c};return $P(['for',a,b,c,d]);}", (i,j,x,f)=>"((i,j,x,f)=>{f="+f+";x="+x+";for(i="+i+",j="+j+";i<j;++i){x=f(i)(x);};return x;})()"],
+  ["len", 1, "(a)=>$S(a)?a.length:$P(['len',a])", (a)=>"("+a+".length)"],
+  ["and", 2, "(a,b)=>$N(a)&&$N(b)?(a&b)>>>0:$P(['and',a,b])", (a,b)=>"(("+a+"&"+b+")>>>0)"],
+  ["or", 2, "(a,b)=>$N(a)&&$N(b)?(a|b)>>>0:$P(['or',a,b])", (a,b)=>"(("+a+"|"+b+")>>>0)"],
+  ["xor", 2, "(a,b)=>$N(a)&&$N(b)?(a^b)>>>0:$P(['xor',a,b])", (a,b)=>"(("+a+"^"+b+")>>>0)"]
 ];
 
 const pri = pris.reduce((pris, pri) => (pris[pri[0]] = pri, pris), {});

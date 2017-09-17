@@ -1,4 +1,5 @@
-listToArray = zb2rhgV8FTZ5RDjzugq2CUjVchGzePkQSQuqXvGuDtHgP7aaK
+listToArray = zb2rhj3APjEyBffYfDUhef71pdkvq8N5HkixVN1hmCacPXJth
+bigNor = zb2rhmDFWSSNMJAE7vNzAkaP1bKj4q89SFQqW4N1pybSWwqFy
 
 aList => bList =>
   md = (pow 2 16)
@@ -21,7 +22,7 @@ aList => bList =>
       car: (flr (div tot md))
       res: c => n => (res c (c (mod tot md) n))
     })
-  (get res "res")
+  (bigNor (get res "res"))
 
 // algorithm:
 // 

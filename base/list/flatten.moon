@@ -1,3 +1,3 @@
-concat = zb2rhYjLm4uAZUXk4qCTJYgXwqimGQQa7CZwjzKe3sqRpzvmj
+concat = zb2rheicGSCKD9rQ8LghijJww9sjEGDgUMANMX9dBZJB5vgdb
 xs =>
-  (xs concat cons => nil => nil)
+  (xs concat val => end => end)
