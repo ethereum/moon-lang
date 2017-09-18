@@ -1,21 +1,19 @@
 (get {
-  case: zb2rhbksBjR3yFP98YrEGss6Yv7wVCgNbYtWiwz9nGRSAoiAa
-  concat: zb2rheicGSCKD9rQ8LghijJww9sjEGDgUMANMX9dBZJB5vgdb
-  dot: zb2rhcbiDjxpYZAK7HdxLWpbtAJvK9LPGKzu5wJpF1M1LXMfp
-  end: zb2rhbQFhrUA2SqQVKweLeRoHomXzJwAsKLtKT2TjW7Eunk6x
-  filter: zb2rhZPBbzVLraGpso9Ubrz35Qno1ytLePGtpqGavq9WBdy9j
-  flatMap: zb2rhkCmuiv918bVuvGtjaAq1pMP1n1WAFAP4XFFj11L28Nbd
-  flatten: zb2rhnd69Yr18ULbCzFHiX34a7WgpWyKYNcx4BtDmxy9Dvo4E
-  fold: zb2rhbksBjR3yFP98YrEGss6Yv7wVCgNbYtWiwz9nGRSAoiAa
-  len: zb2rhewXLf1ikYbooDBeg19TsobyB71Y8XMjtAksfNTE3gDFk
-  map: zb2rhjurLH6CViATi6iy9pwyGgxZd389ky2YyzFUJBDPtxxU3
-  match: zb2rhoexKPhLaQGMSVjrSsRaz56U8RZYkUBUJKPDPNLqYWHw8
-  mul: zb2rheTr2uB6g4Ko6TeBMTtTNSvjxyJP83JtGfhGefDE6TUd9
+  nil: zb2rhdMA7pJgypiZ6PsmxX417KUTmwkpDJBNyFeGKWueeLJC3
+  cons: zb2rhfEz1ZyheiBXi7WptHiNwoXoMkdWv3nWqvtvoHZMLj11h
+  foldr: zb2rhhTZWSPJLzp7TnJmZyZR53c86KdHRiK4d6SaYYG3paXsh
+  concat: zb2rhYjLm4uAZUXk4qCTJYgXwqimGQQa7CZwjzKe3sqRpzvmj
+  filter: zb2rhaXx6rediKEEKvMDzDKvDcbacFqsLTfdhdptNJ28zZaV4
+  flatten: zb2rhXeQYJRG7UyEHeXffsiWLp3oEs4VY9mGcTW6UbS7AUUz2
+  map: zb2rhbZGnAoSDjNLe77j7pB6FjKzH3xMbqR2gzApdUypDiWEa
+  map2: zb2rhiMYfSiFzn1dACqJz3cxS3oPCnRhDpoGAoiHrph7mkD6o
+  flatMap: zb2rhYxANpwRBizkZFvrb8Q8YH2vExUJAZuo7H55AxwgxwhgN
+  product: zb2rheTr2uB6g4Ko6TeBMTtTNSvjxyJP83JtGfhGefDE6TUd9
   range: zb2rhhyNPqLMDBwu1Pr2xb85XXRwuWAVAaph3faQ3Nt534eCP
   reverse: zb2rhYSApY875vycNi6APadgGhV3ErLqAEiSrjQwoAs4PHKwP
-  single: zb2rhivi1RLszWdNEMezzWzhzrDqB6ionDyjRjFukKMDLoMFb
+  one: zb2rhivi1RLszWdNEMezzWzhzrDqB6ionDyjRjFukKMDLoMFb
   sum: zb2rhoMMnNH7etHbYEKmm2LVJJpuzSPUMfsy4R3jSpJtb5kiY
   toArray: zb2rhj3APjEyBffYfDUhef71pdkvq8N5HkixVN1hmCacPXJth
   val: zb2rhcXRC5mtMz8yYiWuZourtH3MaZwx4m3VfDRPvvFkwpbFh
-  zipWith: zb2rhmLLC868BNchhioA8CQdAQvRVHaT6nCXAYBomhP83y9Nf
+  map2: zb2rhmLLC868BNchhioA8CQdAQvRVHaT6nCXAYBomhP83y9Nf
 })
