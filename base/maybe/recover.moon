@@ -1,4 +1,4 @@
 a => maybe =>
   (maybe
     a
-    x => x)
+    a => a)

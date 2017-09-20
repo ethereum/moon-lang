@@ -1,4 +1,8 @@
-msg => maybe =>
+Result = zb2rhoUyznYMMESvXzRNDHjzwcxjaCQUvXcNcsm6o28uiu3xC
+failure = (Result "failure")
+success = (Result "success")
+
+message => maybe =>
   (maybe
-    (err msg)
-    x => (ok x))
+    (failure message)
+    x => (success x))
