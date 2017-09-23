@@ -9,22 +9,23 @@ const termFromString = (source) => {
     var index = 0;
     var nextName = 0;
     var lift = [];
+    // lifted : ([a], e -> t -> x) -> e -> t -> x
     var lifted = (lift, term) => E => T =>
       lift.reduceRight((rest,[name,term]) =>
         T.App(term(E)(T), T.Lam(name, rest)),
         term(E)(T));
-    function parseTerm(vs,li,isKey,isPri) {
+    function parseTerm(vs,_lifted,isKey,isPri) {
       var invalid = /[^a-zA-Z0-9\(\)_{}\[\]\"#\|\/\-<>$=@]/;
 
       // Skip spacing
       while (invalid.test(source[index]||""))
         ++index;
 
-      // Comment
+      // Comment (starts with // or --)
       if (/(\/\/|--)/.test(source.slice(index,index+2))) {
         var i = index;
         while (source[index] && source[index++] !== "\n" && index !== source.length) {}
-        return parse(vs,li,isKey,isPri);
+        return parse(vs,_lifted,isKey,isPri);
 
       // Application
       } else if (source[index] === "(") {
@@ -32,24 +33,28 @@ const termFromString = (source) => {
         ++index;
         var next;
         var args = [];
-        args.push(parse(vs,li,0,1));
-        while ((next = parse(vs,li,0,0)) !== null) {
+        args.push(parse(vs,_lifted,0,1));
+        // TODO when does it return null?
+        while ((next = parse(vs,_lifted,0,0)) !== null) {
           args.push(next);
         }
         var endIndex = index;
         return E => T => {
           var name = args[0];
-          if (priArity.hasOwnProperty(name)) {
+          if (priArity.hasOwnProperty(name)) { // if priArity contains name 
             var len = args.length - 1;
             var arity = priArity[name];
             var priArgs = [];
+            // args = ["add", 1] => (Pri "add" [1, "v1"])
             for (var i = 0; i < arity; ++i) {
               priArgs.push(i < len ? args[i+1](E)(T) : T.Var("v" + (i - len)));
             }
+            // (Pri "add" [1, "v1]") => (Lam "v1" (Pri "add" [1, "v1"]))
             var curried = T.Pri(name, priArgs);
             for (var i = 0; i < arity - len; ++i) {
               curried = T.Lam("v" + (arity - 1 - len - i), curried);
             }
+            // args = ["if" body1 body2 "hi"] => (App (Pri "if" [body1, body2]) "hi")
             for (var i = 0; i < len - arity; ++i) {
               curried = T.App(curried, args[arity + 1 + i]);
             }
@@ -131,9 +136,9 @@ const termFromString = (source) => {
         var kvs = [];
         var len = 0;
         var next;
-        while ((next = parse(vs,li,isArray?0:1,0)) !== null) {
+        while ((next = parse(vs,_lifted,isArray?0:1,0)) !== null) {
           var key = isArray ? String(len++) : next()({Str:s=>s}); // TODO: expectString param
-          var val = isArray ? next : parse(vs,li,0,0);
+          var val = isArray ? next : parse(vs,_lifted,0,0);
           kvs.push([key,val]);
         }
         if (isArray)
@@ -149,21 +154,23 @@ const termFromString = (source) => {
       // Bang
       } else if (/</.test(source[index])) {
         ++index;
-        var body = parse(vs,li,0,0);
+        var body = parse(vs,_lifted,0,0);
         var name = "_" + nextName++;
-        li.push([name,body]);
+        _lifted.push([name,body]);
         return E => T => T.Var(name);
 
       // Expand at compile time
       } else if (/#/.test(source[index])) {
         ++index;
-        var body = parse(vs,li,0,0);
+        var body = parse(vs,_lifted,0,0);
         return E => T => T.Nor(T => body(1)(T));
 
       // Binder-related
       } else {
         var binder = "";
 
+        // "number = 1" => binder = "number"
+        // "a => 1 + 1" => binder = "a"
         while (/[a-zA-Z0-9_$]/.test(source[index]) && index !== source.length)
           binder += source[index++];
 
@@ -181,7 +188,7 @@ const termFromString = (source) => {
         // Let
         } else if (/=/.test(source[index])) {
           ++index;
-          var subs = parse([[binder,"_rec"],vs],li,0,0);
+          var subs = parse([[binder,"_rec"],vs],_lifted,0,0);
           var lift = [];
           var body = parse([[binder,subs],vs],lift,0,0);
           return E => T =>
@@ -222,12 +229,12 @@ const termFromString = (source) => {
         }
       }
     }
-    function parse(vs,li,isKey,isPri) {
-      var parsed = parseTerm(vs,li,isKey,isPri);
+    function parse(vs,_lifted,isKey,isPri) {
+      var parsed = parseTerm(vs,_lifted,isKey,isPri);
       if (/>/.test(source[index]) && parsed !== null) {
         ++index;
-        li.push(["_", parsed]);
-        return parse(vs,li,isKey,isPri);
+        _lifted.push(["_", parsed]);
+        return parse(vs,_lifted,isKey,isPri);
       }
       return parsed;
     }
@@ -258,31 +265,33 @@ const termFormatter = decorations => term => {
         Str = 8, Map = 9, Arr = 10;
 
   const formattable = term({
-    App: (f, x) => {
-      // (App [App f [x]] y) -> (App f [x y])
-      if (f.term[0] === App) {
+    // [App [App fun arg1]] arg2 => term : [App fun [arg1 arg2]]
+    // fun arg => term : [App fun arg]
+    App: (fun, arg) => {
+      if (fun.term[0] === App) {
         return {
-          term: [App, f.term[1], f.term[2].concat([x])],
-          size: 3 + f.size + x.size - 2 // (f x)y -> (f x y)
+          term: [App, fun.term[1], fun.term[2].concat([arg])],
+          size: 3 + fun.size + arg.size - 2
         };
       } else {
         return {
-          term: [App, f, [x]],
-          size: 3 + f.size + x.size // fx -> (f x)
+          term: [App, fun, [arg]],
+          size: 3 + fun.size + arg.size
         };
       }
     },
-    Lam: (name, body) => {
-      // (Lam "foo" [Lam ["bar"] x]) -> (Lam ["foo" "bar"] x)
+    // arg1 [Lam arg2 body] => term : [Lam [arg1 arg2] body]
+    // arg body => term : [Lam arg body]
+    Lam: (arg, body) => {
       if (body.term[0] === Lam) {
         return {
-          term: [Lam, [name].concat(body.term[1]), body.term[2]],
-          size: 4 + name.length + body.size // xy. t -> x => y => t
+          term: [Lam, [arg].concat(body.term[1]), body.term[2]],
+          size: 4 + arg.length + body.size
         };
       } else {
         return {
-          term: [Lam, [name], body],
-          size: 4 + name.length + body.size, // xt -> x => t
+          term: [Lam, [arg], body],
+          size: 4 + arg.length + body.size
         };
       }
     },
@@ -294,17 +303,18 @@ const termFormatter = decorations => term => {
       term: [Ref, name],
       size: name.length
     }),
-    Let: (name, term, body) => {
-      // (Let "k" v [Let [["K" V]] t]) -> (Let ["k" "v"] t)
-      if (body.term[0] === Let) {
+    // key1 val1 [Let [key2 val2] body] => term : [Let [[key1 val1] [key2 val2]] body]
+    // key val body => term : [Let [key val] body]
+    Let: (key, val, body) => {
+      if (body.val[0] === Let) {
         return {
-          term: [Let, [[name,term]].concat(body.term[1]), body.term[2]],
-          size: 4 + name.length + term.size + body.size // kvK = V t -> k = v K = V t
+          term: [Let, [[key, val]].concat(body.term[1]), body.term[2]],
+          size: 4 + key.length + val.size + body.size
         };
       } else {
         return {
-          term: [Let, [[name,term]], body],
-          size: 4 + name.length + term.size + body.size, // kvt -> k = v t
+          term: [Let, [[key, val]], body],
+          size: 4 + key.length + val.size + body.size
         };
       }
     },
@@ -324,6 +334,8 @@ const termFormatter = decorations => term => {
       term: [Str, str],
       size: 2 + str.length
     }),
+    // {length: x rest...} => term : [Arr, rest.values]
+    // {elems...} => term : [Map, elems.toArray]
     Map: kvs => {
       var isArray = false;
       for (var i = 0; i < kvs.length; ++i)
@@ -620,6 +632,7 @@ const termToString = (term, opts = {}) => {
   })(term);
 };
 
+// how many arguments each *pri*mitive function takes
 const priArity = {
   "if": 3,
   "add": 2,
