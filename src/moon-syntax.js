@@ -64,7 +64,7 @@ const termFromString = (source) => {
         };
 
       // String
-      } else if (/"/.test(source[index]) || (isKey && !/}/.test(source[index]))) {
+      } else if (/"/.test(source[index]) || (isKey && !/[}\]]/.test(source[index]))) {
         index += isKey ? 0 : 1;
         var string = "";
         while (!/"/.test(source[index]) && !(isKey && /:/.test(source[index]))) {
