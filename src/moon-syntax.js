@@ -564,13 +564,19 @@ const termFormatter = decorations => term => {
             push(D.Text("{"));
             tab();
             for (var i = 0; i < term[1].length; ++i) {
-              prepend(
-                D.Many([
-                  D.Key(term[1][i][0]),
-                  D.Text(":"),
-                  D.Text(" ")]),
-                term[1][i][0].length + 2);
-              go(term[1][i][1]);
+              const key = D.Many([
+                D.Key(term[1][i][0]),
+                D.Text(":"),
+                D.Text(" ")]);
+              if (term[1][i][1].term[0] === Let) {
+                push(key);
+                tab();
+                go(term[1][i][1]);
+                untab();
+              } else {
+                prepend(key, term[1][i][0].length + 2);
+                go(term[1][i][1]);
+              }
             }
             untab();
             push(D.Text("}"));
