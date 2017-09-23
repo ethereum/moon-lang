@@ -1,3 +1,6 @@
-method => param =>
-  do => end =>
-    (do method param then => (end 0))
+method => 
+  (if (cmp method "stop")
+    do => (do "stop")
+    (if (cmp method "return")
+      result => do => (do "return" result)
+      arg => cont => do => (do method arg then => (cont then do))))

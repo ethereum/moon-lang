@@ -9,7 +9,7 @@ appWalletTopButton = zb2rhhzc7jubFPdDqbj9Drs7HH1dZegrnVcvULGxiXo5gxPnG
     size = (my "size")
     state = (my "state")
     w = (get size "0")
-    h = 86
+    h = (get size "1")
     activeTab = (get state "activeTab")
 
     topButton = x => w => label => icon =>

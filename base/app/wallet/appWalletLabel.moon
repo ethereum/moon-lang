@@ -11,7 +11,7 @@
     h = (get size "1")
     [
       {
-        size: [w 14]
+        size: [w 18]
         value: label
       }
       {

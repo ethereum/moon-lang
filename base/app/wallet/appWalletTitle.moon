@@ -1,5 +1,5 @@
 {
-  params: {
+  args: {
     fst: "A"
     snd: "B"
     sep: 0.5
@@ -15,14 +15,14 @@
   
     fstTitle = {
       size:[(mul w sep) h]
-      box:{text:{color:"rgb(130,124,124)"}}
+      font:{color:"rgb(130,124,124)"}
       value:fst
     }
 
     sndTitle = {
       pos:[(mul w sep) 0]
       size:[(mul (sub 1 w) sep) h]
-      box:{text:{color:"rgb(156,148,148)", weight:300}}
+      font:{color:"rgb(156,148,148)", weight:300}
       value:snd
     }
 

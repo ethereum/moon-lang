@@ -1,5 +1,5 @@
-appWalletTop = zb2rhdhbyN3QLDnCS9R6RzuZPfvWNgR7pTxuzaFpahALLHGTa
-appWalletWallets = zb2rhcdWnVuSXsHXbwqjjvWhP7WG1NxbEDSoD3pZDmAptSueg
+appWalletTop = zb2rhopPKfLtDz9t1fcrcY5pA2BwYDN5Z5k1ytQcbaamZ4rXG
+appWalletWallets = zb2rheur4aA4nfdJmKwVwJ98w1Sq66AU9jbF9Q382eUJdkCmS
 appWalletSend = zb2rhi3zHC2wbXmc5PPBdjomuSWMgzrn8oog8QExjPXQx5Wq6
 
 {
@@ -12,7 +12,7 @@ appWalletSend = zb2rhi3zHC2wbXmc5PPBdjomuSWMgzrn8oog8QExjPXQx5Wq6
     state = (my "state")
     width = (get size "0")
     height = (get size "1")
-    topHeight = 86
+    topHeight = 109
     bottomHeight = (sub height topHeight)
     activeTab = (get state "activeTab")
 
@@ -26,6 +26,7 @@ appWalletSend = zb2rhi3zHC2wbXmc5PPBdjomuSWMgzrn8oog8QExjPXQx5Wq6
     bottom = {
       pos: [0 topHeight]
       size: [width bottomHeight]
+      box: {background: "rgb(250,250,250)"}
       value:
         (if (cmp activeTab "WALLETS")
           appWalletWallets
