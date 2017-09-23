@@ -132,13 +132,17 @@ module.exports = ipfsUrl => {
 
   // Native, Methods -> Promise result
   const performIO = (program, methods) => {
-    return program(method => args => cont => {
-      if (!methods[method]) {
+    return program(method => {
+      if (method === "return") {
+        return result => Promise.resolve(result);
+      } else if (method === "stop") {
+        return Promise.resolve(0);
+      } else if (!methods[method]) {
         throw "Unknown IO method: " + method;
       } else {
-        return methods[method](args).then(cont);
+        return args => cont => methods[method](args).then(cont);
       }
-    })(result => Promise.resolve(result));
+    });
   };
 
   return {
