@@ -226,8 +226,10 @@ const termFromString = (source) => {
       var parsed = parseTerm(vs,li,isKey,isPri);
       if (/>/.test(source[index]) && parsed !== null) {
         ++index;
-        li.push(["_", parsed]);
-        return parse(vs,li,isKey,isPri);
+        var name = "_" + nextName++;
+        li.push([name, parsed]);
+        var rest = parse(vs,li,isKey,isPri);
+        return E => T => T.Let("_", T.Var(name), rest(E)(T));
       }
       return parsed;
     }
@@ -253,39 +255,44 @@ const termFromString = (source) => {
 
 const termFormatter = decorations => term => {
   const D = decorations;
-  const App = 0, Lam = 1, Var = 2, Ref = 3,
-        Let = 4, Fix = 5, Pri = 6, Num = 7,
-        Str = 8, Map = 9, Arr = 10;
 
-  const formattable = term({
-    App: (f, x) => {
-      // (App [App f [x]] y) -> (App f [x y])
-      if (f.term[0] === App) {
-        return {
-          term: [App, f.term[1], f.term[2].concat([x])],
-          size: 3 + f.size + x.size - 2 // (f x)y -> (f x y)
-        };
-      } else {
-        return {
-          term: [App, f, [x]],
-          size: 3 + f.size + x.size // fx -> (f x)
-        };
-      }
-    },
-    Lam: (name, body) => {
-      // (Lam "foo" [Lam ["bar"] x]) -> (Lam ["foo" "bar"] x)
-      if (body.term[0] === Lam) {
-        return {
-          term: [Lam, [name].concat(body.term[1]), body.term[2]],
-          size: 4 + name.length + body.size // xy. t -> x => y => t
-        };
-      } else {
-        return {
-          term: [Lam, [name], body],
-          size: 4 + name.length + body.size, // xt -> x => t
-        };
-      }
-    },
+  // data T
+  //   = App AST [AST]
+  //   | Lam [String] AST
+  //   | Var String
+  //   | Ref String
+  //   | Let [(String, AST)] AST
+  //   | Pri String [AST]
+  //   | Num Number
+  //   | Str String
+  //   | Map [(String, AST)]
+  //   | Arr [AST]
+  //   | Blk AST
+  //   | Lif AST
+  //   | Seq AST
+  //   | Sub String AST AST
+  //
+  // type AST = {
+  //   term: T
+  //   size: Number
+  // }
+
+  const App = 0  , Lam = 1   , Var = 2  , Ref = 3  ,
+        Let = 4  , Fix = 5   , Pri = 6  , Num = 7  ,
+        Str = 8  , Map = 9   , Arr = 10 , Blk = 11 ,
+        Lif = 12 , Seq = 13  , Sub = 14;
+
+  // AST
+  //   Builds a formattable AST from a Moon AST
+  const ast = term({
+    App: (f, x) => ({
+      term: [App, f, [x]],
+      size: 3 + f.size + x.size // fx -> (f x)
+    }),
+    Lam: (name, body) => ({
+      term: [Lam, [name], body],
+      size: 4 + name.length + body.size, // xt -> x => t
+    }),
     Var: name => ({
       term: [Var, name],
       size: name.length
@@ -294,20 +301,10 @@ const termFormatter = decorations => term => {
       term: [Ref, name],
       size: name.length
     }),
-    Let: (name, term, body) => {
-      // (Let "k" v [Let [["K" V]] t]) -> (Let ["k" "v"] t)
-      if (body.term[0] === Let) {
-        return {
-          term: [Let, [[name,term]].concat(body.term[1]), body.term[2]],
-          size: 4 + name.length + term.size + body.size // kvK = V t -> k = v K = V t
-        };
-      } else {
-        return {
-          term: [Let, [[name,term]], body],
-          size: 4 + name.length + term.size + body.size, // kvt -> k = v t
-        };
-      }
-    },
+    Let: (name, term, body) => ({
+      term: [Let, [[name,term]], body],
+      size: 4 + name.length + term.size + body.size, // kvt -> k = v t
+    }),
     Fix: (name, body) => ({
       term: [Fix, name, body],
       size: 2 + name.length + body.size // xt -> x@ t
@@ -344,6 +341,108 @@ const termFormatter = decorations => term => {
     }
   });
 
+  // AST, (AST -> Maybe AST) -> AST
+  //   Performs a transforming pass
+  const pass = (ast, fn) => {
+    const F = ({term:t,size:s},S) => {
+      const transformed = fn({term:t,size:s});
+      if (transformed) {
+        return F(transformed,S);
+      } else {
+        switch (t[0]) {
+          case App: return {size:s, term:[App, F(t[1],S), t[2].map(x => F(x,S))]};
+          case Lam: return {size:s, term:[Lam, t[1], F(t[2],S)]};
+          case Var:
+            const match = find(([name,val]) => name === t[1], S);
+            return match ? match[1] : {size:s, term:[Var, t[1]]};
+          case Ref: return {size:s, term:[Ref, t[1]]};
+          case Let: return {size:s, term:[Let, t[1].map(([k,v]) => [k, F(v,S)]), F(t[2],S)]};
+          case Fix: return {size:s, term:[Fix, t[1], F(t[2],S)]};
+          case Pri: return {size:s, term:[Pri, t[1], t[2].map(x => F(x,S))]};
+          case Num: return {size:s, term:[Num, t[1]]};
+          case Str: return {size:s, term:[Str, t[1]]};
+          case Map: return {size:s, term:[Map, t[1].map(([k,v]) => [k, F(v,S)])]};
+          case Arr: return {size:s, term:[Arr, t[1].map(v => F(v,S))]};
+          case Blk: return {size:s, term:[Blk, F(t[1],S)]};
+          case Lif: return {size:s, term:[Lif, F(t[1],S)]};
+          case Sub: return F({term:t[3].term,size:s},[[t[1],F(t[2],S)],S]);
+        }
+      };
+    };
+    return F(ast, null);
+  };
+
+  // Recovers bang-notation from code without it
+  const monadicAst = pass(ast, ({term:t, size:s}) => {
+    // (App f [(Lam [v] b)]) -> (Blk b[(Lif f)/v]) {iff v is linear}
+    // TODO: this assumes variables starting with "_" are linear. This is
+    // enforced on MoonJS, but isn't part of the specs. Implement properly.
+    if (t[0] === App && t[2][0].term[0] === Lam && t[2][0].term[1][0][0] === "_") {
+      var caller = {
+        term: [Lif, t[1]],
+        size: t[1].size + 1 // f -> <f
+      };
+      var block = {
+        term: [Sub, t[2][0].term[1][0], caller, t[2][0].term[2]],
+        size: t[2][0].term[2].size - t[2][0].term[1][0].length + caller.size
+      };
+      return {
+        term: [Blk, block],
+        size: 2 + block.size // f...x... -> f | ...<x...
+      };
+    }
+  });
+
+  // Removes redundant blocks
+  const shortMonadicAst = pass(monadicAst, ({term:t, size:s}) => {
+    // (Let [...] (Blk b)) -> (Let [...] b)
+    // (Lam [...] (Blk b)) -> (Lam [...] b)
+    // (Fix [...] (Blk b)) -> (Fix [...] b)
+    if ((t[0] === Let || t[0] === Lam || t[0] === Fix) && t[2].term[0] === Blk) {
+      return {
+        term: [t[0], t[1], t[2].term[1]],
+        size: s - 2
+      };
+    }
+    // (Blk (Blk b)) -> (Blk b)
+    if (t[0] === Blk && t[1].term[0] === Blk) {
+      return t[1];
+    };
+  });
+
+  // Compacts single-arg lets, lams and apps into multi-arg forms
+  const finalAst = pass(shortMonadicAst, ({term:t, size:s}) => {
+    // (Let [[k0 v0] ...] [Let [[k1 v1]] t]) -> (Let [[k0 v0] ... [k1 v1]] t)
+    if (t[0] === Let && t[2].term[0] === Let && t[2].term[1].length === 1) {
+      return {
+        term: [Let, t[1].concat(t[2].term[1]), t[2].term[2]],
+        size: s
+      }
+    }
+    // (Let [[k0 v0] ...] [Let [[k1 v1]] t]) -> (Let [[k0 v0] ... [k1 v1]] t)
+    if (t[0] === Let && t[2].term[0] === Let && t[2].term[1].length === 1) {
+      return {
+        term: [Let, t[1].concat(t[2].term[1]), t[2].term[2]],
+        size: s
+      }
+    }
+    // (Lam [v0 ...] [Lam [v1] t]) -> (Lam [v0 ... v1] t)
+    if (t[0] === Lam && t[2].term[0] === Lam && t[2].term[1].length === 1) {
+      return {
+        term: [Lam, t[1].concat(t[2].term[1]), t[2].term[2]],
+        size: s
+      }
+    }
+    // (App [App f [x]] [... y]) -> (App f [x ... y])
+    if (t[0] === App && t[1].term[0] === App && t[1].term[2].length === 1) {
+      return {
+        term: [App, t[1].term[1], t[1].term[2].concat(t[2])],
+        size: s - 2 // ((a b) c) -> (a b c)
+      }
+    }
+  });
+
+  // Formats without indentation
   const stringifyFlat = ({term,size}) => {
     const go = ({term,size}) => {
       const joinMany = terms =>
@@ -375,12 +474,21 @@ const termFormatter = decorations => term => {
           return D.Ref(term[1]);
         case Let:
           return D.Many([
-            D.Many(term[1].map(([k,v]) =>
-              D.Many([
-                D.Var(k),
-                D.Text(" = "),
-                go(v),
-                D.Text(" ")]))),
+            D.Many(term[1].map(([k,v]) => {
+              if (k === "_" && v.term[0] === Lif) {
+                return go({
+                  term: [Seq, v.term[1]],
+                  size: v.term[1].size + 2
+                });
+              } else {
+                return D.Many([
+                  D.Var(k),
+                  D.Text(" = "),
+                  go(v),
+                  D.Text(" ")
+                ]);
+              }
+            })),
             go(term[2])]);
         case Fix:
           return D.Many([
@@ -417,11 +525,24 @@ const termFormatter = decorations => term => {
             D.Text("["),
             joinMany(term[1]),
             D.Text("]")]);
+        case Blk:
+          return D.Many([
+            D.Text("| "),
+            go(term[1])]);
+        case Lif:
+          return D.Many([
+            D.Text("<"),
+            go(term[1])]);
+        case Seq:
+          return D.Many([
+            go(term[1]),
+            D.Text("> ")]);
       }
     };
     return go({term,size});
   };
 
+  // Formats with indentation
   const stringify = ({term,size}) => {
     var tabs = 0;
     var prep = null;
@@ -470,7 +591,12 @@ const termFormatter = decorations => term => {
           case Let:
             for (var i = 0; i < term[1].length; ++i) {
               const assignment = D.Many([D.Var(term[1][i][0]), " = "]);
-              if (term[1][i][1].term[0] === Let) {
+              if (term[1][i][0] === "_" && term[1][i][1].term[0] === Lif) {
+                go({
+                  term: [Seq, term[1][i][1].term[1]],
+                  size: term[1][i][1].term[1].size + 2
+                });
+              } else if (term[1][i][1].term[0] === Let) {
                 push(assignment);
                 tab();
                 go(term[1][i][1]);
@@ -590,6 +716,20 @@ const termFormatter = decorations => term => {
             untab();
             push(D.Text("]"));
             break;
+          case Blk:
+            push(D.Text("| "));
+            tab();
+            go(term[1]);
+            untab();
+            break;
+          case Lif:
+            push(D.Text("<"));
+            go(term[1]);
+            break;
+          case Seq:
+            go(term[1]);
+            push(D.Text(">"));
+            break;
         }
       }
     }
@@ -598,8 +738,8 @@ const termFormatter = decorations => term => {
   };
 
   return D.indent
-    ? stringify(formattable)
-    : stringifyFlat(formattable);
+    ? stringify(finalAst)
+    : stringifyFlat(finalAst);
 };
 
 const termToString = (term, opts = {}) => {
