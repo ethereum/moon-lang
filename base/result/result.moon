@@ -1,0 +1,10 @@
+(get {
+  failure: zb2rhcJzepPeuU1t1ffKs5gf33jZNcqaTXU5T89q1NSpLdPMs
+  success: zb2rhWiKkBV3i9rWkEenNLnjyG1rGaRYALNXMkBs9SWf5utYJ
+  recover: zb2rhcimmXwe2Hwm6YxPf5b2tKTnZ9mrPC4EMyasSAUxe2TBL
+  isFailure: zb2rhZ5PGbQ3UGfuX6RNTA21PQ1SZ4ZbnxxPp61vXQYtZaN4C
+  wrap: zb2rhk6JrmDusWYtP2PZrgoCsESHwYYHn28T4JUTEeNmcneAk
+  map: zb2rhbAThwnBH7XbrEouWbqxUtR49QQLqcnPRMKUdYQ3zGkM4
+  flatten: zb2rhaeW4vimCf12hHDUffbaXSDjjABY2H7mddeQKB6VSbnAr
+  flatMap: zb2rhWsXqNu8PJq6xiZ5us22Qex3jraqMBqA8QM4BScEDV6Cb
+})
