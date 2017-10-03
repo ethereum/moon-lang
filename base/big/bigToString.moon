@@ -1,4 +1,4 @@
-bigToBase = zb2rhXw8GVBqpjKN3jK8x4eVHUUNZPvnyjqRnpa1yqeL1jCVm
+bigToBase = zb2rhXry2Rvu3BXQwDuNkQaFBwffsuJUdTLVJc2EA1tYgQAap
 numToChr = zb2rhaZ9TTk7YhXWSeue3gNgdJ9AJfMvgdDa5hBfBuXodafPs
 listFold = zb2rhbksBjR3yFP98YrEGss6Yv7wVCgNbYtWiwz9nGRSAoiAa
 

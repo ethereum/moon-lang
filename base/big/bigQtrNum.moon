@@ -13,7 +13,7 @@ a => b =>
       digi = (flr (div rem1 b))
       quo1 = c => n => (c digi (quo0 c n))
       diff = (mul b digi)
-      rem1 = (sub rem1 diff)
-      {quo:quo1 rem:rem1}
+      rem2 = (sub rem1 diff)
+      {quo:quo1 rem:rem2}
     end: {quo:c=>n=>n rem:0}
   })

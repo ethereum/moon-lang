@@ -176,7 +176,7 @@ const pris = [
   ["atn", 1, "(a)=>$N(a)?Math.atan(a):$P(['atn',a])", (a)=>"Math.atan("+a+")"],
   ["con", 2, "(a,b)=>$S(a)&&$S(b)?a+b:$P(['con',a,b])", (a,b)=>"("+a+"+"+b+")"],
   ["slc", 3, "(a,b,c)=>$S(a)&&$N(b)&&$N(c)?(b===c-1?a[b]||'':a.substring(b,c)):$P(['slc',a,b,c])", (a,b,c)=>"((a,b,c)=>b===c-1?a[b]||'':a.substring(b,c))("+a+","+b+","+c+")"],
-  ["cmp", 2, "(a,b)=>$S(a)&&$S(b)?(a===b?1:0):$P(['cmp',a,b])", (a,b)=>a+"==="+b],
+  ["cmp", 2, "(a,b)=>$S(a)&&$S(b)?(a===b?1:0):$P(['cmp',a,b])", (a,b)=>"("+a+"==="+b+"?1:0)"],
   ["nts", 1, "(a)=>$N(a)?String(a):$P(['nts',a])", (a)=>"String("+a+")"],
   ["stn", 1, "(a)=>$S(a)?Number(a):$P(['stn',a])", (a)=>"Number("+a+")"],
   ["gen", 1, "(f,_)=>f(k=>v=>a=>(!$S(k)||!$O(a)?$P(['gen',f]):(a[k]=v,a)))({})", (f)=>f+"(k=>v=>a=>(a[k]=v,a))({})"],

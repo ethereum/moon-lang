@@ -1,3 +1,3 @@
-flatten = zb2rhjeLWGCyUFLwN2dTtSZ99uzD88e1shnudCyZz1E1G3JeV
-map = zb2rhXAGWV4CvSjMCzinpPvsvPSbPCUjah4YKGdfhx5BgbjPK
+flatten = zb2rhdVyAPEmxC6Bumn8E4fh9aRKftYqR3FV5XxMgBHDnsuXU
+map = zb2rhgW1F8GpBDCtoXjEcqDBFXNiCDaPNt1fekX2Po8uHWiEV
 fn => array => (flatten (map fn array))

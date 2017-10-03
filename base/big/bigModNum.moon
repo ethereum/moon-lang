@@ -1,4 +1,4 @@
-bigQtrNum = zb2rhjyNi921eSUvyyVSpsrYRqPqpNkCeVS9hm871hCqVPSug
+bigQtrNum = zb2rhmNLxRXARDMEjT6DcBFMWenraake4u3vv6cWXG1FBssk1
 
 // Big -> Uint16 -> Big
 // Modulus of Bignum and a single-digit Uint16.

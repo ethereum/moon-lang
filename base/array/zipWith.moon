@@ -1,8 +1,7 @@
 fn => xs => ys =>
-  len = "length"
   (gen c => n =>
-    lim = (get xs len)
-    ini = (c len lim n)
+    lim = (get xs "length")
+    ini = (c "length" lim n)
     (for 0 lim ini i => a =>
       k = (nts i)
       g = a => (get a k)

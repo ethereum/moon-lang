@@ -1,3 +1,3 @@
-foldr = zb2rhm3gQLzX2mYD1MVzxC3fGddhGX4dvkhUFeTN9k3fsA48J
+foldr = zb2rhbTuYiZm5fGUHUhd3sQNRDhEW6FVjXLp8UyWk5hE9nQ5F
 array => cons => nil =>
   (foldr cons nil array)

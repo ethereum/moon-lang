@@ -1,4 +1,4 @@
-bigToString = zb2rhn4Z6TAEKs5AGcahw4kS8quCtA6yBFRAMwHsyTZ5WZRiQ
+bigToString = zb2rha3nHojbwekNUhiPd3sGf9Me65gxnTtVkJ5YbhscQ9wvg
 
 big =>
   (con "0x" (bigToString 16 big))

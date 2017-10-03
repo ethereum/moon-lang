@@ -1,4 +1,4 @@
-appWalletTopButton = zb2rhhzc7jubFPdDqbj9Drs7HH1dZegrnVcvULGxiXo5gxPnG
+appWalletTopButton = zb2rhcmkPB4N5wKwbjUwGCzEvXrJifEjaz4JhWXVjPDWg6HAJ
 
 {
   name: "ethereum-wallet-top"
@@ -16,9 +16,9 @@ appWalletTopButton = zb2rhhzc7jubFPdDqbj9Drs7HH1dZegrnVcvULGxiXo5gxPnG
       {
         pos: [x 0]
         size: [w h]
-        hear: words => do => end =>
+        onHear: words => do =>
           (do "setState" {activeTab: label} then =>
-          (do "yell" label (end 0)))
+          (do "yell" label (do "stop")))
         value: {
           name: label
           value: appWalletTopButton
@@ -33,9 +33,7 @@ appWalletTopButton = zb2rhhzc7jubFPdDqbj9Drs7HH1dZegrnVcvULGxiXo5gxPnG
     {
       pos: [0 0]
       size: [w h]
-      box: {
-        background: "linear-gradient(rgb(240,240,240), rgb(220,217,217))"
-      }
+      background: "linear-gradient(rgb(240,240,240), rgb(220,217,217))"
       value: [
         (topButton 16 128 "WALLETS" "∑")
         (topButton 152 80 "SEND" "⇪")

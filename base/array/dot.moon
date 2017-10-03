@@ -1,4 +1,4 @@
-sum = zb2rhjR6Xwheqn5rUyY1zv7Vh3JkHm1VnJr5RPWyJqbUP7G27
-zipWith = zb2rhhSkBSHtVk6dNL1kw3qcf2nrdyYfqpUCqbVqXC4ewcUyP
+sum = zb2rhjoGFzi3J64cVbotEzhrvSA6L8zJzZFk53NBbLodnLsjP
+zipWith = zb2rhiHxfGRPmrJqfaCaef7BWASWgwNTCvBSPAWTcfSEbqbFx
 a => b =>
   (sum (zipWith (mul) a b))

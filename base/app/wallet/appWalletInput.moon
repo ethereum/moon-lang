@@ -1,4 +1,5 @@
 min = zb2rhcMiWXCWrJDJtYVb6TWVf2YjSq4qy4vcki5uuAF5v4J9j
+do = zb2rhkLJtRQwHz9e5GjiQkBtjL2SzZZByogr1uNZFyzJGA9dX
 
 {
   name: "ethereum-wallet-input"
@@ -8,6 +9,7 @@ min = zb2rhcMiWXCWrJDJtYVb6TWVf2YjSq4qy4vcki5uuAF5v4J9j
     size = (my "size")
     text = (my "state")
     type = (my "type")
+    disabled = (my "disabled")
     w = (get size "0")
     h = (min (get (my "size") "1") 40)
     {
@@ -21,14 +23,17 @@ min = zb2rhcMiWXCWrJDJtYVb6TWVf2YjSq4qy4vcki5uuAF5v4J9j
         size: [w (mul h 0.5)]
         input: 1
         type: type
+        disabled: disabled
         paddings: {left:8, right:8}
         font: {
           color: "rgb(160,148,148)"
           size: 16
         }
-        onKeyUp: event => do => end => 
+        onKeyUp: event =>
           text = (get event "text")
-          (do "setState" text then => (do "yell" text then => (end 0)))
+          (do "setState" text)>
+          (do "yell" text)>
+          (do "stop")
         value: text
       }
     }

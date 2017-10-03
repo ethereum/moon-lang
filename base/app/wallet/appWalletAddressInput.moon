@@ -1,5 +1,8 @@
 min = zb2rhcMiWXCWrJDJtYVb6TWVf2YjSq4qy4vcki5uuAF5v4J9j
-input = zb2rhj5aJtA5SmuhvSpofhmEgdusQoNopMSSAkZ4oaNh5gGU3
+input = zb2rhXu3yqPyEx5nBKqATrLY8ZYLLqh5HjXQa71TzEzpWBPAa
+do = zb2rhkLJtRQwHz9e5GjiQkBtjL2SzZZByogr1uNZFyzJGA9dX
+renderAddress = zb2rhcFBqeo5M1gL8sFVuZXcZZmuWHrjpTjuhUDZiZ9oBJtRP
+
 {
   name: "ethereum-wallet-address-input"
   state: ""
@@ -11,17 +14,16 @@ input = zb2rhj5aJtA5SmuhvSpofhmEgdusQoNopMSSAkZ4oaNh5gGU3
       {
         pos: [h 0]
         size: [(sub w h) h]
-        onHear: newAddress => do => end =>
-          (do "setState" newAddress then =>
-          (do "yell" newAddress then =>
-          (end 0)))
+        onHear: newAddress => do =>
+          (do "setState" newAddress)>
+          (do "yell" newAddress)>
+          (do "stop")
         value: input
       }
       {
         pos: [0 0]
         size: [h h]
-        background:"rgb(120,120,120)"
-        value: ""
+        value: (renderAddress address 8 (div h 8))
       }
     ]
 }

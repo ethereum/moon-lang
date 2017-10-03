@@ -1,3 +1,2 @@
-ifoldr = zb2rhXLdKusfYqBUMf1PTKp29ZZdEgV6GWftDBFBrr7EssWFj
-cons =>
-  (ifoldr i => cons)
+ifoldr = zb2rhcw9WTW6XGdppMfUnQGz2na5VoCJRmjWyFAHkXaRHgDxs
+cons => (ifoldr i => cons)

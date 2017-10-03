@@ -1,3 +1,2 @@
-ifoldl = zb2rhXGcmKQVvCtxws32SbxXXifiXTiRcvey35VzptSDBKcog
-snoc =>
-  (ifoldl r => i => (snoc r))
+ifoldl = zb2rhkjxcQuHyQeYoYhJgwjvNuAWhVSK1fQ6rx2oiwHMvocVp
+snoc => (ifoldl r => i => (snoc r))

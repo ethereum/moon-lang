@@ -1,6 +1,5 @@
-appWalletTop = zb2rhopPKfLtDz9t1fcrcY5pA2BwYDN5Z5k1ytQcbaamZ4rXG
-appWalletWallets = zb2rheur4aA4nfdJmKwVwJ98w1Sq66AU9jbF9Q382eUJdkCmS
-appWalletSend = zb2rhi3zHC2wbXmc5PPBdjomuSWMgzrn8oog8QExjPXQx5Wq6
+appWalletTop = zb2rhcKX6uNg3pKCxiwuwcH3JVaNMKwCCqthgg2VQH6FoGwYE
+appWalletSend = zb2rhbm4yDdYoV8mbmXZ7o2Bn7XRTvosMSxt4EytfHg4cedJ7
 
 {
   name: "ethereum-wallet",
@@ -19,24 +18,25 @@ appWalletSend = zb2rhi3zHC2wbXmc5PPBdjomuSWMgzrn8oog8QExjPXQx5Wq6
     top = {
       pos:[0 0]
       size:[width topHeight]
-      hear: tab => do => end => (do "setState" {activeTab: tab} (end 0))
+      onHear: tab => do =>
+        (do "setState" {activeTab: tab}
+          (do "stop"))
       value: appWalletTop
     }
 
     bottom = {
       pos: [0 topHeight]
       size: [width bottomHeight]
-      box: {background: "rgb(250,250,250)"}
+      background: "rgb(250,250,250)"
       value:
         (if (cmp activeTab "WALLETS")
-          appWalletWallets
+          "-"
           appWalletSend)
     }
 
     {
       pos: [0 0]
       size: size
-      box: {text:{color:"rgb(200,200,200)"}}
       value: [top bottom]
     }
 }
