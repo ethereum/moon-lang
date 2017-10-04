@@ -103,7 +103,9 @@ encodeType = encode @ type => term =>
     }
     encodedSize = (if (eql lastDim 0) (encodeUint256 (u16ToBig size)) "0")
     encodedTuple = (encode tupleType terms)
-    (bytesConcat encodedSize encodedTuple)
+    (bytesConcat
+      encodedSize
+      encodedTuple)
 
   name = (get type "name")
 

@@ -75,7 +75,7 @@ const termFromString = (source) => {
           } else {
             ++index;
             if (/[\\"\/bfnrt]/.test(source[index])) {
-              switch (source[index]) {
+              switch (source[index++]) {
                 case "b": string += "\b"; break;
                 case "f": string += "\f"; break;
                 case "n": string += "\n"; break;
@@ -83,7 +83,7 @@ const termFromString = (source) => {
                 case "t": string += "\t"; break;
                 case "\\": string += "\\"; break;
                 case "/": string += "/"; break;
-                case '"': string += ''; break;
+                case '"': string += '"'; break;
                 default: throw error;
               }
             } else if (/u/.test(source[index])) {
@@ -507,9 +507,7 @@ const termFormatter = decorations => term => {
           return D.Num(String(term[1]));
         case Str:
           return D.Str(D.Many([
-            D.Text('"'),
-            term[1],
-            D.Text('"')]));
+            D.Text(JSON.stringify(term[1]))]));
         case Map:
           return D.Many([
             D.Text("{"),
@@ -684,7 +682,7 @@ const termFormatter = decorations => term => {
             push(D.Num(String(term[1])));
             break;
           case Str:
-            push(D.Str('"' + term[1] + '"'));
+            push(D.Str(JSON.stringify(term[1])));
             break;
           case Map:
             push(D.Text("{"));
