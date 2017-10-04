@@ -1,6 +1,6 @@
 {
   "name": "moon-lang",
-  "version": "0.2.28",
+  "version": "0.2.29",
   "description": "Universal code-interchange format",
   "main": "lib/moon-api.js",
   "scripts": {
@@ -19,8 +19,7 @@
   "homepage": "https://github.com/maiavictor/moon#readme",
   "dependencies": {
     "nano-ipfs-store": "^0.1.3",
-    "nano-persistent-memoizer": "^0.1.2",
-    "web3": "^1.0.0-beta.22"
+    "nano-persistent-memoizer": "^0.1.2"
   },
   "devDependencies": {
     "bn": "^1.0.1",
