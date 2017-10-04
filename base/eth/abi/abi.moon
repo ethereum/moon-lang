@@ -9,17 +9,21 @@ arrayInit = zb2rhdmABYWjjPKYdUzzsSyt7tqhUfVHfcCWUPiBx9AEyTa8Z
 
 strFilter = zb2rhnhgfZ8ynnFW7WtAuQvU23Z6Bt5UxYCVx8usrjt1m8VSu
 strSplit = zb2rheqi4ntPSJQnoW8aCC7x9ydG5WBAM2dtDsQ9fDjkp36ek
+strIndexOf = zb2rhbxRScabKQaihsvikS7VLMrqwVmG5xTiV8dhpmoycAHcV
 
 bytesLength = zb2rhbRAVvyLUE9tCysrnWvP7guviTgXQWzcK41KocGrhnvnH
 bytesConcat = zb2rhd8xzKmJPH4H4D8SABF547bcJy2P5ze7hmPEHJz2Pnp7N
 bytesPad = zb2rharxQTRobPCL5Qhy6LaWTWo7LsYJ63rVzqjDrk3hArS8T
 bytesFromHex = zb2rhnRAXG8KJ9FAwVTmW7qrfcMuWVJcnKNb5qSBe3sp2r9JS
 bytesSlice = zb2rhg1FpG1nrxVEGvjp1gfU2tCP9sRmXXL77HjL2qnCfjUmv
+bytesFromAscii = zb2rhoav2oVBSU3zQ3Yu1yZqUPcDFwLzxw2bG8NZqKWf4RVUj
 
 u16ToBig = zb2rhYRhv5qo5sPoXSkH34uT4tRxpFDnNkc6G5BDW6pDEk3TW
 bigToHex = zb2rhZFXk2vLZmHXnJ3VCsZfRXjDfSEi3o2fUT6g2iC7wecGU
 hexToBig = zb2rhndxjNzRFG1YPHe8xK9S9nwGQKm3ChEBxovm8R2EC56F1
 bigToNum = zb2rhhuEY9zoiu9rsJK7Mi3UGrQbRYTTyfFwiGyxdx1SP9raW
+
+keccak256 = zb2rhkcDyioJbNcAMUAD4rBxi1pp5g5qFzAkGvQiKPu6MJcVu
 
 isDynamic = isDynamic @ type =>
   name = (get type "name")
@@ -53,6 +57,9 @@ encodeType = encode @ type => term =>
 
   encodeBytes32 = hex =>
     (bytesPad 1 32 "0x00" (bytesFromHex hex))
+
+  encodeAddress = hex =>
+    (bytesPad 0 32 "0x00" (bytesFromHex hex))
 
   encodeUint256 = big =>
     (bytesPad 0 32 "0x00" (bytesFromHex (bigToHex big)))
@@ -118,13 +125,27 @@ encodeType = encode @ type => term =>
   (if (cmp name "bytes32")
     (encodeBytes32 term)
 
+  (if (cmp name "address")
+    (encodeAddress term)
+
   (if (cmp name "uint256")
+    (encodeUint256 term)
+
+  (if (cmp name "bool")
     (encodeUint256 term)
 
   (if (cmp name "bytes")
     (encodeBytes term)
 
-    "unsupported_type")))))
+    (con "0xunsupported_type_" name))))))))
+
+encodeCall = method => params =>
+  parensIndex = (strIndexOf "(" method)
+  methodName = (slc method 0 parensIndex)
+  methodType = (slc method parensIndex (len method))
+  sig = (bytesSlice (keccak256 (bytesFromAscii (con methodName methodType))) 0 4)
+  dat = (encodeType (type methodType) params)
+  (bytesConcat sig dat)
 
 decodeType = type => bytes =>
   decode = decode @ type => bytes => i =>
@@ -138,6 +159,12 @@ decodeType = type => bytes =>
       {
         idx: (add i 32)
         val: (bytesSlice bytes i (add i 32))
+      }
+
+    decodeAddress = i =>
+      {
+        idx: (add i 32)
+        val: (bytesSlice bytes 12 (add i 32))
       }
 
     decodeBytes = i =>
@@ -189,13 +216,19 @@ decodeType = type => bytes =>
       (if (cmp name "bytes32")
         (decodeBytes32 i)
 
+      (if (cmp name "address")
+        (decodeAddress i)
+
       (if (cmp name "uint256")
+        (decodeUint256 i)
+
+      (if (cmp name "bool")
         (decodeUint256 i)
 
       (if (cmp name "bytes")
         (decodeBytes i)
 
-        "unsupported_type")))))
+        (con "unsupported_type_" name))))))))
 
     result
 
@@ -204,4 +237,5 @@ decodeType = type => bytes =>
 (get {
   encode: typeStr => (encodeType (type typeStr))
   decode: typeStr => (decodeType (type typeStr))
+  encodeCall: encodeCall
 })
