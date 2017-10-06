@@ -2,7 +2,8 @@ title = zb2rhgVxRuCMyiunDuRaMtFCFEfqNU3CRqz1SzSa2EpCACRfD
 label = zb2rhcoC7ABP6T3q2AhqmUY47SXCc7d8fGHYkGL9UWioaamBU
 input = zb2rhXu3yqPyEx5nBKqATrLY8ZYLLqh5HjXQa71TzEzpWBPAa
 formatAmount = zb2rhgj5ZNgE8uiu2NWB7dmb8HcdVHi5X5a7DgmJWJPuUEkFJ
-addressInput = zb2rhb1RYphGD1XFXR3wYxoXUY9pLQZrVtKncyKEJmCQ2VQex
+addressInput = zb2rhbPZQztX9vDwXKAQpmRXjFmcCch24BNhZy8QoMC355tPN
+do = zb2rhkLJtRQwHz9e5GjiQkBtjL2SzZZByogr1uNZFyzJGA9dX
 
 sendApp = my =>
   w = (get (my "size") "0")
@@ -50,7 +51,9 @@ sendApp = my =>
           pos: [60 y]
           size: [470 66]
           font: labelText
-          onHear: from => do => (do "setState" (updateAddress from) then => (do "stop"))
+          onHear: from => 
+            (do "setState" (updateAddress from))>
+            (do "stop")
           name: addressName
           value: label
           set: {
@@ -64,9 +67,12 @@ sendApp = my =>
       toBox = (addressBox 191 (updateState "to") "to" "SEND TO")
 
       amountBox = {
+        name: "amount-box"
         pos: [60 324]
         size: [160 66]
-        onHear: amount => do => (do "setState" (updateState "amount" amount) then => (do "stop"))
+        onHear: amount => 
+          (do "setState" (updateState "amount" amount))>
+          (do "stop")
         font: labelText
         value: label
         set: {
@@ -77,37 +83,16 @@ sendApp = my =>
         }
       }
 
-      unitBox = {
-        pos: [(add 60 (add w 8)) 280]
-        size: [(sub w 8) 66]
+      tokenBox = {
+        name: "token-box"
+        pos: [250 324]
+        size: [160 66]
+        font: labelText
         value: label
         set: {
           label: ""
-          thing: 
-            {
-              font:{color:"rgb(120,120,120)"}
-              value: my =>
-                w = (get (my "size") "0")
-                h = (get (my "size") "1")
-                y = 6
-                h2 = (sub h (mul y 2))
-                w2 = (div w 2)
-                [
-                  {
-                    pos:[0 y]
-                    size:[w2 h2]
-                    value:"Ξ ETHER"
-                  }
-                  {
-                    pos:[w2 y]
-                    size:[w2 h2]
-                    font:{align:"right"}
-                    value: 
-                      amount = (slc (nts (stn (get state "amount"))) 0 10)
-                      (con (con amount " ") "ETHER")
-                  }
-                ]
-            }
+          type: "text"
+          thing: input
         }
       }
 
@@ -125,9 +110,10 @@ sendApp = my =>
                 color: "rgb(140,140,140)"
               }
               cursor: "pointer"
-              onClick: do =>
+              onClick: |
                 newState = (updateState "sendAll" (sub 1 (get state "sendAll")))
-                (do "setState" newState then => (do "stop"))
+                (do "setState" newState)>
+                (do "stop")
               value: (if (get state "sendAll") "X" "")
             }
             {
@@ -143,7 +129,7 @@ sendApp = my =>
           ]
       }
 
-      sendBox = {
+      sendButton = {
         pos: [0 475]
         size: [w (sub h 475)]
         background: "rgb(240,240,240)"
@@ -156,16 +142,16 @@ sendApp = my =>
             radius: 2
             font:{size:22}
             borders:{bottom:{size:3 style:"solid" color:"rgb(60,151,212)"}}
-            onClick: do =>
+            onClick: |
               tx = {
                 from: (get state "from")
                 to: (get state "to")
                 value: (get state "amount")
               }
-              (do "setState" (updateState "result" "") then =>
-                (do "eth" ["sendTransaction" tx] result =>
-                  (do "setState" (updateState "result" result) then =>
-                    (do "stop"))))
+              (do "setState" (updateState "result" ""))>
+              result = <(do "eth" ["sendTransaction" tx])
+              (do "setState" (updateState "result" result))>
+              (do "stop")
             value: {
               pos: [0 10]
               size: [280 36]
@@ -192,9 +178,9 @@ sendApp = my =>
         fromBox
         toBox
         amountBox
-        unitBox
+        tokenBox
         sendAllBox
-        sendBox
+        sendButton
       ]
   }
 

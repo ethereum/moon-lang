@@ -1,7 +1,7 @@
 min = zb2rhcMiWXCWrJDJtYVb6TWVf2YjSq4qy4vcki5uuAF5v4J9j
 input = zb2rhXu3yqPyEx5nBKqATrLY8ZYLLqh5HjXQa71TzEzpWBPAa
 do = zb2rhkLJtRQwHz9e5GjiQkBtjL2SzZZByogr1uNZFyzJGA9dX
-renderAddress = zb2rhcFBqeo5M1gL8sFVuZXcZZmuWHrjpTjuhUDZiZ9oBJtRP
+renderAddress = zb2rhe7DnDFA13zHnhUGUjBn7nMuDhyxbdgCds24WnR9Dc2G7
 
 {
   name: "ethereum-wallet-address-input"
@@ -23,6 +23,7 @@ renderAddress = zb2rhcFBqeo5M1gL8sFVuZXcZZmuWHrjpTjuhUDZiZ9oBJtRP
       {
         pos: [0 0]
         size: [h h]
+        radius: (div h 2)
         value: (renderAddress address 8 (div h 8))
       }
     ]

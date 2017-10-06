@@ -1,10 +1,11 @@
-appWalletTopButton = zb2rhcmkPB4N5wKwbjUwGCzEvXrJifEjaz4JhWXVjPDWg6HAJ
+appWalletTopButton = zb2rhb8zjeiRfBzBJLABVKQCQHGAv9RZ6s8mBQjHHCCCajmBD
 
 {
   name: "ethereum-wallet-top"
   state: {
-    activeTab: "WALLETS"
+    activeTab: "RECEIVE"
   }
+  font: {family: "helvetica"}
   value: my =>
     size = (my "size")
     state = (my "state")
@@ -35,8 +36,8 @@ appWalletTopButton = zb2rhcmkPB4N5wKwbjUwGCzEvXrJifEjaz4JhWXVjPDWg6HAJ
       size: [w h]
       background: "linear-gradient(rgb(240,240,240), rgb(220,217,217))"
       value: [
-        (topButton 16 128 "WALLETS" "∑")
-        (topButton 152 80 "SEND" "⇪")
+        (topButton 16 128 "RECEIVE" "⇩")
+        (topButton 152 80 "SEND" "⇧")
       ]
     }
 }

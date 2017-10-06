@@ -1,5 +1,6 @@
-appWalletTop = zb2rhcKX6uNg3pKCxiwuwcH3JVaNMKwCCqthgg2VQH6FoGwYE
-appWalletSend = zb2rhbm4yDdYoV8mbmXZ7o2Bn7XRTvosMSxt4EytfHg4cedJ7
+appWalletTop = zb2rhjNgBa9a74gNfGFWxyswhB1nRbQGG3Z6FaHwyXoDA7LuW
+appWalletSend = zb2rhYC1SfbZ4mbcJDVLp1ML8wRNFs1uzkWWNrNaPndt1VHkc
+appWalletReceive = zb2rhf3qG53qZJPMZyCm1EruajUmyawWQnwUFxqwpk7YQhx4N
 
 {
   name: "ethereum-wallet",
@@ -29,8 +30,8 @@ appWalletSend = zb2rhbm4yDdYoV8mbmXZ7o2Bn7XRTvosMSxt4EytfHg4cedJ7
       size: [width bottomHeight]
       background: "rgb(250,250,250)"
       value:
-        (if (cmp activeTab "WALLETS")
-          "-"
+        (if (cmp activeTab "RECEIVE")
+          appWalletReceive
           appWalletSend)
     }
 
