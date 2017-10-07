@@ -1,4 +1,4 @@
-tokenTable = zb2rhYLvFWqWEHswxQymVb8JyE4zXjx8DWZSGerg5QFonvQWZ
+tokenTable = zb2rhmmKhoSZknG3mgsYinVhiHnHWRd6e6wTfqinf3crAwgPe
 
 receiveApp = my =>
   w = (get (my "size") "0")
@@ -10,6 +10,7 @@ receiveApp = my =>
     background: "rgb(250,250,250)"
     value: {
       pos: [55 40]
+      size: [(sub w 110) (sub h 80)]
       set: {
         addr: address
       }

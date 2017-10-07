@@ -1,6 +1,6 @@
 appWalletTop = zb2rhjNgBa9a74gNfGFWxyswhB1nRbQGG3Z6FaHwyXoDA7LuW
 appWalletSend = zb2rhYC1SfbZ4mbcJDVLp1ML8wRNFs1uzkWWNrNaPndt1VHkc
-appWalletReceive = zb2rhf3qG53qZJPMZyCm1EruajUmyawWQnwUFxqwpk7YQhx4N
+appWalletReceive = zb2rhms2DkGUSgHsdNHnNGuV4ifkTSBYfaQ1SyB1Zx2VTU5UX
 
 {
   name: "ethereum-wallet",
@@ -20,8 +20,8 @@ appWalletReceive = zb2rhf3qG53qZJPMZyCm1EruajUmyawWQnwUFxqwpk7YQhx4N
       pos:[0 0]
       size:[width topHeight]
       onHear: tab => do =>
-        (do "setState" {activeTab: tab}
-          (do "stop"))
+        (do "setState" {activeTab: tab})>
+        (do "stop")
       value: appWalletTop
     }
 
