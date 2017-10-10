@@ -4,6 +4,12 @@ input = zb2rhXu3yqPyEx5nBKqATrLY8ZYLLqh5HjXQa71TzEzpWBPAa
 formatAmount = zb2rhgj5ZNgE8uiu2NWB7dmb8HcdVHi5X5a7DgmJWJPuUEkFJ
 addressInput = zb2rhbPZQztX9vDwXKAQpmRXjFmcCch24BNhZy8QoMC355tPN
 do = zb2rhkLJtRQwHz9e5GjiQkBtjL2SzZZByogr1uNZFyzJGA9dX
+select = zb2rhb7fWCHtBdFAKEFbpELP6UNXMxUCnnvcfjJmmCxc3UEVo
+arrayMap = zb2rhgW1F8GpBDCtoXjEcqDBFXNiCDaPNt1fekX2Po8uHWiEV
+arrayGet = zb2rhjfCUgfysNDVs2pTuMw9Um8hRbGyYdsjKCaMTceKAGDSG
+arrayJoin = zb2rhgWm1GQM8ith9EBVJSMxsLAZBzGGsCvgnyaPZHmz3c7ym
+erc20TokenList = zb2rhdWFStnichuAgzjzvnC3g1wMdp1hcDAdRginacN8zoqQs
+tokenTransfer = zb2rhfr5TACypc3eLXqofWbGpAUWs4oUD2za4cFSs7ket6cYq
 
 sendApp = my =>
   w = (get (my "size") "0")
@@ -15,6 +21,7 @@ sendApp = my =>
       to: ""
       amount: ""
       result: ""
+      tokenIndex: 0
       sendAll: 0
     }
     pos: [0 0]
@@ -26,6 +33,7 @@ sendApp = my =>
       size = (my "size")
       w = (get size "0")
       h = (get size "1")
+      token = (arrayGet erc20TokenList (get state "tokenIndex"))
 
       updateState = key => val =>
         refresh = k => (if (cmp key k) val (get state k))
@@ -34,6 +42,7 @@ sendApp = my =>
           to: (refresh "to")
           amount: (refresh "amount")
           result: (refresh "result")
+          tokenIndex: (refresh "tokenIndex")
           sendAll: (refresh "sendAll")
         }
 
@@ -69,7 +78,7 @@ sendApp = my =>
       amountBox = {
         name: "amount-box"
         pos: [60 324]
-        size: [160 66]
+        size: [140 66]
         onHear: amount => 
           (do "setState" (updateState "amount" amount))>
           (do "stop")
@@ -85,14 +94,43 @@ sendApp = my =>
 
       tokenBox = {
         name: "token-box"
-        pos: [250 324]
-        size: [160 66]
-        font: labelText
-        value: label
+        pos: [210 370]
+        size: [90 20]
+        onHear: tokenIndex =>
+          (do "setState" (updateState "tokenIndex" tokenIndex))>
+          (do "stop")
+        font: {
+          align: "center"
+          color: "rgb(130,124,124)"
+        }
+        value: select
         set: {
-          label: ""
-          type: "text"
-          thing: input
+          arrows: {
+            left: {
+              font: {
+                align: "center"
+                color: "rgb(105,153,223)"
+              }
+              value: "←"
+            }
+            right: {
+              font: {
+                align: "center"
+                color: "rgb(105,153,223)"
+              }
+              value: "→"
+            }
+          }
+          options:
+            option = token =>
+              {
+                font: {
+                  align: "center"
+                  color: "rgb(160,160,160)"
+                }
+                value: (get token "symbol")
+              }
+            (arrayMap option erc20TokenList)
         }
       }
 
@@ -143,13 +181,13 @@ sendApp = my =>
             font:{size:22}
             borders:{bottom:{size:3 style:"solid" color:"rgb(60,151,212)"}}
             onClick: |
-              tx = {
-                from: (get state "from")
-                to: (get state "to")
-                value: (get state "amount")
-              }
+              to = (get state "to")
+              amount = (stn (get state "amount"))
+              symbol = (get token "symbol")
+              (do "print" symbol)>
+              (do "print" amount)>
               (do "setState" (updateState "result" ""))>
-              result = <(do "eth" ["sendTransaction" tx])
+              result = <(tokenTransfer to amount symbol)
               (do "setState" (updateState "result" result))>
               (do "stop")
             value: {
@@ -162,7 +200,8 @@ sendApp = my =>
               }
               value: 
                 amount = (if (get state "sendAll") "ALL" (formatAmount (stn (get state "amount"))))
-                (con "SEND " (con amount " ETHER"))
+                tokenSymbol = (get token "symbol")
+                (arrayJoin " " ["SEND" amount tokenSymbol])
             }
           }
           {

@@ -7,3 +7,8 @@ to => value => contractAddress =>
     data: (abi "encodeCall" "transfer(address,uint256)" [to value])
   }
   (do "eth" ["sendTransaction" [tx]])
+
+//0x
+//a9059cbb
+//000000000000000000000000c7fe03ce5fb8d188554e19e64d34522e77c4e6d4
+//00000000000000000000000000000000000000000000000000038d7ea4c68000
