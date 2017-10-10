@@ -1,5 +1,5 @@
 appWalletTop = zb2rhjNgBa9a74gNfGFWxyswhB1nRbQGG3Z6FaHwyXoDA7LuW
-appWalletSend = zb2rhcLDiG9nihhRkRJ3rnGYtTpuvmTfmRF2totA82itkbuAW
+appWalletSend = zb2rhXCFbisBzzyV4jqnigcSwXxbUbEaRiSgAJDh3bnvNM3xy
 appWalletReceive = zb2rhms2DkGUSgHsdNHnNGuV4ifkTSBYfaQ1SyB1Zx2VTU5UX
 
 {
