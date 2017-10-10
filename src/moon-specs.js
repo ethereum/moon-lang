@@ -19,32 +19,36 @@
 // named variable, Fix is the fixed point, Pri encodes a primitive operation.
 // Num, Str and Map hold JSON data. There are 27 primitive ops:
 // 
-// if  :: Number -> MoonTerm -> MoonTerm
-// add :: Number -> Number -> Number
-// sub :: Number -> Number -> Number
-// mul :: Number -> Number -> Number
-// div :: Number -> Number -> Number
-// mod :: Number -> Number -> Number
-// pow :: Number -> Number -> Number
-// log :: Number -> Number -> Number
-// ltn :: Number -> Number -> Number
-// gtn :: Number -> Number -> Number
-// eql :: Number -> Number -> Number
-// flr :: Number -> Number
-// sin :: Number -> Number
-// cos :: Number -> Number
-// tan :: Number -> Number
-// asn :: Number -> Number
-// acs :: Number -> Number
-// atn :: Number -> Number
-// con :: String -> String -> String
-// slc :: String -> Number -> Number -> String
-// cmp :: String -> String -> Number
-// nts :: Number -> String
-// stn :: String -> Number
-// gen :: ((String -> a -> Map a) -> Map a -> Map a) -> Map a
-// get :: String -> Map a -> Nullable a
-// for :: Number -> Number -> st -> (Number -> st -> st) -> st
+// if  :: Number -> a -> a -> a                                            -- lazy branching
+// add :: Number -> Number -> Number                                       -- addition
+// sub :: Number -> Number -> Number                                       -- subtraction
+// mul :: Number -> Number -> Number                                       -- multiplication
+// div :: Number -> Number -> Number                                       -- division
+// mod :: Number -> Number -> Number                                       -- modulus
+// pow :: Number -> Number -> Number                                       -- power
+// log :: Number -> Number -> Number                                       -- logarithm
+// ltn :: Number -> Number -> Number                                       -- less than
+// gtn :: Number -> Number -> Number                                       -- greater than
+// eql :: Number -> Number -> Number                                       -- number equality
+// flr :: Number -> Number                                                 -- floor
+// sin :: Number -> Number                                                 -- sine
+// cos :: Number -> Number                                                 -- cosine
+// tan :: Number -> Number                                                 -- tangent
+// asn :: Number -> Number                                                 -- arcsine
+// acs :: Number -> Number                                                 -- arccosine
+// atn :: Number -> Number                                                 -- arctangent
+// con :: String -> String -> String                                       -- concatenation
+// slc :: String -> Number -> Number -> String                             -- slicing
+// cmp :: String -> String -> Number                                       -- string equality
+// nts :: Number -> String                                                 -- number to string
+// stn :: String -> Number                                                 -- string to number
+// gen :: ((String -> a -> Map a) -> Map a -> Map a) -> Map a              -- generates a map dynamically
+// get :: String -> Map a -> a                                             -- map lookup, key *must* be present
+// for :: Number -> Number -> state -> (Number -> state -> state) -> state -- loops
+// len :: String -> Number                                                 -- string length
+// xor :: Number -> Number -> Number                                       -- uint32 bitwise xor
+// or  :: Number -> Number -> Number                                       -- uint32 bitwise or
+// and :: Number -> Number -> Number                                       -- uint32 bitwise and
 //
 // Most operations are hopefully obvious. `con` is concatenation, `slc` is
 // slicing, `cmp` is string equality comparison. `nts` and `stn` converts from
