@@ -2,7 +2,7 @@ title = zb2rhgVxRuCMyiunDuRaMtFCFEfqNU3CRqz1SzSa2EpCACRfD
 label = zb2rhcoC7ABP6T3q2AhqmUY47SXCc7d8fGHYkGL9UWioaamBU
 input = zb2rhXu3yqPyEx5nBKqATrLY8ZYLLqh5HjXQa71TzEzpWBPAa
 formatAmount = zb2rhgj5ZNgE8uiu2NWB7dmb8HcdVHi5X5a7DgmJWJPuUEkFJ
-addressInput = zb2rhbPZQztX9vDwXKAQpmRXjFmcCch24BNhZy8QoMC355tPN
+addressInput = zb2rhZ1Fnx8Yauif6Apj7nwUJDvX1N3HW3EzcZs2vNYVyBMeu
 do = zb2rhkLJtRQwHz9e5GjiQkBtjL2SzZZByogr1uNZFyzJGA9dX
 
 sendApp = my =>
@@ -114,7 +114,7 @@ sendApp = my =>
                 newState = (updateState "sendAll" (sub 1 (get state "sendAll")))
                 (do "setState" newState)>
                 (do "stop")
-              value: (if (get state "sendAll") "X" "")
+              value: (if (get state "sendAll") "✔" "")
             }
             {
               pos: [35 0]
