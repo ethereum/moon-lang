@@ -2,7 +2,7 @@ min = zb2rhcMiWXCWrJDJtYVb6TWVf2YjSq4qy4vcki5uuAF5v4J9j
 do = zb2rhkLJtRQwHz9e5GjiQkBtjL2SzZZByogr1uNZFyzJGA9dX
 
 {
-  name: "ethereum-wallet-input"
+  name: "primitive-input"
   state: ""
   args: {
     paddings: size => {}

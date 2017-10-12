@@ -1,5 +1,5 @@
 min = zb2rhcMiWXCWrJDJtYVb6TWVf2YjSq4qy4vcki5uuAF5v4J9j
-primitiveInput = zb2rhZW1hEgTFfTA2KWt3TzZcr9hqVxvnC6XXvYBhyiQQkfis
+primitiveInput = zb2rhavZE48pZVgZrCH2hshynpLpGjac1o7uSo5P1uxxAMWQF
 renderAddress = zb2rhe7DnDFA13zHnhUGUjBn7nMuDhyxbdgCds24WnR9Dc2G7
 addressLib = zb2rhcTJ9VEbvgij9DTfphtzza1hzTETqVQXc1948GvoAGWjM
 isChecksum = zb2rhgTfh2fo9AmE7xmkDnn3Vtm7DFQopSopYeKiDS35wWtZW

@@ -1,8 +1,10 @@
-addressInput = zb2rhc7knKY19pDeoXQkEroHfPc7hn6QYCM75wxdJ8143Hnzc
-primitiveInput = zb2rhZW1hEgTFfTA2KWt3TzZcr9hqVxvnC6XXvYBhyiQQkfis
+addressInput = zb2rhnFjThdp5YQuN7ookdx6GYQMzB4CZFPWDF267p94VvNkZ
+primitiveInput = zb2rhavZE48pZVgZrCH2hshynpLpGjac1o7uSo5P1uxxAMWQF
 
-my => {
-  value: (if (cmp (my "type") "address")
-    addressInput
-    primitiveInput)
+{
+  name: "input"
+  value: my =>
+    (if (cmp (my "type") "address")
+      addressInput
+      primitiveInput)
 }

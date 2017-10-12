@@ -1,9 +1,9 @@
-input = zb2rheNMvxPG25EnpC4yCjHvUMSBLuEckcp2Po5vRTmfWxBqj
+input = zb2rhd3YtZbhHjhYx69SGPnbjVhTDUyWpaPzEHbnmZDZVFJzw
 do = zb2rhkLJtRQwHz9e5GjiQkBtjL2SzZZByogr1uNZFyzJGA9dX
 
 my => {
   set: {
-    type: "address"
+    type: "number"
   }
   onHear: value =>
     (do "print" value)>

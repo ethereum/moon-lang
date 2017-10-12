@@ -17,6 +17,7 @@ tokenRow = zb2rhncYBN1MMTVqMGD3YbuQgX6fGsekaBR8fEE971WoHYUiR
 
   state: {
     balances: (arrayMap (x => 0) tokenList)
+    selected: ""
   }
 
   args: {
@@ -33,32 +34,76 @@ tokenRow = zb2rhncYBN1MMTVqMGD3YbuQgX6fGsekaBR8fEE971WoHYUiR
     height = (get size "1")
     lineHeight = (my "lineHeight")
 
-    addressIcon =
-      {
-        pos: [0 0]
-        size: [lineHeight lineHeight]
-        radius: (div lineHeight 2)
-        value: (renderAddress address 8 (div lineHeight 8))
+    tokenRow = size => dark => symbol => name => address => balance =>
+      height = (get size "1")
+      radius = (div height 2)
+      onClick =
+        newState = {
+          balances: (get state "balances")
+          selected: symbol
+        }
+        (do "setState" newState)>
+        (do "yell" symbol)>
+        (do "stop")
+      nameFont = {
+        color: "rgb(87,77,77)"
+        cursor: "poiter"
+        family: "helvetica"
       }
-
-    addressHex = 
-      {
-        pos: [lineHeight 0]
-        size: [(sub width lineHeight) lineHeight]
-        font: {color: "rgb(87,77,77)" family: "helvetica"}
-        selectable: 1
-        value: | (paddings 3 2 3 2)> address
+      balanceFont = {
+        family: "monospace"
+        align: "right"
+      } 
+      symbolFont = {
+        family: "monospace"
+        size: (mul lineHeight 0.4)
+        weight: "bold"
       }
+      selected = (cmp symbol (get state "selected"))
+      background =
+        (if selected
+          "rgba(0,0,0,0.15)"
+          (if dark
+            "rgba(0,0,0,0.05)"
+            "rgba(0,0,0,0)"
+          )
+        )
+      wrap = t => r => l => b => value =>
+        {
+          background: background
+          cursor: "pointer"
+          onClick: onClick
+          value: (paddings t r l b value)
+        }
+      icon = (renderAddress address 8 (div height 8))
+      [
+        (wrap 3 2 3 2 {
+          radius: radius
+          value: icon
+        })
+        (wrap 3 2 3 2 {
+          font: nameFont
+          value: name
+        })
+        (wrap 3 1 3 0 {
+          font: balanceFont
+          value: (numberFormatUnit balance)
+        })
+        (wrap 3 0 3 1 {
+          font: symbolFont
+          value: symbol
+        })
+      ]
 
     tokenTable = 
       {
-        pos: [0 (add lineHeight 2)]
-        size: [width (sub height 28)]
+        pos: [0 0]
+        size: [width height]
         value: (rows {
           sizes: 
-            nw = (div (sub width (add lineHeight 32)) 2)
+            nw = (div (sub width (mul lineHeight 2)) 2)
             {
-              rows: [lineHeight nw nw 36]
+              rows: [lineHeight nw nw lineHeight]
               cols: (arrayMap (x => lineHeight) tokenList)
             }
           lines: 
@@ -77,10 +122,15 @@ tokenRow = zb2rhncYBN1MMTVqMGD3YbuQgX6fGsekaBR8fEE971WoHYUiR
       // Gets data from blockchain
       onFetch: |
         balances = <(erc20BalancesOf address)
-        (do "setState" {balances: balances})>
+        oldState = <(do "getState" {})
+        newState = {
+          balances: balances
+          selected: (get oldState "selected")
+        }
+        (do "setState" newState)>
         (do "stop")
 
       // Renders ERC20 table
-      value: [addressIcon addressHex tokenTable]
+      value: tokenTable
   }
 }

@@ -1,4 +1,4 @@
-tokenTable = zb2rhmmKhoSZknG3mgsYinVhiHnHWRd6e6wTfqinf3crAwgPe
+tokenTable = TypeError:
 
 receiveApp = my =>
   w = (get (my "size") "0")
