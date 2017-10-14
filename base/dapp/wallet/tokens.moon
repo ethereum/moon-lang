@@ -1,4 +1,4 @@
-tokenTable = zb2rhcDokBJXN4uiazrDTvwey5Q5f1XhgZpAufMTZSBspRZUJ
+tokenTable = zb2rhhikHuzTPv3QDmyDZyB2QaGEPW6Y9BatpAPitDRY5vxUD
 
 my => {
   set: {addr: (my "address")}

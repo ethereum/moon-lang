@@ -46,7 +46,6 @@ formatAmount = zb2rhgj5ZNgE8uiu2NWB7dmb8HcdVHi5X5a7DgmJWJPuUEkFJ
           amount: (stn amount)
         }
         (do "setState" newState)>
-        (do "print" newState)>
         (do "stop")
       set: {
         label: "AMOUNT"
@@ -58,13 +57,12 @@ formatAmount = zb2rhgj5ZNgE8uiu2NWB7dmb8HcdVHi5X5a7DgmJWJPuUEkFJ
       pos: [0 192]
       size: [w 24]
       cursor: "pointer"
-      onClick: |
+      onClick:
         to = (get state "to")
         amount = (get state "amount")
-        (do "print" {to:to amount:amount})>
         token = (my "token")
-        txid = <(tokenTransfer to amount token)
-        (do "print" txid)>
+        result = <(tokenTransfer to amount token)
+        (do "yell" result)>
         (do "stop")
       font: {
         weight: "bold"
@@ -83,6 +81,9 @@ formatAmount = zb2rhgj5ZNgE8uiu2NWB7dmb8HcdVHi5X5a7DgmJWJPuUEkFJ
         family:"helvetica"
         color: (my "linkColor")
       }
+      onClick: |
+        (do "yell" {type: "cancel"})>
+        (do "stop")
       value: "Cancel"
     }
 

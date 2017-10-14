@@ -22,7 +22,7 @@ tokenRow = zb2rhncYBN1MMTVqMGD3YbuQgX6fGsekaBR8fEE971WoHYUiR
 
   args: {
     addr: "0xc7fE03CE5fB8D188554E19E64D34522e77C4e6D4"
-    lineHeight: 24
+    lineHeight: 32
   }
 
   value: my => 
@@ -76,20 +76,23 @@ tokenRow = zb2rhncYBN1MMTVqMGD3YbuQgX6fGsekaBR8fEE971WoHYUiR
           value: (paddings t r l b value)
         }
       icon = (renderAddress address 8 (div height 8))
+      r = (mul lineHeight 0.32)
+      p = (mul lineHeight 0.25)
+      q = (mul lineHeight 0.15)
       [
-        (wrap 3 2 3 2 {
+        (wrap q q q q {
           radius: radius
           value: icon
         })
-        (wrap 3 2 3 2 {
+        (wrap p p p p {
           font: nameFont
           value: name
         })
-        (wrap 3 1 3 0 {
+        (wrap p p p p {
           font: balanceFont
           value: (numberFormatUnit balance)
         })
-        (wrap 3 0 3 1 {
+        (wrap r 0 r 0 {
           font: symbolFont
           value: symbol
         })
@@ -99,6 +102,7 @@ tokenRow = zb2rhncYBN1MMTVqMGD3YbuQgX6fGsekaBR8fEE971WoHYUiR
       {
         pos: [0 0]
         size: [width height]
+        scroll: 1
         value: (rows {
           sizes: 
             nw = (div (sub width (mul lineHeight 2)) 2)

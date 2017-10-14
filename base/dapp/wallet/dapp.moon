@@ -1,18 +1,19 @@
 min = zb2rhcMiWXCWrJDJtYVb6TWVf2YjSq4qy4vcki5uuAF5v4J9j
 paddings = zb2rhioC1iQYahsx8iXWEcFY9GQgovSwM19YL8FZZqAsejNkQ
 yourAccount = zb2rhmnw3yMWKZMYkyn1dxzYXzGsamc1USr28NHabbEE5f1qP
-tokens = zb2rhmqrHodQC7hYpfKNQXQZq2BMfsaCqwQP6gzAfdqrpX57o
-sender = zb2rhXdQKm6AzAvGzqcLrmdXh9RHwt9mdm3369bneqvw6QjRY
+tokens = zb2rhgh6NjS6XjhWHGjAPr4qsv6y2p6aLVP51aiBKWJNADFk2
+sender = zb2rhgY9D3fLd3zuLFDXgQGpmNEqyKuUyeh6tudnR21onowNo
 do = zb2rhkLJtRQwHz9e5GjiQkBtjL2SzZZByogr1uNZFyzJGA9dX
 
 {
   name: "ethereum-wallet",
   state: {
-    token: "ETH"
+    token: ""
   }
   value: my =>
     size = (my "size")
     state = (my "state")
+    token = (get state "token")
     w = (get size "0")
     h = (get size "1")
     gw = 32
@@ -45,6 +46,7 @@ do = zb2rhkLJtRQwHz9e5GjiQkBtjL2SzZZByogr1uNZFyzJGA9dX
     tokensBox = {
       pos: [tokensX tokensY]
       size: [tokensW tokensH]
+      background: "rgb(249,249,249)"
       onHear: token => 
         (do "setState" {token: token})>
         (do "stop")
@@ -60,12 +62,36 @@ do = zb2rhkLJtRQwHz9e5GjiQkBtjL2SzZZByogr1uNZFyzJGA9dX
       pos: [senderX senderY]
       size: [senderW senderH]
       set: {token: (get state "token")}
-      value: (paddings gh gw gh gw my => {
-        pos: [0 0]
-        size: (my "size")
-        value: sender
-      })
+      onHear: result =>
+        type = (get result "type")
+        (if (cmp type "cancel")
+          | (do "setState" {token: ""})>
+            (do "stop")
+          | (do "stop"))
+      value: 
+        (if (cmp token "")
+          {
+            pos: [gw gh]
+            size: [senderW (mul gh 1.2)]
+            font: {
+              family: "helvetica"
+              color: "rgb(77,139,219)"
+            }
+            cursor: "pointer"
+            onClick: |
+              (do "setState" {token: "eth"})>
+              (do "stop")
+            value: "Send Transaction..."
+          }
+          (paddings gh gw gh gw my => {
+            pos: [0 0]
+            size: (my "size")
+            value: sender
+          })
+        )
     }
+
+
 
     {
       pos: [0 0]
