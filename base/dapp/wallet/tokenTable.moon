@@ -5,7 +5,6 @@ arrayImap = zb2rhZtm57cN9goFEo37qLcAAsVza2QZU2WPMuABcDvZobk8o
 arrayMap = zb2rhgW1F8GpBDCtoXjEcqDBFXNiCDaPNt1fekX2Po8uHWiEV
 do = zb2rhkLJtRQwHz9e5GjiQkBtjL2SzZZByogr1uNZFyzJGA9dX
 erc20BalancesOf = zb2rhaQVrHiDBQM1a3c23dNGomaq8PheRvg7S8q4ffNfyQz9T
-numberFormatUnit = zb2rhnmbMkvo9bbynEktmPTrEU4ELWYz8PEgpGeELfT81V1fw
 paddings = zb2rhioC1iQYahsx8iXWEcFY9GQgovSwM19YL8FZZqAsejNkQ
 renderAddress = zb2rhe7DnDFA13zHnhUGUjBn7nMuDhyxbdgCds24WnR9Dc2G7
 rows = zb2rhnMhVJf8kS9iAmpDbxGUASc38wox2bK9FSPRgU3JmjBzY
@@ -51,12 +50,12 @@ tokenRow = zb2rhncYBN1MMTVqMGD3YbuQgX6fGsekaBR8fEE971WoHYUiR
         family: "helvetica"
       }
       balanceFont = {
-        family: "monospace"
+        family: "helvetica"
         align: "right"
       } 
       symbolFont = {
-        family: "monospace"
-        size: (mul lineHeight 0.4)
+        family: "helvetica"
+        size: (mul lineHeight 0.35)
         weight: "bold"
       }
       selected = (cmp symbol (get state "selected"))
@@ -75,10 +74,12 @@ tokenRow = zb2rhncYBN1MMTVqMGD3YbuQgX6fGsekaBR8fEE971WoHYUiR
           onClick: onClick
           value: (paddings t r l b value)
         }
-      icon = (renderAddress address 8 (div height 8))
       r = (mul lineHeight 0.32)
       p = (mul lineHeight 0.25)
       q = (mul lineHeight 0.15)
+      icon = (if (cmp address "0x0000000000000000000000000000000000000000")
+        {font: {family: "icomoon"}, value: ""}
+        (renderAddress address 8 (div (sub height (mul q 2)) 8)))
       [
         (wrap q q q q {
           radius: radius
@@ -90,11 +91,15 @@ tokenRow = zb2rhncYBN1MMTVqMGD3YbuQgX6fGsekaBR8fEE971WoHYUiR
         })
         (wrap p p p p {
           font: balanceFont
-          value: (numberFormatUnit balance)
+          value: (nts balance)
         })
         (wrap r 0 r 0 {
           font: symbolFont
           value: symbol
+        })
+        (wrap p p p p {
+          font: nameFont
+          value: (if selected "✔︎" " ")
         })
       ]
 
@@ -105,9 +110,9 @@ tokenRow = zb2rhncYBN1MMTVqMGD3YbuQgX6fGsekaBR8fEE971WoHYUiR
         scroll: 1
         value: (rows {
           sizes: 
-            nw = (div (sub width (mul lineHeight 2)) 2)
+            nw = (div (sub width (mul lineHeight 3)) 2)
             {
-              rows: [lineHeight nw nw lineHeight]
+              rows: [lineHeight nw nw lineHeight lineHeight]
               cols: (arrayMap (x => lineHeight) tokenList)
             }
           lines: 

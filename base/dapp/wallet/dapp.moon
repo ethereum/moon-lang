@@ -1,8 +1,8 @@
 min = zb2rhcMiWXCWrJDJtYVb6TWVf2YjSq4qy4vcki5uuAF5v4J9j
 paddings = zb2rhioC1iQYahsx8iXWEcFY9GQgovSwM19YL8FZZqAsejNkQ
 yourAccount = zb2rhmnw3yMWKZMYkyn1dxzYXzGsamc1USr28NHabbEE5f1qP
-tokens = zb2rhgh6NjS6XjhWHGjAPr4qsv6y2p6aLVP51aiBKWJNADFk2
-sender = zb2rhgY9D3fLd3zuLFDXgQGpmNEqyKuUyeh6tudnR21onowNo
+tokens = zb2rhdkbFJ4g25ngM5eKPnd7CaGf1av2pqReMfTYAMaF6Nw3r
+sender = zb2rhdiKdZYSqiSyQTDNod6MEF67hGfMbuHXvo1cyvYQWNvpP
 do = zb2rhkLJtRQwHz9e5GjiQkBtjL2SzZZByogr1uNZFyzJGA9dX
 
 {
@@ -18,14 +18,14 @@ do = zb2rhkLJtRQwHz9e5GjiQkBtjL2SzZZByogr1uNZFyzJGA9dX
     h = (get size "1")
     gw = 32
     gh = 16
-    sided = (gtn w (mul 30 gw)) 
+    sided = (or (gtn w (mul 30 gw)) (and (gtn w h) (ltn h (mul 38 gh))))
 
     accountW = w
     accountH = (mul 4 gh)
     tokensW = (if sided (div w 2) w)
-    tokensH = (if sided (sub h accountH) (sub h (add (mul 20 gh) accountH)))
+    tokensH = (if sided (sub h accountH) (mul gh 14))
     senderW = (if sided (div w 2) w)
-    senderH = (if sided (sub h accountH) (mul 20 gh))
+    senderH = (if sided (sub h accountH) (sub h (add tokensH accountH)))
     accountX = 0
     accountY = 0
     senderX = (if sided tokensW 0)
@@ -46,7 +46,6 @@ do = zb2rhkLJtRQwHz9e5GjiQkBtjL2SzZZByogr1uNZFyzJGA9dX
     tokensBox = {
       pos: [tokensX tokensY]
       size: [tokensW tokensH]
-      background: "rgb(249,249,249)"
       onHear: token => 
         (do "setState" {token: token})>
         (do "stop")
@@ -54,6 +53,9 @@ do = zb2rhkLJtRQwHz9e5GjiQkBtjL2SzZZByogr1uNZFyzJGA9dX
         pos: [0 0]
         size: (my "size")
         color: "rgb(200,200,200)"
+        set: {
+          lineHeight: (mul gh 2)
+        }
         value: tokens
       })
     }

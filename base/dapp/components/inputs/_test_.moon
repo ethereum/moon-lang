@@ -3,7 +3,7 @@ do = zb2rhkLJtRQwHz9e5GjiQkBtjL2SzZZByogr1uNZFyzJGA9dX
 
 my => {
   set: {
-    type: "number"
+    type: "address"
   }
   onHear: value =>
     (do "print" value)>

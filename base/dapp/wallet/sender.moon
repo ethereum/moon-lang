@@ -1,9 +1,7 @@
-//input = zb2rheNMvxPG25EnpC4yCjHvUMSBLuEckcp2Po5vRTmfWxBqj
 labeledInput = zb2rhjFtcd5XfjpMrYsGvTxPyQ4LW2GQsNTXaAumYdxXpQcA7
 do = zb2rhkLJtRQwHz9e5GjiQkBtjL2SzZZByogr1uNZFyzJGA9dX
 tokenTransfer = zb2rhkP5QB1w9MKsNvGUX6C5BZYEtevV3ZFf1a2peknBfGg1b
 arrayJoin = zb2rhgWm1GQM8ith9EBVJSMxsLAZBzGGsCvgnyaPZHmz3c7ym
-formatAmount = zb2rhgj5ZNgE8uiu2NWB7dmb8HcdVHi5X5a7DgmJWJPuUEkFJ
 
 {
   args: {
@@ -70,7 +68,7 @@ formatAmount = zb2rhgj5ZNgE8uiu2NWB7dmb8HcdVHi5X5a7DgmJWJPuUEkFJ
         color: (my "linkColor")
       }
       value: 
-        amount = (formatAmount (get state "amount"))
+        amount = (get state "amount")
         (arrayJoin " " ["SEND" amount (my "token")])
     }
     cancel = {
