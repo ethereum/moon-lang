@@ -1,7 +1,7 @@
 renderAddress = zb2rhe7DnDFA13zHnhUGUjBn7nMuDhyxbdgCds24WnR9Dc2G7
 {
   args: {
-    address: "0xc7fE03CE5fB8D188554E19E64D34522e77C4e6D4"
+    address: "0x0000000000000000000000000000000000000000"
   }
   value: my =>
     size = (my "size")
