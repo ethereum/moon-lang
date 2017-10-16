@@ -1,8 +1,8 @@
 min = zb2rhcMiWXCWrJDJtYVb6TWVf2YjSq4qy4vcki5uuAF5v4J9j
 paddings = zb2rhioC1iQYahsx8iXWEcFY9GQgovSwM19YL8FZZqAsejNkQ
 yourAccount = zb2rhmnw3yMWKZMYkyn1dxzYXzGsamc1USr28NHabbEE5f1qP
-tokens = zb2rhdkbFJ4g25ngM5eKPnd7CaGf1av2pqReMfTYAMaF6Nw3r
-sender = zb2rhdiKdZYSqiSyQTDNod6MEF67hGfMbuHXvo1cyvYQWNvpP
+tokenTable = zb2rha4XYk4j1KUV5im7d6qJofCqgYP4sbUXk8dJED6nuRBZD
+sender = zb2rhhmr3k3Lcn6zvfBGMipjfGofMD1jPwAiTxbtmFZjjnYZG
 do = zb2rhkLJtRQwHz9e5GjiQkBtjL2SzZZByogr1uNZFyzJGA9dX
 
 {
@@ -12,8 +12,7 @@ do = zb2rhkLJtRQwHz9e5GjiQkBtjL2SzZZByogr1uNZFyzJGA9dX
   }
   value: my =>
     size = (my "size")
-    state = (my "state")
-    token = (get state "token")
+    token = (my "token")
     w = (get size "0")
     h = (get size "1")
     gw = 32
@@ -47,7 +46,7 @@ do = zb2rhkLJtRQwHz9e5GjiQkBtjL2SzZZByogr1uNZFyzJGA9dX
       pos: [tokensX tokensY]
       size: [tokensW tokensH]
       onHear: token => 
-        (do "setState" {token: token})>
+        (do "set" {token: token})>
         (do "stop")
       value: (paddings gh gw gh gw my => {
         pos: [0 0]
@@ -56,18 +55,18 @@ do = zb2rhkLJtRQwHz9e5GjiQkBtjL2SzZZByogr1uNZFyzJGA9dX
         set: {
           lineHeight: (mul gh 2)
         }
-        value: tokens
+        value: tokenTable
       })
     }
 
     senderBox = {
       pos: [senderX senderY]
       size: [senderW senderH]
-      set: {token: (get state "token")}
+      set: {token: (my "token")}
       onHear: result =>
         type = (get result "type")
         (if (cmp type "cancel")
-          | (do "setState" {token: ""})>
+          | (do "set" {token: ""})>
             (do "stop")
           | (do "stop"))
       value: 
@@ -81,7 +80,7 @@ do = zb2rhkLJtRQwHz9e5GjiQkBtjL2SzZZByogr1uNZFyzJGA9dX
             }
             cursor: "pointer"
             onClick: |
-              (do "setState" {token: "eth"})>
+              (do "set" {token: "eth"})>
               (do "stop")
             value: "Send Transaction..."
           }

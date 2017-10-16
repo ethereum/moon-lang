@@ -1,5 +1,5 @@
-addressInput = zb2rhnFjThdp5YQuN7ookdx6GYQMzB4CZFPWDF267p94VvNkZ
-primitiveInput = zb2rhavZE48pZVgZrCH2hshynpLpGjac1o7uSo5P1uxxAMWQF
+addressInput = zb2rho5qUVhLXcAbevXp6ZMbNwNWaLgKFfGGTsuxkMXFvhDRi
+primitiveInput = zb2rhgH5gRoTQN1GH4Y5RutY1RnFbCv93S8jiXiFLtTh18pQt
 
 {
   name: "input"

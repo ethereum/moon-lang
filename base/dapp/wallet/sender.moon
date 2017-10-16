@@ -1,9 +1,10 @@
-labeledInput = zb2rhjFtcd5XfjpMrYsGvTxPyQ4LW2GQsNTXaAumYdxXpQcA7
+labeledInput = zb2rhnpypAmZpKNAQTAYprCs1c4n3yvpY5QbdWLmFmWQFoXL6
 do = zb2rhkLJtRQwHz9e5GjiQkBtjL2SzZZByogr1uNZFyzJGA9dX
 tokenTransfer = zb2rhkP5QB1w9MKsNvGUX6C5BZYEtevV3ZFf1a2peknBfGg1b
 arrayJoin = zb2rhgWm1GQM8ith9EBVJSMxsLAZBzGGsCvgnyaPZHmz3c7ym
 
 {
+  name: "wallet-sender"
   args: {
     token: "ETH"
     linkColor: "rgb(74,139,217)"
@@ -13,7 +14,6 @@ arrayJoin = zb2rhgWm1GQM8ith9EBVJSMxsLAZBzGGsCvgnyaPZHmz3c7ym
     amount: 0
   }
   value: my =>
-    state = (my "state")
     size = (my "size")
     w = (get size "0")
     h = (get size "1")
@@ -24,9 +24,9 @@ arrayJoin = zb2rhgWm1GQM8ith9EBVJSMxsLAZBzGGsCvgnyaPZHmz3c7ym
       onHear: to =>
         newState = {
           to: to
-          amount: (get state "amount")
+          amount: (my "amount")
         }
-        (do "setState" newState)>
+        (do "set" newState)>
         (do "end")
       set: {
         label: "SEND TO"
@@ -40,10 +40,10 @@ arrayJoin = zb2rhgWm1GQM8ith9EBVJSMxsLAZBzGGsCvgnyaPZHmz3c7ym
       size: [w 64]
       onHear: amount =>
         newState = {
-          to: (get state "to")
+          to: (my "to")
           amount: (stn amount)
         }
-        (do "setState" newState)>
+        (do "set" newState)>
         (do "stop")
       set: {
         label: "AMOUNT"
@@ -56,8 +56,8 @@ arrayJoin = zb2rhgWm1GQM8ith9EBVJSMxsLAZBzGGsCvgnyaPZHmz3c7ym
       size: [w 24]
       cursor: "pointer"
       onClick:
-        to = (get state "to")
-        amount = (get state "amount")
+        to = (my "to")
+        amount = (my "amount")
         token = (my "token")
         result = <(tokenTransfer to amount token)
         (do "yell" result)>
@@ -68,7 +68,7 @@ arrayJoin = zb2rhgWm1GQM8ith9EBVJSMxsLAZBzGGsCvgnyaPZHmz3c7ym
         color: (my "linkColor")
       }
       value: 
-        amount = (get state "amount")
+        amount = (my "amount")
         (arrayJoin " " ["SEND" amount (my "token")])
     }
     cancel = {

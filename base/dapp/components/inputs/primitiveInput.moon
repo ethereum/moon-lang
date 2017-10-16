@@ -3,7 +3,7 @@ do = zb2rhkLJtRQwHz9e5GjiQkBtjL2SzZZByogr1uNZFyzJGA9dX
 
 {
   name: "primitive-input"
-  state: ""
+  state: {text: ""}
   args: {
     paddings: size => {}
     font: size => {
@@ -16,7 +16,7 @@ do = zb2rhkLJtRQwHz9e5GjiQkBtjL2SzZZByogr1uNZFyzJGA9dX
     size = (my "size")
     w = (get size "0")
     h = (get (my "size") "1")
-    text = (my "state")
+    text = (my "text")
     type = (my "type")
     disabled = (my "disabled")
     {
@@ -29,7 +29,7 @@ do = zb2rhkLJtRQwHz9e5GjiQkBtjL2SzZZByogr1uNZFyzJGA9dX
       font: (my "font" size)
       onKeyUp: event =>
         text = (get event "text")
-        (do "setState" text)>
+        (do "set" {text: text})>
         (do "yell" text)>
         (do "stop")
       value: text

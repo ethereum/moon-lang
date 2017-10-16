@@ -1,5 +1,5 @@
 min = zb2rhcMiWXCWrJDJtYVb6TWVf2YjSq4qy4vcki5uuAF5v4J9j
-primitiveInput = zb2rhavZE48pZVgZrCH2hshynpLpGjac1o7uSo5P1uxxAMWQF
+primitiveInput = zb2rhgH5gRoTQN1GH4Y5RutY1RnFbCv93S8jiXiFLtTh18pQt
 renderAddress = zb2rhe7DnDFA13zHnhUGUjBn7nMuDhyxbdgCds24WnR9Dc2G7
 addressLib = zb2rhcTJ9VEbvgij9DTfphtzza1hzTETqVQXc1948GvoAGWjM
 isChecksum = zb2rhgTfh2fo9AmE7xmkDnn3Vtm7DFQopSopYeKiDS35wWtZW
@@ -11,7 +11,7 @@ not = (sub 1)
 
 {
   name: "address-input"
-  state: ""
+  state: {text: ""}
   args: {
     invalidIcon: size => "⛔️"
     addressIcon: size => address =>
@@ -21,7 +21,7 @@ not = (sub 1)
     normalColor: "rgba(0,0,0,0)"
   }
   value: my =>
-    address = (my "state")
+    address = (my "text")
     w = (get (my "size") "0")
     h = (get (my "size") "1")
     isBlank = (cmp address "")
@@ -59,7 +59,7 @@ not = (sub 1)
       pos: [h 0]
       size: [(sub w h) h]
       onHear: newAddress => 
-        (do "setState" newAddress)>
+        (do "set" {text: newAddress})>
         (do "yell" newAddress)>
         (do "stop")
       value: primitiveInput
