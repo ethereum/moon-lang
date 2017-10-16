@@ -10,5 +10,5 @@ to => value => symbol =>
   tokenAddress = (get token "address")
   valueHex = (etherToHex value)
   (if (cmp tokenName "Ethereum")
-    (do "eth" ["sendTransaction" {to:to value:valueHex}])
+    (do "eth" ["sendTransaction" [{to:to value:valueHex}]])
     (transfer to (big valueHex) tokenAddress))

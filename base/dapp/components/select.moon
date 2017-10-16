@@ -7,7 +7,7 @@ my =>
   width = (get size "0")
   height = (get size "1")
   {
-    state: 0
+    state: {index: 0}
 
     args: {
       options: ["foo" "bar" "baz"]
@@ -26,13 +26,13 @@ my =>
     value: my => 
 
       options = (my "options")
-      selected = (my "state")
+      selected = (my "index")
       arrows = (my "arrows")
 
       select = n => 
         len = (arrayLength options)
         nextState = (mod (add (add selected len) n) len)
-        (do "setState" nextState)>
+        (do "set" nextState)>
         (do "yell" nextState)>
         (do "stop")
 
