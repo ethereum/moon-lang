@@ -1,5 +1,6 @@
-addressInput = zb2rhcv7UicBSiTEGSDFfWtfK5ffuWkdWUQzbY6pz7zLWWELY
-primitiveInput = zb2rhkyUvnAg9MicAnmAfSmWk4pTJo8py42HfCJALuc27jwu5
+addressInput = zb2rhdT7vnmvwowCBUEPRGY4dfSWTUvh3cUw94gPuEq7nKtFA
+primitiveInput = zb2rhgH5gRoTQN1GH4Y5RutY1RnFbCv93S8jiXiFLtTh18pQt
+
 {
   name: "input"
   value: my => (if (cmp (my "type") "address") addressInput primitiveInput)
