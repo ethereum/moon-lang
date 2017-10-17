@@ -1,8 +1,8 @@
-input = zb2rhji28xSW6ZwBEMRy4T3bvD3TDZh2VCHNzB9wnq7Ahc9Gm
+input = zb2rhgrdmmiCXBSzUqjSbeW7KcCRymXZeC1DHVoJWAJTTmgfk
 do = zb2rhkLJtRQwHz9e5GjiQkBtjL2SzZZByogr1uNZFyzJGA9dX
 
 {
-  name: "labeled-input"
+  name: "wallet-labeled-input"
   args: {
     label: "Label"
     type: "address"

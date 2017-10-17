@@ -1,5 +1,6 @@
-renderAddress = zb2rhe7DnDFA13zHnhUGUjBn7nMuDhyxbdgCds24WnR9Dc2G7
+renderAddress = zb2rhdLVJ4vfqAKdqPwydFxzYmzpiQeYERCuV9wbL51NkBMas
 {
+  name: "wallet-your-account"
   args: {
     address: "0x0000000000000000000000000000000000000000"
   }

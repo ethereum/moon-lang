@@ -29,4 +29,7 @@ seedData => size => scale =>
 
     (randomStop imageData))
 
-  (arrayFlatten (randomRun seedData makeIcon))
+  {
+    name: "blockies"
+    value: (arrayFlatten (randomRun seedData makeIcon))
+  }
