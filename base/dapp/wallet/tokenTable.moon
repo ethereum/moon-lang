@@ -81,7 +81,7 @@ concat = zb2rhen9kLmNpH8Tt7ASAjV3ws1EYDeqXYG1Us5AWyHc7qiX5
           p = (mul lineHeight 0.25)
           q = (mul lineHeight 0.15)
           icon = (if (cmp address "0x0000000000000000000000000000000000000000")
-            {font:{family:"icomoon" color:linkColor} value:""}
+            {font:{family:"icomoon" color:linkColor} value:""}
             (renderAddress address 8 (div (sub height (mul q 2)) 8))
           )
           [
