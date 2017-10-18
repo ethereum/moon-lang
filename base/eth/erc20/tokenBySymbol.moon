@@ -1,4 +1,4 @@
-tokenList = zb2rhdWFStnichuAgzjzvnC3g1wMdp1hcDAdRginacN8zoqQs
+tokenList = zb2rhiiq8LhauWFmAQtMNmyaDbWKYtBaxc7wGg1hAESY5Vnp6
 arrayFoldr = zb2rhbTuYiZm5fGUHUhd3sQNRDhEW6FVjXLp8UyWk5hE9nQ5F
 
 symbol =>
