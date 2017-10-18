@@ -1,8 +1,8 @@
-Array = zb2rhXsv3emLb5JadcgLjdGnmU6jQD9BorHPwADKLQ7JHkmEb
+Array = zb2rhY7sfHuePiP1kGiXEdcBHEPBpVzT6PWMjLJ567LbPM9B6
 a = [1 2 3 4]
 b = [5 6 7 8]
 {
-  get: (Array "get" a "0")
+  get: (Array "get" a 0)
   concat: (Array "concat" a b)
   dot: (Array "dot" [3 4 0] [3 4 0])
   flatMap: (Array "flatMap" (Array "reverse") [[1 2] [3 4] [5 6]])
@@ -15,4 +15,5 @@ b = [5 6 7 8]
   toList: (Array "toList" a)
   zipWith: (Array "zipWith" (add) a b)
   crossWith: (Array "crossWith" (add) 0 [[1 2 3] [1 1 1] [1 1 1]])
+  filter: (Array "filter" x => (mod 2 x) a)
 }
