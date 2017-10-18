@@ -57,7 +57,7 @@ arrayJoin = zb2rhgWm1GQM8ith9EBVJSMxsLAZBzGGsCvgnyaPZHmz3c7ym
       font: {weight:"bold" family:"helvetica" color:(my "linkColor")}
       value:
         amount = (my "amount")
-        (arrayJoin " " ["SEND" amount (my "token")])
+        (arrayJoin " " ["SEND" (nts amount) (my "token")])
     }
     cancel = {
       pos: [0 240]
