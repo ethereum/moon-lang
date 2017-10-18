@@ -28,6 +28,7 @@ renderAddress = zb2rhX8bHJsvCUHjVEkeLynfNunnhHEXaDRokPa55BgE5r88u
         pos: [startX titleH]
         size: [(sub w startX) addressH]
         font: {family: "helvetica"}
+        selectable: 1
         value: (my "address")
       }
     ]
