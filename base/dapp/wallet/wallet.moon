@@ -1,8 +1,8 @@
 min = zb2rhcMiWXCWrJDJtYVb6TWVf2YjSq4qy4vcki5uuAF5v4J9j
 paddings = zb2rhioC1iQYahsx8iXWEcFY9GQgovSwM19YL8FZZqAsejNkQ
-yourAccount = zb2rhj9JFLeoLh6aQTj8JBRbYZxZMP8g6XJ2BPGdLa8kBURF2
-tokenTable = zb2rhX5D2owMESQbnsQTwM9ketGHYm3nY2W6b1MeY6uRcPaYh
-sender = zb2rhadPgyULisq5aNhWjpEHMWYbMXyVAacyXX2CHizACoScW
+yourAccount = zb2rhiZD3TmKAFd61jshmPYa63v3w1ej5gCfULRAgXnrupgzP
+tokenTable = zb2rha32kqD5UnCJ9X4kzfD2zQkcYMaLLUASHFHb73mBKfp73
+sender = zb2rhjZHBg2pWiA9vpxkuUt2cP3Rhmyw2qNFZKhpTZXpPo3BF
 do = zb2rhkLJtRQwHz9e5GjiQkBtjL2SzZZByogr1uNZFyzJGA9dX
 concat = zb2rhen9kLmNpH8Tt7ASAjV3ws1EYDeqXYG1Us5AWyHc7qiX5
 rgba = zb2rhncWqcLHBJZJJa7VhFmjk5AtE2dS2HaTyuYqzwgbJdBu2
@@ -43,25 +43,17 @@ rgba = zb2rhncWqcLHBJZJJa7VhFmjk5AtE2dS2HaTyuYqzwgbJdBu2
       size: [accountW accountH]
       background: (rgba (concat bgColor [1]))
       set: {textColor:textColor}
-      value: (paddings
-        gh
-        gw
-        gh
-        gw
-        my => {pos:[0 0] size:(my "size") value:yourAccount}
-      )
+      value:
+        value = my => {pos:[0 0] size:(my "size") value:yourAccount}
+        (paddings gh gw gh gw value)
     }
     tokensBox = {
       pos: [tokensX tokensY]
       size: [tokensW tokensH]
       onHear: token => (do "set" {token:token})> (do "stop")
       set: {selectable:(sub 1 (cmp token ""))}
-      value: (paddings
-        gh
-        gw
-        gh
-        gw
-        my =>
+      value: 
+        value = my =>
           {
             pos: [0 0]
             size: (my "size")
@@ -69,7 +61,7 @@ rgba = zb2rhncWqcLHBJZJJa7VhFmjk5AtE2dS2HaTyuYqzwgbJdBu2
             set: {lineHeight:(mul gh 2)}
             value: tokenTable
           }
-      )
+        (paddings gh gw gh gw value)
     }
     senderBox = {
       pos: [senderX senderY]
@@ -92,13 +84,8 @@ rgba = zb2rhncWqcLHBJZJJa7VhFmjk5AtE2dS2HaTyuYqzwgbJdBu2
           onClick: | (do "set" {token:"eth"})> (do "stop")
           value: "Send Transaction..."
         }
-        (paddings
-          gh
-          gw
-          gh
-          gw
-          my => {pos:[0 0] size:(my "size") value:sender}
-        )
+        value = my => {pos:[0 0] size:(my "size") value:sender}
+        (paddings gh gw gh gw value)
       )
     }
     {pos:[0 0] size:size value:[accountBox tokensBox senderBox]}

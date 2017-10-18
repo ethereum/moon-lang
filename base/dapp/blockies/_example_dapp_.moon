@@ -1,6 +1,4 @@
-renderAddress = zb2rhdLVJ4vfqAKdqPwydFxzYmzpiQeYERCuV9wbL51NkBMas
-arrayImap = zb2rhbU6L7kgC7tmLRSmRKXqEbDeoqaRXRBn58nYrZ9JWJDyu
-do = zb2rhkLJtRQwHz9e5GjiQkBtjL2SzZZByogr1uNZFyzJGA9dX
+renderAddress = zb2rhX8bHJsvCUHjVEkeLynfNunnhHEXaDRokPa55BgE5r88u
 
 addresses = [
   "0xfb6916095ca1df60bb79ce92ce3ea74c37c5d359"
@@ -13,10 +11,27 @@ addresses = [
   "0xd1220a0cf47c7b9be7a2e6ba89f429762e7b9adb"
 ]
 
-(arrayImap 
-  i => address => {
-    pos: [(mul i 64) 0]
-    size: [64 64]
-    value: (renderAddress address 8 8)
-  }
-  addresses)
+{
+  name: "blockies-example"
+  state: {x:0}
+  value: my =>
+    {
+      value: [
+        {
+          pos: [0 0]
+          size: [64 64]
+          value: (renderAddress (get addresses "0") 8 8)
+        }
+        {
+          pos: [64 0]
+          size: [64 64]
+          value: (renderAddress (get addresses "1") 8 8)
+        }
+        {
+          pos: [128 0]
+          size: [64 64]
+          value: (renderAddress (get addresses "2") 8 8)
+        }
+      ]
+    }
+}
