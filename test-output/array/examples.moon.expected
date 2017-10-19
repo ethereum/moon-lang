@@ -1,0 +1,61 @@
+{
+  get: (get [1 2 3 4] (nts "0"))
+  concat: (gen
+    a => b => 
+      (a 
+        "length"
+        (sub (add (len [1 2 3 4]) (len [5 6 7 8])) 0)
+        (for 0 (add (len [1 2 3 4]) (len [5 6 7 8])) b c => 
+          (a 
+            (nts
+              (sub
+                (add 0 (add (len [1 2 3 4]) (len [5 6 7 8])))
+                (add c 1)
+              )
+            )
+            (if
+              (ltn
+                (sub
+                  (add 0 (add (len [1 2 3 4]) (len [5 6 7 8])))
+                  (add c 1)
+                )
+                (len [1 2 3 4])
+              )
+              (get
+                [1 2 3 4]
+                (nts
+                  (sub
+                    (add 0 (add (len [1 2 3 4]) (len [5 6 7 8])))
+                    (add c 1)
+                  )
+                )
+              )
+              (get
+                [5 6 7 8]
+                (nts
+                  (sub
+                    (sub
+                      (add 0 (add (len [1 2 3 4]) (len [5 6 7 8])))
+                      (add c 1)
+                    )
+                    (len [1 2 3 4])
+                  )
+                )
+              )
+            )
+          )
+        )
+      )
+  )
+  dot: 25
+  flatMap: [2 1 4 3 6 5]
+  foldr: 10
+  join: "foo-bar-tic-tac"
+  map: [2 3 4 5]
+  range: [0 1 2 3 4 5]
+  reverse: [4 3 2 1]
+  sum: 10
+  toList: a => b => (a 1 (a 2 (a 3 (a 4 b))))
+  zipWith: [6 8 10 12]
+  crossWith: [3 4 5]
+}

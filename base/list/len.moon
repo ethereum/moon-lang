@@ -1,2 +1,2 @@
 xs =>
-  (xs h => (add 1) 0)
+  (xs (head => (add 1)) 0)
