@@ -1,4 +1,4 @@
-renderAddress = zb2rhdLVJ4vfqAKdqPwydFxzYmzpiQeYERCuV9wbL51NkBMas
+renderAddress = zb2rhX8bHJsvCUHjVEkeLynfNunnhHEXaDRokPa55BgE5r88u
 {
   name: "wallet-your-account"
   args: {
@@ -28,6 +28,7 @@ renderAddress = zb2rhdLVJ4vfqAKdqPwydFxzYmzpiQeYERCuV9wbL51NkBMas
         pos: [startX titleH]
         size: [(sub w startX) addressH]
         font: {family: "helvetica"}
+        selectable: 1
         value: (my "address")
       }
     ]

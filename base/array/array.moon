@@ -8,7 +8,8 @@
   zipWith: zb2rhiHxfGRPmrJqfaCaef7BWASWgwNTCvBSPAWTcfSEbqbFx
   generate: zb2rhchsqGDzj5UBppkaEa9wm1H5n6VvVgQkHq6ryvFdKXWh8
   map: zb2rhgW1F8GpBDCtoXjEcqDBFXNiCDaPNt1fekX2Po8uHWiEV
-  concat: zb2rhcbAzJTfU5R9mT499fiywCCS8MhYP8NEyxxUvu4DMfCg6
+  concat: zb2rhen9kLmNpH8Tt7ASAjV3ws1EYDeqXYG1Us5AWyHc7qiX5
+  filter: zb2rhbyK1dakJM7Jpez9dwUVMunm8yfmAMNkJanPueCHVPabA
   flatten: zb2rhdVyAPEmxC6Bumn8E4fh9aRKftYqR3FV5XxMgBHDnsuXU
   flatMap: zb2rhYxt39cQ3QCMUVZx9PiXoWhejEHEmoyJ98QnNP9hC63Q9
   reverse: zb2rhnH7hyhQezWkhSP7ResyYTeh4bkU98jX2hsi3cz8XLD4V

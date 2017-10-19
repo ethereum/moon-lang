@@ -1,6 +1,6 @@
 // The `Do` constructor, as described on _docs_.md.
 
-method => 
+method =>
   (if (cmp method "stop")
     do => (do "stop")
     (if (cmp method "return")
