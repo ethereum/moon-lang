@@ -2,16 +2,17 @@ input = zb2rheurmNEP8DfdPAnFrHtRQx3tpKoycAJNsRR8ZWJCm2CXk
 do = zb2rhkLJtRQwHz9e5GjiQkBtjL2SzZZByogr1uNZFyzJGA9dX
 {
   name: "labeled-input"
-  args: {label:"Label" type:"address" color:"blue"}
+  args: {label:"Label" type:"address" color:"blue" textColor:"black"}
   value: my =>
     size = (my "size")
     w = (get size "0")
     h = (get size "1")
     color = (my "color")
+    textColor = (my "textColor")
     labelBox = {
       pos: [0 0]
       size: [(mul w 0.5) (mul h 0.5)]
-      font: {family:"helvetica" weight:"bold" color:color size:(mul h 0.25)}
+      font: {family:"helvetica" weight:"bold" color:textColor size:(mul h 0.25)}
       value: (my "label")
     }
     inputBox = {
