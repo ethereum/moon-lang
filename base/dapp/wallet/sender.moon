@@ -1,4 +1,4 @@
-labeledInput = zb2rhhVEYfi57V1PmhMMu6Dy2KvMLwYrFA3zdr1q1bitktAAR
+labeledInput = zb2rhiXZbnhSGAED6X1GDMxUUFTnT9AfzvUwv7qf2uWfSg7JH
 do = zb2rhkLJtRQwHz9e5GjiQkBtjL2SzZZByogr1uNZFyzJGA9dX
 tokenTransfer = zb2rhZF8eCvDpDXbfhgrjJuL9iLsmpUsSSCk3wX4A1HqjRqmc
 arrayJoin = zb2rhgWm1GQM8ith9EBVJSMxsLAZBzGGsCvgnyaPZHmz3c7ym
@@ -23,7 +23,7 @@ arrayJoin = zb2rhgWm1GQM8ith9EBVJSMxsLAZBzGGsCvgnyaPZHmz3c7ym
         label: "SEND TO"
         type: "address"
         color: color
-        placeholder: "Type an Ethereum Address"
+        placeholder: ""
       }
       value: labeledInput
     }
@@ -39,7 +39,7 @@ arrayJoin = zb2rhgWm1GQM8ith9EBVJSMxsLAZBzGGsCvgnyaPZHmz3c7ym
         label: "AMOUNT"
         type: "number"
         color: color
-        placeholder: "Type an amount"
+        placeholder: ""
       }
       value: labeledInput
     }

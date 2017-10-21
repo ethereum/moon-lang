@@ -21,6 +21,7 @@ do = zb2rhkLJtRQwHz9e5GjiQkBtjL2SzZZByogr1uNZFyzJGA9dX
       size: [w h]
       input: 1
       type: type
+      selectable: 1
       disabled: disabled
       paddings: (my "paddings" size)
       font: (my "font" size)
