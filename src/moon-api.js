@@ -130,6 +130,10 @@ module.exports = ipfsUrl => {
   const imports = code =>
     importsWith(load, code);
 
+  // String -> Promise Native
+  const build = (code, opts) =>
+    imports(code).then(code => parse(code,opts));
+
   // Native, Methods -> Promise result
   const performIO = (program, methods) => {
     return program(method => {
@@ -158,6 +162,7 @@ module.exports = ipfsUrl => {
     cid,
     importsWith,
     imports,
+    build,
     performIO
   };
 }
