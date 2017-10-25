@@ -1,8 +1,8 @@
 min = zb2rhcMiWXCWrJDJtYVb6TWVf2YjSq4qy4vcki5uuAF5v4J9j
 paddings = zb2rhih6haVR3ksSJ8uAh5xZkK3tvDgb1ZWEPQBnjFpoPF4SQ
 yourAccount = zb2rhbBTuYFEfnC5bPh76vx7XJVMCHtrwGBWwdKA3Me2JAt6f
-tokenTable = zb2rhhYzcm5MAbkehawiZpWWFypx2Q1LE13qfvNQ3KSsGKCog
-sender = zb2rhXSeL32d4vWAJx33AJ8EKhkPU2qZDveY6yYKnKbJCRC3k
+tokenTable = zb2rhhwsKyemhzfU3dLiQm6XagtsQCTegyV1RiLZhAM34urwX
+sender = zb2rhXMAUhbpycZ12r1FwrNrMr9Q7PciBAmaMUXjWPMVer37t
 do = zb2rhkLJtRQwHz9e5GjiQkBtjL2SzZZByogr1uNZFyzJGA9dX
 
 {
@@ -72,6 +72,7 @@ do = zb2rhkLJtRQwHz9e5GjiQkBtjL2SzZZByogr1uNZFyzJGA9dX
       pos: [senderX senderY]
       size: [senderW senderH]
       set: {token:(my "token")}
+      background: "rgba(255,255,255,0.25)"
       onHear: result =>
         type = (get result "type")
         (if (cmp type "cancel")

@@ -1,6 +1,6 @@
 labeledInput = zb2rhhkUZFMArW5NxJJ1kseBpCMu4uCCYbcEsS1EBpFJxTMVQ
 do = zb2rhkLJtRQwHz9e5GjiQkBtjL2SzZZByogr1uNZFyzJGA9dX
-tokenTransfer = zb2rhngVMKzBEKR69tY8fammJKCu6KP8DKG4r4rFnWxXS4Dkm
+tokenTransfer = zb2rhoAjmVgjJfkYNS9c3mDso516nsgvzE2ygqt7czNM3ik5f
 arrayJoin = zb2rhgWm1GQM8ith9EBVJSMxsLAZBzGGsCvgnyaPZHmz3c7ym
 {
   name: "wallet-sender"
@@ -60,7 +60,7 @@ arrayJoin = zb2rhgWm1GQM8ith9EBVJSMxsLAZBzGGsCvgnyaPZHmz3c7ym
         (arrayJoin " " ["SEND" (nts amount) (my "token")])
     }
     cancel = {
-      pos: [0 240]
+      pos: [0 236]
       size: [w 20]
       cursor: "pointer"
       font: {family:"helvetica" color:(my "linkColor")}

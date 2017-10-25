@@ -5,6 +5,11 @@
     symbol: "ETH"
   }
   {
+    name: "Rinkebits"
+    address: "0x8a75f985d5316b1a98bc11fe5364abbad55e1c7a"
+    symbol: "RINK"
+  }
+  {
     name: "EOS" 
     address: "0x86Fa049857E0209aa7D9e616F7eb3b3B78ECfdb0" 
     symbol: "EOS" 
@@ -33,11 +38,6 @@
     name: "Metal" 
     address: "0xF433089366899D83a9f26A773D59ec7eCF30355e" 
     symbol: "MTL" 
-  }
-  {
-    name: "KyberNetwork" 
-    address: "0xdd974D5C2e2928deA5F71b9825b8b646686BD200" 
-    symbol: "KNC" 
   }
   {
     name: "Veritaseum" 

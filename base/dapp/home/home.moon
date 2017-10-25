@@ -4,7 +4,7 @@ moonImage = zb2rhbEccKnwdnXWDLyMhMi2UrGdFpXtpLX9Trdx1fKzf8rbF
 {
   name: "moon-home"
   title: {
-    text:"Hello, Moon!"
+    text:"Hello, Moon"
     background:"rgb(0,0,0)"
   }
   state: {
@@ -19,6 +19,12 @@ moonImage = zb2rhbEccKnwdnXWDLyMhMi2UrGdFpXtpLX9Trdx1fKzf8rbF
     width = (get size "0")
     height = (get size "1")
     [
+      {
+        pos: [0 (sub height 150)]
+        size: [width 150]
+        background: moonImage
+        child: ""
+      }
       {
         pos: [20 20]
         size: [90 40]
@@ -36,12 +42,6 @@ moonImage = zb2rhbEccKnwdnXWDLyMhMi2UrGdFpXtpLX9Trdx1fKzf8rbF
         size: [(sub width 40) 25]
         font: {color:"rgb(80,80,80)" weight:"300"}
         child: (con "Block: " (my "blockNumber"))
-      }
-      {
-        pos: [0 100]
-        size: [width (sub height 100)]
-        background: moonImage
-        child: ""
       }
     ]
 }
