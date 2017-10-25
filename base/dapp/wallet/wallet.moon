@@ -8,7 +8,7 @@ withAlpha = zb2rhmDXZmJm8CGxQUQdVLWoiAKuinhSBH9TgWfUDq9foqVBZ
 
 {
   name: "ethereum-wallet"
-  title: {text:"Ethereum Wallet" background:[226 218 218]}
+  title: {text:"Ethereum Wallet" background:"rgb(226,218,218)"}
   state: {token:""}
   args: {
     textColor: "rgb(95,84,84)"
