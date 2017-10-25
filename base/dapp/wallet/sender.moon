@@ -1,4 +1,4 @@
-labeledInput = zb2rhoHAwXEsriMB2GUmo77TMLggNqbqpq6UXNanJaQvdU841
+labeledInput = zb2rhhkUZFMArW5NxJJ1kseBpCMu4uCCYbcEsS1EBpFJxTMVQ
 do = zb2rhkLJtRQwHz9e5GjiQkBtjL2SzZZByogr1uNZFyzJGA9dX
 tokenTransfer = zb2rhZF8eCvDpDXbfhgrjJuL9iLsmpUsSSCk3wX4A1HqjRqmc
 arrayJoin = zb2rhgWm1GQM8ith9EBVJSMxsLAZBzGGsCvgnyaPZHmz3c7ym
@@ -6,7 +6,7 @@ arrayJoin = zb2rhgWm1GQM8ith9EBVJSMxsLAZBzGGsCvgnyaPZHmz3c7ym
   name: "wallet-sender"
   args: {token:"ETH" linkColor:"blue"}
   state: {to:"0x" amount:0}
-  value: my =>
+  child: my =>
     size = (my "size")
     w = (get size "0")
     h = (get size "1")
@@ -25,7 +25,7 @@ arrayJoin = zb2rhgWm1GQM8ith9EBVJSMxsLAZBzGGsCvgnyaPZHmz3c7ym
         color: color
         placeholder: ""
       }
-      value: labeledInput
+      child: labeledInput
     }
     amountBox = {
       name: "amount"
@@ -41,7 +41,7 @@ arrayJoin = zb2rhgWm1GQM8ith9EBVJSMxsLAZBzGGsCvgnyaPZHmz3c7ym
         color: color
         placeholder: ""
       }
-      value: labeledInput
+      child: labeledInput
     }
     send = {
       pos: [0 192]
@@ -55,7 +55,7 @@ arrayJoin = zb2rhgWm1GQM8ith9EBVJSMxsLAZBzGGsCvgnyaPZHmz3c7ym
         (do "yell" result)>
         (do "stop")
       font: {weight:"bold" family:"helvetica" color:(my "linkColor")}
-      value:
+      child:
         amount = (my "amount")
         (arrayJoin " " ["SEND" (nts amount) (my "token")])
     }
@@ -65,7 +65,7 @@ arrayJoin = zb2rhgWm1GQM8ith9EBVJSMxsLAZBzGGsCvgnyaPZHmz3c7ym
       cursor: "pointer"
       font: {family:"helvetica" color:(my "linkColor")}
       onClick: | (do "yell" {type:"cancel"})> (do "stop")
-      value: "Cancel"
+      child: "Cancel"
     }
     [sendToBox amountBox send cancel]
 }

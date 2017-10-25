@@ -1,8 +1,8 @@
 min = zb2rhcMiWXCWrJDJtYVb6TWVf2YjSq4qy4vcki5uuAF5v4J9j
-paddings = zb2rhioC1iQYahsx8iXWEcFY9GQgovSwM19YL8FZZqAsejNkQ
-yourAccount = zb2rhiC9Z8W6qBmp27PAZk65Q9fenDkDbkacQfhiFEJ7Jartk
-tokenTable = zb2rhc6rDc8mSqjNkNGKvFn7SCBrD861GBhpmQFhziYg1bR3Y
-sender = zb2rhkxPAW2Bu3GzWGxvn5cxhLRD8XKbzkS5JYoJHsCZgTt2P
+paddings = zb2rhih6haVR3ksSJ8uAh5xZkK3tvDgb1ZWEPQBnjFpoPF4SQ
+yourAccount = zb2rhbBTuYFEfnC5bPh76vx7XJVMCHtrwGBWwdKA3Me2JAt6f
+tokenTable = zb2rhmH7PtmaKg8rKpGxaNzMqy9gq4suHaqDSZmP9yqjLE6xG
+sender = zb2rhewp9VeVQirT46U3i2Nsxf1aeBJkoNboCKo62hYVHGXE3
 do = zb2rhkLJtRQwHz9e5GjiQkBtjL2SzZZByogr1uNZFyzJGA9dX
 withAlpha = zb2rhmDXZmJm8CGxQUQdVLWoiAKuinhSBH9TgWfUDq9foqVBZ
 
@@ -15,7 +15,7 @@ withAlpha = zb2rhmDXZmJm8CGxQUQdVLWoiAKuinhSBH9TgWfUDq9foqVBZ
     backgroundColor: "rgb(226,218,218)"
     actionColor: "rgb(74,144,226)"
   }
-  value: my =>
+  child: my =>
     size = (my "size")
     token = (my "token")
     w = (get size "0")
@@ -43,17 +43,17 @@ withAlpha = zb2rhmDXZmJm8CGxQUQdVLWoiAKuinhSBH9TgWfUDq9foqVBZ
       size: [accountW accountH]
       background: backgroundColor
       set: {textColor:textColor}
-      value:
-        value = my => {pos:[0 0] size:(my "size") value:yourAccount}
-        (paddings gh gw gh gw value)
+      child:
+        child = my => {pos:[0 0] size:(my "size") child:yourAccount}
+        (paddings gh gw gh gw child)
     }
     tokensBox = {
       pos: [tokensX tokensY]
       size: [tokensW tokensH]
       onHear: token => (do "set" {token:token})> (do "stop")
       set: {selectable:(sub 1 (cmp token ""))}
-      value: 
-        value = my =>
+      child: 
+        child = my =>
           {
             pos: [0 0]
             size: (my "size")
@@ -64,9 +64,9 @@ withAlpha = zb2rhmDXZmJm8CGxQUQdVLWoiAKuinhSBH9TgWfUDq9foqVBZ
               backgroundColor: backgroundColor
               actionColor: actionColor
             }
-            value: tokenTable
+            child: tokenTable
           }
-        (paddings gh gw gh gw value)
+        (paddings gh gw gh gw child)
     }
     senderBox = {
       pos: [senderX senderY]
@@ -80,18 +80,18 @@ withAlpha = zb2rhmDXZmJm8CGxQUQdVLWoiAKuinhSBH9TgWfUDq9foqVBZ
           (do "stop")
         )
       set: {linkColor:actionColor}
-      value: (if (cmp token "")
+      child: (if (cmp token "")
         {
           pos: [gw gh]
           size: [senderW (mul gh 1.2)]
           font: {family:"helvetica" color:actionColor weight:600}
           cursor: "pointer"
           onClick: | (do "set" {token:"eth"})> (do "stop")
-          value: "Send Transaction..."
+          child: "Send Transaction..."
         }
-        value = my => {pos:[0 0] size:(my "size") value:sender}
-        (paddings gh gw gh gw value)
+        child = my => {pos:[0 0] size:(my "size") child:sender}
+        (paddings gh gw gh gw child)
       )
     }
-    {pos:[0 0] size:size value:[accountBox tokensBox senderBox]}
+    {pos:[0 0] size:size child:[accountBox tokensBox senderBox]}
 }

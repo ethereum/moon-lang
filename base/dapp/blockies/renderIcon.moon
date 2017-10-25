@@ -21,7 +21,7 @@ seedData => size => scale =>
           pos: [(mul i scale) (mul j scale)]
           size: [scale scale]
           background: color
-          value: ""
+          child: ""
         }
       [(box i) (box (sub (sub size i) 1))]
         
@@ -31,5 +31,5 @@ seedData => size => scale =>
 
   {
     name: "blockies"
-    value: (arrayFlatten (randomRun seedData makeIcon))
+    child: (arrayFlatten (randomRun seedData makeIcon))
   }

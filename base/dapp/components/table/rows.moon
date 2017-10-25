@@ -12,7 +12,7 @@ params =>
       {
         pos: pos
         size: size
-        value: (arrayGet (arrayGet lines j) i)
+        child: (arrayGet (arrayGet lines j) i)
       }
   })
 

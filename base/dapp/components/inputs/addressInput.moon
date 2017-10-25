@@ -1,7 +1,6 @@
 min = zb2rhcMiWXCWrJDJtYVb6TWVf2YjSq4qy4vcki5uuAF5v4J9j
-primitiveInput = zb2rhj2tAGJ7auyZX3bNa52xdEz26VQoL9BJ3S9xxYWTda99E
-renderAddress = zb2rhX8bHJsvCUHjVEkeLynfNunnhHEXaDRokPa55BgE5r88u
-addressLib = zb2rhcTJ9VEbvgij9DTfphtzza1hzTETqVQXc1948GvoAGWjM
+primitiveInput = zb2rhhi3c6Urufjp7F9m9uR3PDRXBym1Tf2d3h2PcX9Y3zuhz
+renderAddress = zb2rhdkgwMJAUkUAqX9mcjNCsHx2sSHFrTyz2xiJtReKCQW9J
 isChecksum = zb2rhgTfh2fo9AmE7xmkDnn3Vtm7DFQopSopYeKiDS35wWtZW
 toChecksum = zb2rhnhr6fbAa5z19B1zYn5giehHmuvWGT7qGGFKxdWe5NjiU
 isValid = zb2rhXEQ7G9ZseYJHosRVGFzyxf6Z2YzHkiWuY3wTkLG5EcZ5
@@ -21,7 +20,7 @@ not = v0 => (sub 1 v0)
     color: "blue"
     fontFamily: "icomoon"
   }
-  value: my =>
+  child: my =>
     address = (my "text")
     w = (get (my "size") "0")
     h = (get (my "size") "1")
@@ -38,13 +37,13 @@ not = v0 => (sub 1 v0)
     iconBox = {
       pos: [(mul h 0.1) (mul h 0.1)]
       size: [(mul h 0.8) (mul h 0.8)]
-      value: my =>
+      child: my =>
         {
           pos: [0 0]
           size: (my "size")
           radius: (if isValidAddress (mul h 0.5) 0)
           font: {align:"center" family:fontFamily color:color}
-          value: my =>
+          child: my =>
             (if isBlank
               ""
               (if isValidAddress
@@ -58,8 +57,10 @@ not = v0 => (sub 1 v0)
       pos: [h 0]
       size: [(sub w h) h]
       onHear: newAddress =>
-        (do "set" {text:newAddress})> (do "yell" newAddress)> (do "stop")
-      value: primitiveInput
+        (do "set" {text:newAddress})>
+        (do "yell" newAddress)>
+        (do "stop")
+      child: primitiveInput
     }
-    {size:[w h] background:background value:[iconBox inputBox]}
+    {size:[w h] background:background child:[iconBox inputBox]}
 }

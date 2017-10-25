@@ -1,7 +1,7 @@
-addressInput = zb2rhheDez5rT7kU8Eu6jwGqVZjds5n6nnBFGgi8ZpnN3R2vb
-primitiveInput = zb2rhj2tAGJ7auyZX3bNa52xdEz26VQoL9BJ3S9xxYWTda99E
+addressInput = zb2rhYqoX1WDU4WXmY6nVTL3jKeaZaeZ63m1PVJ5phNHhioUj
+primitiveInput = zb2rhhi3c6Urufjp7F9m9uR3PDRXBym1Tf2d3h2PcX9Y3zuhz
 
 {
   name: "input"
-  value: my => (if (cmp (my "type") "address") addressInput primitiveInput)
+  child: my => (if (cmp (my "type") "address") addressInput primitiveInput)
 }

@@ -1,4 +1,4 @@
-renderAddress = zb2rhX8bHJsvCUHjVEkeLynfNunnhHEXaDRokPa55BgE5r88u
+renderAddress = zb2rhdkgwMJAUkUAqX9mcjNCsHx2sSHFrTyz2xiJtReKCQW9J
 
 addresses = [
   "0xfb6916095ca1df60bb79ce92ce3ea74c37c5d359"
@@ -14,23 +14,23 @@ addresses = [
 {
   name: "blockies-example"
   state: {x:0}
-  value: my =>
+  child: my =>
     {
-      value: [
+      child: [
         {
           pos: [0 0]
           size: [64 64]
-          value: (renderAddress (get addresses "0") 8 8)
+          child: (renderAddress (get addresses "0") 8 8)
         }
         {
           pos: [64 0]
           size: [64 64]
-          value: (renderAddress (get addresses "1") 8 8)
+          child: (renderAddress (get addresses "1") 8 8)
         }
         {
           pos: [128 0]
           size: [64 64]
-          value: (renderAddress (get addresses "2") 8 8)
+          child: (renderAddress (get addresses "2") 8 8)
         }
       ]
     }

@@ -8,7 +8,7 @@ do = zb2rhkLJtRQwHz9e5GjiQkBtjL2SzZZByogr1uNZFyzJGA9dX
     font: size => {color:"rgb(160,148,148)" size:(mul (get size "1") 0.8)}
     disabled: 0
   }
-  value: my =>
+  child: my =>
     size = (my "size")
     w = (get size "0")
     h = (get (my "size") "1")
@@ -30,7 +30,7 @@ do = zb2rhkLJtRQwHz9e5GjiQkBtjL2SzZZByogr1uNZFyzJGA9dX
         (do "set" {text:text})>
         (do "yell" text)>
         (do "stop")
-      value: text
+      child: text
       placeholder: placeholder
     }
 }

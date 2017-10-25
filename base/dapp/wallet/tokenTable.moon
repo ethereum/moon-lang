@@ -5,16 +5,16 @@ arrayZipWith = zb2rhiHxfGRPmrJqfaCaef7BWASWgwNTCvBSPAWTcfSEbqbFx
 do = zb2rhkLJtRQwHz9e5GjiQkBtjL2SzZZByogr1uNZFyzJGA9dX
 erc20BalancesOf = zb2rhmybMXoUsMLY79H1nG2PYFeH5C9ufuScswbfTZKNypThN
 tokenList = zb2rhnh6h5iDikW8SNUFXRsrcLHDW8FYW4xRTXGzja1xicHxf
-paddings = zb2rhioC1iQYahsx8iXWEcFY9GQgovSwM19YL8FZZqAsejNkQ
-renderAddress = zb2rhX8bHJsvCUHjVEkeLynfNunnhHEXaDRokPa55BgE5r88u
-rows = zb2rhnMhVJf8kS9iAmpDbxGUASc38wox2bK9FSPRgU3JmjBzY
+paddings = zb2rhih6haVR3ksSJ8uAh5xZkK3tvDgb1ZWEPQBnjFpoPF4SQ
+renderAddress = zb2rhdkgwMJAUkUAqX9mcjNCsHx2sSHFrTyz2xiJtReKCQW9J
+rows = zb2rhdCiXTycyexhBiwPqdu4999ayvF1GMvwj7YwLmNezc59j
 arraySlice = zb2rhiPF8JLJ2JFUKR3MGk8HvdjSSa6oAY7KmVpXzZfcD65zu
 tokenRow = zb2rhncYBN1MMTVqMGD3YbuQgX6fGsekaBR8fEE971WoHYUiR
 withAlpha = zb2rhmDXZmJm8CGxQUQdVLWoiAKuinhSBH9TgWfUDq9foqVBZ
 
 {
   name: "erc20-token-table"
-  value: my =>
+  child: my =>
     {
       state: {
         balances:(arrayMap x => 0 tokenList)
@@ -28,7 +28,7 @@ withAlpha = zb2rhmDXZmJm8CGxQUQdVLWoiAKuinhSBH9TgWfUDq9foqVBZ
         textColor: "rgb(51,51,51)"
         selectable: 0
       }
-      value: my =>
+      child: my =>
         address = (my "addr")
         size = (my "size")
         width = (get size "0")
@@ -59,7 +59,7 @@ withAlpha = zb2rhmDXZmJm8CGxQUQdVLWoiAKuinhSBH9TgWfUDq9foqVBZ
           pos: [0 0]
           size: [width height]
           scroll: 1
-          value: (rows
+          child: (rows
             {
               sizes:
                 nw = (div (sub width (mul lineHeight 3)) 2)
@@ -107,27 +107,27 @@ withAlpha = zb2rhmDXZmJm8CGxQUQdVLWoiAKuinhSBH9TgWfUDq9foqVBZ
                       (withAlpha backgroundColor 0.1)
                     )
                   )
-                  cell = t => r => l => b => value =>
+                  cell = t => r => l => b => child =>
                     {
                       background: background
                       cursor: (if isSelectable "pointer" "normal")
                       onClick: onClick
-                      value: (paddings t r l b value)
+                      child: (paddings t r l b child)
                     }
                   r = (mul lineHeight 0.32)
                   p = (mul lineHeight 0.25)
                   q = (mul lineHeight 0.15)
                   icon = (if (cmp address "0x0000000000000000000000000000000000000000")
-                    {font:{family:"icomoon" color:linkColor} value:""}
+                    {font:{family:"icomoon" color:linkColor} child:""}
                     (renderAddress address 8 (div (sub lineHeight (mul q 2)) 8))
                   )
                   tick = (if (and isSelectable isSelected) "✔︎" " ")
                   [
-                    (cell q q q q {radius:radius value:icon})
-                    (cell p p p p {font:nameFont value:name})
-                    (cell p p p p {font:balanceFont value:(nts balance)})
-                    (cell r 0 r 0 {font:symbolFont value:symbol})
-                    (cell p p p p {font:nameFont color:textColor value:tick})
+                    (cell q q q q {radius:radius child:icon})
+                    (cell p p p p {font:nameFont child:name})
+                    (cell p p p p {font:balanceFont child:(nts balance)})
+                    (cell r 0 r 0 {font:symbolFont child:symbol})
+                    (cell p p p p {font:nameFont color:textColor child:tick})
                   ]
                 (arrayImap buildTokenRow usedTokenList)
             }
@@ -140,7 +140,7 @@ withAlpha = zb2rhmDXZmJm8CGxQUQdVLWoiAKuinhSBH9TgWfUDq9foqVBZ
             newState = {balances:balances selected:selected}
             (do "set" newState)>
             (do "stop")
-          value: tokenTable
+          child: tokenTable
         }
     }
 }

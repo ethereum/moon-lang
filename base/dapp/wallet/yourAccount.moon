@@ -1,10 +1,10 @@
-renderAddress = zb2rhX8bHJsvCUHjVEkeLynfNunnhHEXaDRokPa55BgE5r88u
+renderAddress = zb2rhdkgwMJAUkUAqX9mcjNCsHx2sSHFrTyz2xiJtReKCQW9J
 {
   name: "wallet-your-account"
   args: {
     address: "0x0000000000000000000000000000000000000000"
   }
-  value: my =>
+  child: my =>
     size = (my "size")
     w = (get size "0")
     h = (get size "1")
@@ -16,20 +16,20 @@ renderAddress = zb2rhX8bHJsvCUHjVEkeLynfNunnhHEXaDRokPa55BgE5r88u
         pos: [0 0]
         size: [h h]
         radius: (mul h 0.16)
-        value: (renderAddress (my "address") 8 (div h 8))
+        child: (renderAddress (my "address") 8 (div h 8))
       }
       {
         pos: [startX 0]
         size: [(sub w startX) titleH]
         font: {family: "helvetica"}
-        value: "Your Account"
+        child: "Your Account"
       }
       {
         pos: [startX titleH]
         size: [(sub w startX) addressH]
         font: {family: "helvetica"}
         selectable: 1
-        value: (my "address")
+        child: (my "address")
       }
     ]
 }

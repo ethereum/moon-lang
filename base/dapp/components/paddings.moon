@@ -1,4 +1,4 @@
-top => right => bottom => left => value =>
+top => right => bottom => left => child =>
   my =>
     t = top
     r = right
@@ -9,5 +9,5 @@ top => right => bottom => left => value =>
     {
       pos: [l t]
       size: [(sub w (add l r)) (sub h (add t b))]
-      value: value
+      child: child 
     }

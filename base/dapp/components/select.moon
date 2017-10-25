@@ -14,16 +14,16 @@ my =>
       arrows: {
         left: {
           font: {align: "center"}
-          value: "←"
+          child: "←"
         }
         right: {
           font: {align: "center"}
-          value: "→"
+          child: "→"
         }
       }
     }
 
-    value: my => 
+    child: my => 
 
       options = (my "options")
       selected = (my "index")
@@ -41,7 +41,7 @@ my =>
         size: [height height]
         cursor: "pointer"
         onClick: (select -1)
-        value: (get arrows "left")
+        child: (get arrows "left")
       }
 
       rightArrow = {
@@ -49,13 +49,13 @@ my =>
         size: [height height]
         cursor: "pointer"
         onClick: (select 1)
-        value: (get arrows "right")
+        child: (get arrows "right")
       }
 
       screen = {
         pos: [height 0]
         size: [(sub width (mul height 2)) height]
-        value: (arrayGet options selected)
+        child: (arrayGet options selected)
       }
 
       [

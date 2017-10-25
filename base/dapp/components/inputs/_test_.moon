@@ -1,4 +1,4 @@
-input = zb2rhdXL1cmQuVj4uSi9VT4Au1Z1fUxA1xc47kuuA4fbYfkt2
+input = zb2rhfQJvJ1LE6nidV7KNQWUZU331sR98G6Ynv3P4cANjpohv
 do = zb2rhkLJtRQwHz9e5GjiQkBtjL2SzZZByogr1uNZFyzJGA9dX
 
 my => {
@@ -15,5 +15,5 @@ my => {
       color: "rgb(140,180,230)"
     }
   }
-  value: input
+  child: input
 }
