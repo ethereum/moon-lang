@@ -1,6 +1,6 @@
 [
   {
-    name: "Ethereum"
+    name: "Ether"
     address: "0x0000000000000000000000000000000000000000"
     symbol: "ETH"
   }

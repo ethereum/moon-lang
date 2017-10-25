@@ -1,6 +1,6 @@
 labeledInput = zb2rhhkUZFMArW5NxJJ1kseBpCMu4uCCYbcEsS1EBpFJxTMVQ
 do = zb2rhkLJtRQwHz9e5GjiQkBtjL2SzZZByogr1uNZFyzJGA9dX
-tokenTransfer = zb2rhZF8eCvDpDXbfhgrjJuL9iLsmpUsSSCk3wX4A1HqjRqmc
+tokenTransfer = zb2rhngVMKzBEKR69tY8fammJKCu6KP8DKG4r4rFnWxXS4Dkm
 arrayJoin = zb2rhgWm1GQM8ith9EBVJSMxsLAZBzGGsCvgnyaPZHmz3c7ym
 {
   name: "wallet-sender"

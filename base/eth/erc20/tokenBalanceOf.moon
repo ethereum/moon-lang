@@ -1,6 +1,6 @@
 balanceOf = zb2rhmFmNwJL6wR8UyofxPK9XtUvBsbzjdyRx7HsTH6J3r7y8
 hexToEther = zb2rhn4gzprHnkT6RUfid2wKjR964PTnER3ysMU9tuKDAqVnu
-tokenBySymbol = zb2rhnsugmCSDgFDRHFpKXz7UYxoeLFaJiR14qMG6P2rmgGwm
+tokenBySymbol = zb2rhWvn7Do1HGtWDdXs6zzpkZg5cQpsmhZY3GrfbHtVyMTwj
 do = zb2rhkLJtRQwHz9e5GjiQkBtjL2SzZZByogr1uNZFyzJGA9dX
 
 address => symbol => return =>

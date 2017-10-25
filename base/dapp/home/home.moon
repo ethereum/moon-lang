@@ -20,11 +20,6 @@ moonImage = zb2rhbEccKnwdnXWDLyMhMi2UrGdFpXtpLX9Trdx1fKzf8rbF
     height = (get size "1")
     [
       {
-        pos: [0 0]
-        size: [width height]
-        background: "rgb(0,0,0)"
-      }
-      {
         pos: [20 20]
         size: [90 40]
         font: {color:"rgb(250,250,250)" weight:"300"}
@@ -43,8 +38,8 @@ moonImage = zb2rhbEccKnwdnXWDLyMhMi2UrGdFpXtpLX9Trdx1fKzf8rbF
         child: (con "Block: " (my "blockNumber"))
       }
       {
-        pos: [0 120]
-        size: [width (sub height 120)]
+        pos: [0 100]
+        size: [width (sub height 100)]
         background: moonImage
         child: ""
       }
