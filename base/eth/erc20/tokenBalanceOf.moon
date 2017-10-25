@@ -7,7 +7,7 @@ address => symbol => return =>
   token = (tokenBySymbol symbol)
   tokenName = (get token "name")
   tokenAddress = (get token "address")
-  balance = <(if (cmp tokenName "Ethereum")
+  balance = <(if (cmp tokenName "Ether")
     (do "eth" ["getBalance" [address "latest"]])
     (balanceOf address tokenAddress))
   (return (hexToEther balance))
