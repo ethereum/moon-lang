@@ -464,7 +464,8 @@ const termFormatter = decorations => term => {
             D.Many(term[1].map(v =>
               D.Many([
                 D.Var(v),
-                D.Text(" =>"),
+                D.Text(" "),
+                D.Text("=>"),
                 D.Text(" ")]))),
             go(term[2])
           ]);
@@ -483,7 +484,9 @@ const termFormatter = decorations => term => {
               } else {
                 return D.Many([
                   D.Var(k),
-                  D.Text(" = "),
+                  D.Text(" "),
+                  D.Text("="),
+                  D.Text(" "),
                   go(v),
                   D.Text(" ")
                 ]);
@@ -581,14 +584,16 @@ const termFormatter = decorations => term => {
               D.Many(term[1].map(v =>
                 D.Many([
                   D.Var(v),
-                  D.Text(" => ")]))));
+                  D.Text(" "),
+                  D.Text("=>"),
+                  D.Text(" ")]))));
             tab();
             go(term[2]);
             untab();
             break;
           case Let:
             for (var i = 0; i < term[1].length; ++i) {
-              const assignment = D.Many([D.Var(term[1][i][0]), " = "]);
+              const assignment = D.Many([D.Var(term[1][i][0]), D.Text(" "), D.Text("="), D.Text(" ")]);
               if (term[1][i][0] === "_" && term[1][i][1].term[0] === Lif) {
                 go({
                   term: [Seq, term[1][i][1].term[1]],
@@ -652,7 +657,9 @@ const termFormatter = decorations => term => {
                 D.Many(forLam.term[1].map(v =>
                   D.Many([
                     D.Var(v),
-                    D.Text(" => ")])))]));
+                    D.Text(" "),
+                    D.Text("=>"),
+                    D.Text(" ")])))]));
               tab();
               go(forLam.term[2]);
               untab();
