@@ -6,13 +6,16 @@ do = zb2rhkLJtRQwHz9e5GjiQkBtjL2SzZZByogr1uNZFyzJGA9dX
     size = (my "size")
     width = (get size "0")
     {
-      pos: [20 20]
-      size: [(sub width 40) 40]
-      font:{
-        color:"rgb(120,120,120)"
-        style:"italic"
+      background: "rgb(120,120,120)"
+      value: {
+        pos: [20 20]
+        size: [(sub width 40) 40]
+        font:{
+          color:"rgb(250,250,250)"
+          style:"italic"
+        }
+        cursor: "pointer"
+        value: "Welcome to Moon!"
       }
-      cursor: "pointer"
-      value: "Welcome to Moon!"
     }
 }

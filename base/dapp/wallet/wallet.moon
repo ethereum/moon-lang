@@ -1,19 +1,19 @@
 min = zb2rhcMiWXCWrJDJtYVb6TWVf2YjSq4qy4vcki5uuAF5v4J9j
 paddings = zb2rhioC1iQYahsx8iXWEcFY9GQgovSwM19YL8FZZqAsejNkQ
 yourAccount = zb2rhiC9Z8W6qBmp27PAZk65Q9fenDkDbkacQfhiFEJ7Jartk
-tokenTable = zb2rha32kqD5UnCJ9X4kzfD2zQkcYMaLLUASHFHb73mBKfp73
-sender = zb2rhcLVftbscFqPZDw2pWQfhXFN1hf56KZPHhwwje5KDn6UH
+tokenTable = zb2rhc6rDc8mSqjNkNGKvFn7SCBrD861GBhpmQFhziYg1bR3Y
+sender = zb2rhkxPAW2Bu3GzWGxvn5cxhLRD8XKbzkS5JYoJHsCZgTt2P
 do = zb2rhkLJtRQwHz9e5GjiQkBtjL2SzZZByogr1uNZFyzJGA9dX
-concat = zb2rhen9kLmNpH8Tt7ASAjV3ws1EYDeqXYG1Us5AWyHc7qiX5
-rgba = zb2rhncWqcLHBJZJJa7VhFmjk5AtE2dS2HaTyuYqzwgbJdBu2
+withAlpha = zb2rhmDXZmJm8CGxQUQdVLWoiAKuinhSBH9TgWfUDq9foqVBZ
+
 {
   name: "ethereum-wallet"
   title: {text:"Ethereum Wallet" background:[226 218 218]}
   state: {token:""}
-  set: {
-    textColor: "#5F5454"
-    backgroundColor: [226 218 218]
-    actionColor: [74 144 226]
+  args: {
+    textColor: "rgb(95,84,84)"
+    backgroundColor: "rgb(226,218,218)"
+    actionColor: "rgb(74,144,226)"
   }
   value: my =>
     size = (my "size")
@@ -36,12 +36,12 @@ rgba = zb2rhncWqcLHBJZJJa7VhFmjk5AtE2dS2HaTyuYqzwgbJdBu2
     tokensX = 0
     tokensY = accountH
     textColor = (my "textColor")
-    bgColor = (my "backgroundColor")
-    actionColor = (rgba (concat (my "actionColor") [1]))
+    backgroundColor = (my "backgroundColor")
+    actionColor = (my "actionColor")
     accountBox = {
       pos: [accountX accountY]
       size: [accountW accountH]
-      background: (rgba (concat bgColor [1]))
+      background: backgroundColor
       set: {textColor:textColor}
       value:
         value = my => {pos:[0 0] size:(my "size") value:yourAccount}
@@ -58,7 +58,12 @@ rgba = zb2rhncWqcLHBJZJJa7VhFmjk5AtE2dS2HaTyuYqzwgbJdBu2
             pos: [0 0]
             size: (my "size")
             color: "rgb(200,200,200)"
-            set: {lineHeight:(mul gh 2)}
+            set: {
+              lineHeight: (mul gh 2)
+              textColor: textColor
+              backgroundColor: backgroundColor
+              actionColor: actionColor
+            }
             value: tokenTable
           }
         (paddings gh gw gh gw value)
@@ -66,7 +71,7 @@ rgba = zb2rhncWqcLHBJZJJa7VhFmjk5AtE2dS2HaTyuYqzwgbJdBu2
     senderBox = {
       pos: [senderX senderY]
       size: [senderW senderH]
-      background: (rgba (concat bgColor [0.5]))
+      background: (withAlpha backgroundColor 0.5)
       set: {token:(my "token")}
       onHear: result =>
         type = (get result "type")

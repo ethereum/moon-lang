@@ -4,14 +4,13 @@ arrayMap = zb2rhgW1F8GpBDCtoXjEcqDBFXNiCDaPNt1fekX2Po8uHWiEV
 arrayZipWith = zb2rhiHxfGRPmrJqfaCaef7BWASWgwNTCvBSPAWTcfSEbqbFx
 do = zb2rhkLJtRQwHz9e5GjiQkBtjL2SzZZByogr1uNZFyzJGA9dX
 erc20BalancesOf = zb2rhmybMXoUsMLY79H1nG2PYFeH5C9ufuScswbfTZKNypThN
+tokenList = zb2rhnh6h5iDikW8SNUFXRsrcLHDW8FYW4xRTXGzja1xicHxf
 paddings = zb2rhioC1iQYahsx8iXWEcFY9GQgovSwM19YL8FZZqAsejNkQ
 renderAddress = zb2rhX8bHJsvCUHjVEkeLynfNunnhHEXaDRokPa55BgE5r88u
 rows = zb2rhnMhVJf8kS9iAmpDbxGUASc38wox2bK9FSPRgU3JmjBzY
 arraySlice = zb2rhiPF8JLJ2JFUKR3MGk8HvdjSSa6oAY7KmVpXzZfcD65zu
 tokenRow = zb2rhncYBN1MMTVqMGD3YbuQgX6fGsekaBR8fEE971WoHYUiR
-rgba = zb2rhncWqcLHBJZJJa7VhFmjk5AtE2dS2HaTyuYqzwgbJdBu2
-concat = zb2rhen9kLmNpH8Tt7ASAjV3ws1EYDeqXYG1Us5AWyHc7qiX5
-tokenList = zb2rhnh6h5iDikW8SNUFXRsrcLHDW8FYW4xRTXGzja1xicHxf
+withAlpha = zb2rhmDXZmJm8CGxQUQdVLWoiAKuinhSBH9TgWfUDq9foqVBZ
 
 {
   name: "erc20-token-table"
@@ -24,9 +23,9 @@ tokenList = zb2rhnh6h5iDikW8SNUFXRsrcLHDW8FYW4xRTXGzja1xicHxf
       args: {
         addr: (my "address")
         lineHeight: 32
-        backgroundColor: [226 216 216]
-        actionColor: [74 144 266]
-        textColor: "#333"
+        backgroundColor: "rgb(226,218,218)"
+        actionColor: "rgb(74,144,266)"
+        textColor: "rgb(51,51,51)"
         selectable: 0
       }
       value: my =>
@@ -35,7 +34,7 @@ tokenList = zb2rhnh6h5iDikW8SNUFXRsrcLHDW8FYW4xRTXGzja1xicHxf
         width = (get size "0")
         height = (get size "1")
         lineHeight = (my "lineHeight")
-        bgColors = (my "backgroundColor")
+        backgroundColor = (my "backgroundColor")
         actionColor = (my "actionColor")
         selected = (my "selected")
         isSelectable = (my "selectable")
@@ -53,7 +52,7 @@ tokenList = zb2rhnh6h5iDikW8SNUFXRsrcLHDW8FYW4xRTXGzja1xicHxf
             (or hasBalance isETH)
           tokens
         textColor = (if isSelectable
-          (rgba (concat actionColor [1]))
+          actionColor
           (my "textColor")
         )
         tokenTable = {
@@ -97,15 +96,15 @@ tokenList = zb2rhnh6h5iDikW8SNUFXRsrcLHDW8FYW4xRTXGzja1xicHxf
                   }
                   background = (if isSelectable
                     (if isSelected
-                      (rgba (concat actionColor [1]))
+                      actionColor
                       (if isDark
-                        (rgba (concat actionColor [0.1]))
-                        (rgba (concat actionColor [0.05]))
+                        (withAlpha actionColor 0.1)
+                        (withAlpha actionColor 0.05)
                       )
                     )
                     (if isDark
-                      (rgba (concat bgColors [0.5]))
-                      (rgba (concat bgColors [0.1]))
+                      (withAlpha backgroundColor 0.5)
+                      (withAlpha backgroundColor 0.1)
                     )
                   )
                   cell = t => r => l => b => value =>
