@@ -1,0 +1,12 @@
+{
+  range: a => b => (a 0 (a 1 (a 2 (a 3 b))))
+  sum: 10
+  filter: a => b => (a 3 (a 4 b))
+  concat: a => b => 
+    (a 1 (a 2 (a 3 (a 4 (a 5 (a 6 (a 7 (a 8 b))))))))
+  zipWith: a => b => (a 6 (a 8 (a 10 (a 12 b))))
+  mul: 24
+  reverse: a => b => (a 4 (a 3 (a 2 (a 1 b))))
+  len: 4
+  match: 1
+}

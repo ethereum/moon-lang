@@ -1,3 +1,7 @@
 node_modules/
 .stuff/
 TRASH/
+*~
+.*.un~
+*.swp
+*.swo
