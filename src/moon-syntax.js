@@ -31,10 +31,19 @@ const termFromString = (source) => {
         var startIndex = index;
         ++index;
         var next;
+        var lamb = 0;
         var args = [];
         args.push(parse(vs,li,0,1));
-        while ((next = parse(vs,li,0,0)) !== null) {
-          args.push(next);
+        while (true) {
+          while (invalid.test(source[index]||"")) ++index;
+          if(source[index+1] == "_") {
+            ++index;
+            args.push(E => T => T.Var("_" + lamb++))
+          }
+          else if ((next = parse(vs,li,0,0)) !== null) {
+            args.push(next);
+          }
+          else break;
         }
         var endIndex = index;
         return E => T => {
@@ -47,6 +56,7 @@ const termFromString = (source) => {
               priArgs.push(i < len ? args[i+1](E)(T) : T.Var("v" + (i - len)));
             }
             var curried = T.Pri(name, priArgs);
+            while(lamb-- > 0) curried = T.Lam("_" + lamb, app);
             for (var i = 0; i < arity - len; ++i) {
               curried = T.Lam("v" + (arity - 1 - len - i), curried);
             }
@@ -59,8 +69,9 @@ const termFromString = (source) => {
             for (var i = 1; i < args.length; ++i) {
               app = T.App(app,args[i](E)(T));
             }
+            while(lamb-- > 0) app = T.Lam("_" + lamb, app);
+            return app;
           }
-          return app;
         };
 
       // String
